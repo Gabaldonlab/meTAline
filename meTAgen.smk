@@ -9,17 +9,13 @@ import os
 from datetime import datetime
 import sys
 
-#sys.path.append('./lib/scr/')
-#from helper_functions import which_tech
-
-
 date1 = str(datetime.now())
 tmp = str.replace(date1," ",".") 
 tmp2 = str.replace(tmp,":","")
 date = str.replace(tmp2,"-","")
 
 #First determine the config file
-configfile: os.path.join(workflow.basedir, "config.json") #lib/config/config.json" As a default setting. The config will be named per user interest using MASV_get_config.py
+configfile: os.path.join(workflow.basedir, "config.json")
 
 ##############
 # PARAMETERS #
@@ -52,33 +48,19 @@ logs_dir = os.path.join(workingdir, config["Parameters"]["logs_dir"])
 if not os.path.exists(logs_dir):
     os.makedirs(logs_dir)
 
-#mosdepth directory
-#mosdir= outdir+"mosdepth/"
-#if not os.path.exists(mosdir):
-#    os.makedirs(mosdir)
-
-
 #Create the necessary dir. Do not create alignment_out directory if there is no reference in the config
-if reference_genome == None or reference_genome == "null":
-    if not os.path.exists(trimmomatic_out):
-        os.makedirs(trimmomatic_out)
-    if not os.path.exists(kraken_out):
-        os.makedirs(kraken_out)
-    if not os.path.exists(krona_out):
-        os.makedirs(krona_out)
-    if not os.path.exists(extracted_fa_out):
-        os.makedirs(extracted_fa_out)
-else:
+if reference_genome != None or reference_genome != "null":
     if not os.path.exists(alignment_out):
         os.makedirs(alignment_out)
-    if not os.path.exists(trimmomatic_out):
-        os.makedirs(trimmomatic_out)
-    if not os.path.exists(kraken_out):
-        os.makedirs(kraken_out)
-    if not os.path.exists(krona_out):
-        os.makedirs(krona_out)
-    if not os.path.exists(extracted_fa_out):
-        os.makedirs(extracted_fa_out)
+if not os.path.exists(trimmomatic_out):
+    os.makedirs(trimmomatic_out)
+if not os.path.exists(kraken_out):
+    os.makedirs(kraken_out)
+if not os.path.exists(krona_out):
+    os.makedirs(krona_out)
+if not os.path.exists(extracted_fa_out):
+    os.makedirs(extracted_fa_out)
+
 
 
 # file wildcard
@@ -101,12 +83,8 @@ include: "lib/rules/taxonomy.smk"
 read_processing = list()
 
 if reference_genome == None or reference_genome == "null":
-    #read_processing.append(expand(trimmomatic_out + "{file}_1_paired.fq.gz", file=files.split(',')))
-    #read_processing.append(expand(trimmomatic_out + "{file}_2_paired.fq.gz", file=files.split(',')))
     read_processing.append(directory(trimmomatic_out +sample+"_qc"))
 else:
-    #read_processing.append(expand(trimmomatic_out + "{file}_1_paired.fq.gz", file=files.split(',')))
-    #read_processing.append(expand(trimmomatic_out + "{file}_2_paired.fq.gz", file=files.split(',')))
     read_processing.append(directory(trimmomatic_out +sample+"_qc"))
     read_processing.append(alignment_out + sample +".bowtie2.bam")
     read_processing.append(alignment_out + sample +".bowtie2.bam.bai")
