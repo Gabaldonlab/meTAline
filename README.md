@@ -1,4 +1,4 @@
-# meTAgen: Metagenomics Taxonomic Assignation pipeline
+# meTAgen: metagenomics Taxonomic Assignation pipeline
 meTAgen is taxonomic assignation pipeline implemented in SnakeMake for WGS metagenomics data.
 
 ## Getting Started
