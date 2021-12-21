@@ -25,7 +25,7 @@ rule Kraken2:
         database = config["Inputs"]["krakendb"],
         outdir = config["Outputs"]["kraken_out"]
     benchmark:
-        os.path.join(benchmark_dir, (str(date) + "_" + sample +".kraken2.benchmark.txt"))
+        benchmark_dir + "/" + sample +".kraken2.benchmark.txt"
     log:
         logs_dir + str(date) + ".illumina_kraken2.log"
     threads: config["Kraken2"]["kraken2_cores"]
@@ -34,11 +34,11 @@ rule Kraken2:
     run:
         if reference_genome == None or reference_genome == "null":
             #Running kraken2 for paired data
-            shell("kraken2 --paired --threads {threads} --db {params.database}  --paired {input.read1} {input.read2} --use-names --report {output.report} --output {output.out}; ")
+            shell("kraken2 --threads {threads} --db {params.database}  --paired {input.read1} {input.read2} --use-names --report {output.report} --output {output.out}")
 
         else:
             #Running kraken2 for read extracted from BAM file
-            shell("kraken2 --threads {threads} --db {params.database} {input.read1} --use-names --report {output.report} --output {output.out}; ")
+            shell("kraken2 --threads {threads} --db {params.database} {input.read1} --use-names --report {output.report} --output {output.out}")
 
 rule Bracken:
     input:
