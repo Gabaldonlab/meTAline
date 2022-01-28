@@ -59,5 +59,6 @@ if reference_genome != None or reference_genome != "null":
         threads: config["Bowtie2"]["bowtie2_cores"]
         conda: os.path.join(workflow.basedir, "WGS_env.yml")
         shell:
-            #Generate unmaped reads, also generated an empty fastq.gz for the Kraken2 assignation
-            "samtools view -b -f 4 {input.BAM} | samtools fasta | pigz -p {threads} -c  > {output.fasta};"
+            #Generate unmaped bam file, use it and then remove it
+            "samtools view -b -f 4 {input.BAM} > temp.bam;"
+            "samtools fasta temp.bam | pigz -p {threads} -c  > {output.fasta}; rm temp.bam
