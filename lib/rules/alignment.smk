@@ -61,4 +61,4 @@ if reference_genome != None or reference_genome != "null":
         shell:
             #Generate unmaped bam file, use it and then remove it
             "samtools view -b -f 4 {input.BAM} > temp.bam;"
-            "samtools fasta temp.bam | pigz -p {threads} -c  > {output.fasta}; rm temp.bam
+            "samtools fasta temp.bam | pigz -p {threads} -c  > {output.fasta}; rm temp.bam"
