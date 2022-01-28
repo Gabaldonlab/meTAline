@@ -218,14 +218,12 @@ class CreateConfigurationFile(object):
             
         if args.reference_genome:
             args.reference_genome = os.path.abspath(args.reference_genome)
-        else:
-            args.reference_genome = working_dir + "reference/genome.fa"
 
         if not os.path.exists(args.reference_genome):
-            print("The reference genome has been not provided or it has not been found in "+args.reference_genome+". Enabling the taxonomic assignation of a environmental sample")
-            #parser.print_help()
-            #sys.exit(-1)
-            args.reference_genome = None
+            if args.reference_genome == None:
+                print("The reference genome has been not provided or it has not been found in "+args.reference_genome+". Enabling the taxonomic assignation of a environmental sample")
+                args.reference_genome = None
+
 
         if args.krakendb:
             args.krakendb = os.path.abspath(args.krakendb)
