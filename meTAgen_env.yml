@@ -22,11 +22,12 @@ dependencies:
   - boost-cpp=1.74.0=hc6e9bd1_2
   - boto3=1.16.59=pyhd8ed1ab_0
   - botocore=1.19.59=pyhd8ed1ab_0
+  - bowtie2=2.3.5.1=py36he513fc3_0
   - bracken=2.6.0=py36hf1ae8f4_2
   - brotlipy=0.7.0=py36h8f6f2f9_1001
   - bwa=0.7.17=hed695b0_7
   - bzip2=1.0.8=h7f98852_4
-  - ca-certificates=2021.1.19=h06a4308_0
+  - ca-certificates=2021.10.26=h06a4308_2
   - cachetools=4.2.1=pyhd8ed1ab_0
   - cairo=1.16.0=h7979940_1007
   - certifi=2020.12.5=py36h06a4308_0
@@ -158,6 +159,7 @@ dependencies:
   - snakemake-minimal=5.3.0=py36_1
   - sqlite=3.13.0=1
   - tar=1.33=ha1f6473_1
+  - tbb=2021.5.0=hd09550d_0
   - tk=8.5.19=2
   - trimmomatic=0.39=1
   - typing-extensions=3.7.4.3=0
