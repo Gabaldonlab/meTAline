@@ -14,7 +14,7 @@ tmp = str.replace(date1," ",".")
 tmp2 = str.replace(tmp,":","")
 date = str.replace(tmp2,"-","")
 
-#First determine the config file
+#First determine the config file, if changed by the user, need to either specified here or through snakemake commands
 configfile: os.path.join(workflow.basedir, "config.json")
 
 ##############
