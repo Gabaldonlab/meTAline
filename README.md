@@ -1,5 +1,5 @@
-# meTAgen: metagenomics Taxonomic Assignation pipeline
-meTAgen is taxonomic assignation pipeline implemented in SnakeMake for WGS metagenomics data.
+# meTAline: metagenomics Taxonomic Assignation pipeline
+meTAline is taxonomic assignation pipeline implemented in SnakeMake for WGS metagenomics data.
 
 ## Getting Started
 First it is required to pre-install conda with either anaconda or miniconda3. 
@@ -15,23 +15,23 @@ After installing conda, download and install the pipeline
 
 ```Shell
 # First clone the meTAgen repository
-$ git clone https://github.com/Dfupa/meTAgen.git
-# Change to meTAgen directory
-$ cd meTAgen/
+$ git clone https://github.com/Dfupa/meTAline.git
+# Change to meTAline directory
+$ cd meTAline/
 # Set the conda environment with all the necessary dependencies
-$ conda env create -f meTAgen_env.yml
+$ conda env create -f meTAline_env.yml
 # Activate the conda environment
-$ conda activate meTAgen
+$ conda activate meTAline
 ```
 
 # Input
-This pipline uses as an input a config file located in the MASV_pipeline/lib/config/ directory.  The user can find in that directoy a script called get_config.py which will build a config file with the parameters provided by the user.
+This pipline uses as an input a config file located in the meTAline/lib/config/ directory.  The user can find in that directoy a script called get_config.py which will build a config file with the parameters provided by the user.
 
-More information is provided by using the help parameter of MASV_get_config.py
+More information is provided by using the help parameter of generate_config.py
 
 ```Shell
 # Always assuming the environment is active
-$ python3 lib/config/get_config.py -h
+$ python3 lib/config/generate_config.py -h
 ```
 
 # Target rules
@@ -44,11 +44,11 @@ The target rules currently available to use are:
 
 
 # How to run snakemake
-In order to run the MASV pipeline just use the following command
+In order to run the meTAline pipeline just use the following command
 
 ```Shell
 # Always assuming the environment is active
-$ snakemake -s meTAgen.smk -r all -j 16 -n
+$ snakemake -s meTAline.smk -r all -j 16 -n
 ```
 The -n option is for a dry run, avoding the execution of any job yet. -j is the number of threads provided to the pipeline.  In this specific example, we selected the rule all using the parameter -r. 
 
