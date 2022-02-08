@@ -1,6 +1,8 @@
 # meTAline: metagenomics Taxonomic Assignation pipeline
 meTAline is taxonomic assignation pipeline implemented in SnakeMake for WGS metagenomics data.
 
+Additionally, you can use the bash wrapper located here: 
+
 ## Getting Started
 First it is required to pre-install conda with either anaconda or miniconda3. 
 
