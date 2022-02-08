@@ -17,7 +17,7 @@ After installing conda, download and install the pipeline
 
 ```Shell
 # First clone the meTAgen repository
-$ git clone https://github.com/Dfupa/meTAline.git
+$ git clone https://github.com/Gabaldonlab/meTAline.git
 # Change to meTAline directory
 $ cd meTAline/
 # Set the conda environment with all the necessary dependencies
