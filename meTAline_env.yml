@@ -1,4 +1,4 @@
-name: meTAgen
+name: meTAline
 channels:
   - bioconda
   - conda-forge
