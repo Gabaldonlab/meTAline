@@ -25,7 +25,7 @@ $ conda activate meTAline
 ```
 
 # Input
-This pipline uses as an input a config file located in the meTAline/lib/config/ directory.  The user can find in that directoy a script called get_config.py which will build a config file with the parameters provided by the user.
+This pipline uses as an input a config file located in the meTAline/lib/config/ directory.  The user can find in that directoy a script called generate_config.py which will build a config file with the parameters provided by the user.
 
 More information is provided by using the help parameter of generate_config.py
 
