@@ -1,0 +1,18 @@
+#!/bin/bash
+#SBATCH --job-name=WGS_snakemake
+#SBATCH --workdir=.
+#SBATCH --output=./smk-%j.out
+#SBATCH --error=./smk-%j.err
+#SBATCH --time=02:00:00
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=48
+#SBATCH --mail-type=end
+#SBATCH --mail-user=diego.fuentes@bsc.es
+#SBATCH --qos=debug
+#SBATCH --constraint=highmem
+module load ANACONDA/5.0.1
+####################################
+source /apps/ANACONDA/2019.07/etc/profile.d/conda.sh
+conda activate meTAgen
+
+snakemake -s meTAgen.smk -r all --cores 48
