@@ -27,11 +27,14 @@ $ conda activate meTAline
 # Input
 This pipline uses as an input a config file located in the meTAline/lib/config/ directory.  The user can find in that directoy a script called generate_config.py which will build a config file with the parameters provided by the user.
 
-More information is provided by using the help parameter of generate_config.py
+More information is provided by using the help parameter of generate_config.py, provide at least the mandatory arguments (the host reference genome index can be omitted if you are running an environmental sample).
 
 ```Shell
 # Always assuming the environment is active
 $ python3 lib/config/generate_config.py -h
+# An example of the real command
+$ python3 lib/config/generate_config.py --sample-barcode metagenomics_sample --reads-directory /path/to/the/reads/directory/ --reference-genome /path/to/reference_genomes/human_hg38/HUMAN_index --krakendb /path/to/KRAKEN2_DB_COMPLETE --kmer_dist /path/to/KRAKEN2_DB/KRAKEN2_DB_COMPLETE/database150mers.kmer_distrib --basedir /my/desired/directory/ --configFile config.json
+
 ```
 
 # Target rules
