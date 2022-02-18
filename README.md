@@ -52,7 +52,10 @@ In order to run the meTAline pipeline just use the following command
 ```Shell
 # Always assuming the environment is active
 $ snakemake -s meTAline.smk -r all -j 16 -n
+
+#If you want to run it with thour ouwn configs (after commenting the config parameter in the meTAline.smk file)
+$ snakemake -s meTAline.smk -r all -j 16 -n --configfile myconfig.json
 ```
-The -n option is for a dry run, avoding the execution of any job yet. -j is the number of threads provided to the pipeline.  In this specific example, we selected the rule all using the parameter -r. 
+The -n option is for a dry run, avoding the execution of any job yet. -j is the number of threads provided to the pipeline.  In this specific example, we selected the rule all using the parameter -r. You can use different configs by adding the --configfile parameter but it requires that you comment the configfile argument in the main meTAline.smk.
 
 More information regarding Snakemake and its commands can be found through Snakemake [documentation](https://snakemake.readthedocs.io/en/stable/index.html).
