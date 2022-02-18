@@ -55,10 +55,11 @@ if reference_genome != None or reference_genome != "null":
             BAI = rules.index_bam.output.BAI
         output:
             fasta = protected(alignment_out + sample +".unammped.fastq.gz"),
+            intermediate=temp(alignment_out + "temp.bam")
         log: logs_dir + str(date) + "_"+sample+".bam2fasta.log"  
         threads: config["Bowtie2"]["bowtie2_cores"]
         conda: os.path.join(workflow.basedir, "WGS_env.yml")
         shell:
             #Generate unmaped bam file, use it and then remove it
-            "samtools view -b -f 4 {input.BAM} > temp.bam;"
-            "samtools fasta temp.bam | pigz -p {threads} -c  > {output.fasta}; rm temp.bam"
+            "samtools view -b -f 4 {input.BAM} > {output.intermediate};"
+            "samtools fasta temp.bam | pigz -p {threads} -c  > {output.fasta};"
