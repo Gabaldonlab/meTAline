@@ -1,0 +1,2 @@
+source /apps/ANACONDA/2019.07/etc/profile.d/conda.sh && conda activate meTAgen && snakemake -s meTAline.smk --cores 48 --configfile PONSJIG35.json
+source /apps/ANACONDA/2019.07/etc/profile.d/conda.sh && conda activate meTAgen && snakemake -s meTAline.smk --cores 48 --configfile PONSJIG39.json
