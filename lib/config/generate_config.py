@@ -273,7 +273,7 @@ class CreateConfigurationFile(object):
         if args.fastqs == None:
             for r, d, f in os.walk(args.reads_directory):
                 for file in f:
-                    if re.search('.fastq.gz', file):
+                    if re.search('.fastq.gz', file) or re.search('.fq.gz', file):
                         if file.endswith('_1.fastq.gz'):
                             a = file.replace('_1.fastq.gz','')
                         elif file.endswith('_2.fastq.gz'):
@@ -283,7 +283,7 @@ class CreateConfigurationFile(object):
                             args.fastqs = a
                         else:
                             args.fastqs += "," + a
-                    elif re.search('.fastq', file):
+                    elif re.search('.fastq', file) or re.search('.fq', file):
                         if file.endswith('_1.fastq.gz'):
                             a = file.replace('_1.fastq.gz','')
                         elif file.endswith('_2.fastq.gz'):
