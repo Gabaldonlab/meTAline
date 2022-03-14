@@ -274,33 +274,32 @@ class CreateConfigurationFile(object):
         if args.fastqs == None:
             for r, d, f in os.walk(args.reads_directory):
                 for file in f:
+                    #Conditions for compressed files
                     if re.search('.fastq.gz', file) or re.search('.fq.gz', file):
-                        if file.endswith('_1.fastq.gz') or file.endswith('_1.fq.gz'):
-                            if file.endswith('_1.fastq.gz'):
-                                a = file.replace('_1.fastq.gz','')
-                            elif file.endswith('_1.fq.gz'):
-                                a = file.replace('_1.fq.gz','')
-                        elif file.endswith('_2.fastq.gz') or file.endswith('_2.fastq.gz'):
-                            if file.endswith('_2.fastq.gz'):
-                                a = file.replace('_2.fastq.gz','')
-                            elif file.endswith('_2.fq.gz'):
-                                a = file.replace('_2.fq.gz','')
+                        if file.endswith('_1.fastq.gz'):
+                            a = file.replace('_1.fastq.gz','')
+                        elif file.endswith('_2.fastq.gz'):
+                            a = file.replace('_2.fastq.gz','')
+                        elif file.endswith('_1.fq.gz'):
+                            a = file.replace('_1.fq.gz','')
+                        elif file.endswith('_2.fq.gz'):
+                            a = file.replace('_2.fq.gz','')
                         barcodes.append(a)
                         if args.fastqs == None:
                             args.fastqs = a
                         else:
                             args.fastqs += "," + a
+
+                    #Conditions for uncompressed files
                     elif re.search('.fastq', file) or re.search('.fq', file):
-                        if file.endswith('_1.fastq') or file.endswith('_1.fq'):
-                            if file.endswith('_1.fastq'):
-                                a = file.replace('_1.fastq','')
-                            elif file.endswith('_1.fq'):
-                                a = file.replace('_1.fq.','')
-                        elif file.endswith('_2.fastq') or file.endswith('_2.fq'):
-                            if file.endswith('_2.fastq'):
-                                a = file.replace('_2.fastq','')
-                            elif file.endswith('_2.fq'):
-                                a = file.replace('_2.fq','')
+                        if file.endswith('_1.fastq'):
+                            a = file.replace('_1.fastq','')
+                        elif file.endswith('_2.fastq'):
+                            a = file.replace('_2.fastq','')
+                        elif file.endswith('_1.fq'):
+                            a = file.replace('_1.fq','')
+                        elif file.endswith('_2.fq'):
+                            a = file.replace('_2.fq','')
                         barcodes.append(a)
                         if args.fastqs == None:
                             args.fastqs = a
