@@ -9,8 +9,8 @@
 
 rule Trimmomatic:
     input:
-        read1 = config["Inputs"]["reads_directory"] + "{file}_1.fastq.gz",
-        read2 = config["Inputs"]["reads_directory"] + "{file}_2.fastq.gz"
+        read1 = config["Inputs"]["reads_directory"] + "{file}_1."+config["Parameters"]["extension"],
+        read2 = config["Inputs"]["reads_directory"] + "{file}_2."+config["Parameters"]["extension"]
     output:
         trim1 = protected(trimmomatic_out + "{file}_1_paired.fq.gz"),
         trim2 = protected(trimmomatic_out + "{file}_2_paired.fq.gz"),
