@@ -24,6 +24,7 @@ class CreateConfigurationFile(object):
         self.configFile = "config.json"                      #Name of the json configuration file to be created.
         self.version = 1                                     #Pipeline version
         self.logs_dir = "WGS_logs"                           #Directory to keep all the log files
+        self.extension = "fastq.gz"                          #Extension of the illumina raw read files
         self.sample_barcode = None                           #Sample barcode 
         self.basedir = self.sample_barcode                   #Base directory for the pipeline run
 
@@ -103,6 +104,7 @@ class CreateConfigurationFile(object):
         general_group.add_argument('--configFile', dest="configFile", metavar="configFile", help='Configuration JSON to be generated. Default %s.' % self.configFile)
         general_group.add_argument('--version', type=int, dest="version", metavar="version", default=self.version, help='Pipeline run version. Default %s.' % self.version)
         general_group.add_argument('--logs-dir', dest="logs_dir", metavar="logs_dir", help='Directory to keep all the log files. Default WGS_logs.')
+        general_group.add_argument('--extension', dest="extension", metavar="extension", default=self.extension, help='Extension of the illumina raw read files. Default %s.' % self.extension)
         general_group.add_argument('--sample-barcode', dest="sample_barcode", metavar="sample_barcode", help='Sample barcode. Default %s.' % self.sample_barcode)
         general_group.add_argument('--basedir', dest="basedir", metavar="basedir", help='Base directory for the pipeline run. Default %s.' % self.basedir)
 
@@ -116,9 +118,8 @@ class CreateConfigurationFile(object):
         input_group.add_argument('--reference-genome', dest="reference_genome", metavar="reference_genome", help='Indexed reference genome path (ie: reference/Human_index). Your path is  %s.' % self.reference_genome)
         input_group.add_argument('--krakendb', dest="krakendb", metavar="krakendb", help='Kraken2 database used for the taxonomic assignation. Your path is  %s.' % self.krakendb) 
         input_group.add_argument('--kmer_dist', dest="kmer_dist", metavar="kmer_dist", help='Kraken2 kmer distribution path used for Bracken. Your path is  %s.' % self.kmer_dist) 
-        input_group.add_argument('--taxid', dest="taxid", metavar="taxid", default=self.taxid, help='Selects the taxid used for exctracting fasta reads. You can add more than one using space as the separator. Default "%s".' % self.taxid)
+        input_group.add_argument('--taxid', dest="taxid", metavar="taxid", default=self.taxid, help='Selects the taxid used for exctracting fasta reads. You can add more than one using space as the separator. Default \"%s\".' % self.taxid)
 
-    
     def register_output(self, parser):
         """Register all output parameters with the given
         argparse parser
@@ -304,6 +305,7 @@ class CreateConfigurationFile(object):
         self.generalParameters["version"] = args.version
         self.generalParameters["basedir"] = args.basedir
         self.generalParameters["logs_dir"] = args.logs_dir
+        self.generalParameters["extension"] = args.extension
         self.generalParameters["sample_barcode"] = args.sample_barcode
         self.allParameters["Parameters"] = self.generalParameters
 
