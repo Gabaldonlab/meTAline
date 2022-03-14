@@ -54,7 +54,7 @@ if reference_genome != None or reference_genome != "null":
             BAM = rules.bowtie2.output.out,
             BAI = rules.index_bam.output.BAI
         output:
-            fasta = protected(alignment_out + sample +".unammped.fastq.gz"),
+            fasta = protected(alignment_out + sample +".unmapped.fastq.gz"),
             intermediate=temp(alignment_out + "temp.bam")
         log: logs_dir + str(date) + "_"+sample+".bam2fasta.log"  
         threads: config["Bowtie2"]["bowtie2_cores"]
@@ -62,4 +62,4 @@ if reference_genome != None or reference_genome != "null":
         shell:
             #Generate unmaped bam file, use it and then remove it
             "samtools view -b -f 4 {input.BAM} > {output.intermediate};"
-            "samtools fasta temp.bam | pigz -p {threads} -c  > {output.fasta};"
+            "samtools fasta {output.intermediate} | pigz -p {threads} -c  > {output.fasta};"
