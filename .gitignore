@@ -1,0 +1,8 @@
+## -----------
+# Helper files
+## -----------
+
+*.job
+*.txt
+TruSeq3-PE-2.fa
+.env
