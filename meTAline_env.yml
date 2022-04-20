@@ -16,6 +16,7 @@ dependencies:
   - attrs=20.3.0=pyhd3deb0d_0
   - backports=1.0=py_2
   - backports.functools_lru_cache=1.6.1=py_0
+  - biom-format=2.1.6=py36_1
   - biopython=1.78=py36h7b6447c_0
   - blast=2.5.0=hc0b0e79_3
   - boost=1.74.0=py36h355b2fd_3
@@ -27,12 +28,13 @@ dependencies:
   - brotlipy=0.7.0=py36h8f6f2f9_1001
   - bwa=0.7.17=hed695b0_7
   - bzip2=1.0.8=h7f98852_4
-  - ca-certificates=2021.10.26=h06a4308_2
+  - ca-certificates=2021.10.8=ha878542_0
   - cachetools=4.2.1=pyhd8ed1ab_0
   - cairo=1.16.0=h7979940_1007
-  - certifi=2020.12.5=py36h06a4308_0
+  - certifi=2021.5.30=py36h5fab9bb_0
   - cffi=1.14.4=py36hc120d54_1
   - chardet=3.0.4=py36h9880bd3_1008
+  - click=8.0.1=py36h5fab9bb_0
   - conda=4.6.14=py36_0
   - configargparse=1.2.3=pyh9f0ad1d_0
   - cryptography=2.5=py36hb7f436b_1
@@ -54,6 +56,7 @@ dependencies:
   - freetype=2.10.4=h0708190_1
   - fribidi=1.0.10=h36c2ea0_0
   - ftputil=4.0.0=py_0
+  - future=0.18.2=py36h5fab9bb_3
   - gdk-pixbuf=2.42.2=h0c95a7a_2
   - gettext=0.19.8.1=h0b5b191_1005
   - giflib=5.2.1=h36c2ea0_2
@@ -70,7 +73,9 @@ dependencies:
   - graphviz=2.42.3=h6939c30_2
   - gtk2=2.24.33=hab0c2f8_0
   - gts=0.7.6=h64030ff_2
+  - h5py=2.10.0=nompi_py36h513d04c_102
   - harfbuzz=2.7.4=h5cf4720_0
+  - hdf5=1.10.5=nompi_h5b725eb_1114
   - icu=68.1=h58526e2_0
   - idna=2.10=pyh9f0ad1d_0
   - idna_ssl=1.1.0=py36h9f0ad1d_1001
@@ -80,6 +85,7 @@ dependencies:
   - jmespath=0.10.0=pyh9f0ad1d_0
   - jpeg=9d=h36c2ea0_0
   - jsonschema=3.2.0=py_2
+  - kraken-biom=1.0.1=py_2
   - kraken2=2.1.1=pl526hc9558a2_0
   - krakentools=0.1=py_0
   - krona=2.7.1=pl526_1
@@ -113,7 +119,7 @@ dependencies:
   - networkx=2.5=py_0
   - numpy=1.19.5=py36h2aa4a07_1
   - openjdk=11.0.8=hacce0ff_0
-  - openssl=1.0.2u=h7b6447c_0
+  - openssl=1.0.2u=h516909a_0
   - pandas=1.1.5=py36h284efc9_0
   - pango=1.42.4=h69149e4_5
   - paramiko=1.18.2=py36_0
@@ -152,6 +158,7 @@ dependencies:
   - ruamel_yaml=0.15.80=py36h8f6f2f9_1003
   - s3transfer=0.3.4=pyhd8ed1ab_0
   - samtools=1.3.1=0
+  - scipy=1.5.3=py36h9e8f40b_0
   - setuptools=49.6.0=py36h5fab9bb_3
   - six=1.15.0=pyh9f0ad1d_0
   - smmap=4.0.0=pyh44b312d_0
