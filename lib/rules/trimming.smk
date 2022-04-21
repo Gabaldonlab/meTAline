@@ -30,7 +30,7 @@ rule Trimmomatic:
     threads: 
         config["Trimmomatic"]["trimmo_cores"]
 
-    conda: os.path.join(workflow.basedir, "WGS_env.yml")
+    conda: os.path.join(workflow.basedir, "meTAline_env.yml")
 
     shell:
         "trimmomatic PE -threads {threads} -phred33 {input.read1} {input.read2} {output.trim1} {output.unpaired1} {output.trim2} {output.unpaired2} ILLUMINACLIP:{params.illuminaclip} LEADING:{params.leading} TRAILING:{params.trailing} SLIDINGWINDOW:{params.slidingwindow} MINLEN:{params.minlen} ;"
@@ -50,7 +50,7 @@ rule Concat_reads:
     threads: 
         config["Trimmomatic"]["trimmo_cores"]
 
-    conda: os.path.join(workflow.basedir, "WGS_env.yml")
+    conda: os.path.join(workflow.basedir, "meTAline_env.yml")
 
     shell:
         "zcat {input.trim1} | pigz -p {threads} -c  > {output.concat1}; zcat {input.trim2} | pigz -p {threads} -c  > {output.concat2}; "
@@ -68,7 +68,7 @@ rule fastqc:
     log:
         logs_dir+str(date)+".fastqc.log"
     threads: 4
-    conda: os.path.join(workflow.basedir, "WGS_env.yml")
+    conda: os.path.join(workflow.basedir, "meTAline_env.yml")
     shell:
         #Fastqc called from snakemake requires to have the outdir already created
         "mkdir {output.DIR}; fastqc {input.reads1} {input.reads2} {params.mode}={output.DIR} -t 4"
