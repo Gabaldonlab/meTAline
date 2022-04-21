@@ -29,7 +29,7 @@ rule Kraken2:
     log:
         logs_dir + str(date) + ".illumina_kraken2.log"
     threads: config["Kraken2"]["kraken2_cores"]
-    conda: os.path.join(workflow.basedir, "WGS_env.yml")
+    conda: os.path.join(workflow.basedir, "meTAline_env.yml")
     #Run interpretes the following block as python code, keep python synthax
     run:
         if reference_genome == None or reference_genome == "null":
@@ -52,7 +52,7 @@ rule Bracken:
     log:
         logs_dir + str(date) + ".illumina_kraken.log"
     threads: config["Kraken2"]["kraken2_cores"]
-    conda: os.path.join(workflow.basedir, "WGS_env.yml")
+    conda: os.path.join(workflow.basedir, "meTAline_env.yml")
     shell:
         "est_abundance.py -i {input.report} -k {params.kmers} -l S -t 10 -o {output.abundance}; "
 
@@ -88,7 +88,7 @@ rule extract_reads:
     log:
         logs_dir + str(date) + ".extracted_reads.log"
     threads: 4
-    conda: os.path.join(workflow.basedir, "WGS_env.yml")
+    conda: os.path.join(workflow.basedir, "meTAline_env.yml")
     shell:
         "extract_kraken_reads.py -k {input.kraken} -r {input.report} -s1 {input.read1} -s2 {input.read2}  -t 2 2157 --exclude --include-children  -o {params.intermediate1}  -o2 {params.intermediate2};"
         "cat {params.intermediate1} | pigz -p {threads} -c > {output.ext1}; cat {params.intermediate2} | pigz -p {threads} -c  > {output.ext2};"
