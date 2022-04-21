@@ -29,7 +29,7 @@ if reference_genome != None or reference_genome != "null":
         benchmark:
             os.path.join(benchmark_dir, (str(date) + "_" + sample +".alignment.benchmark.txt"))
         threads: config["Bowtie2"]["bowtie2_cores"]
-        conda: os.path.join(workflow.basedir, "WGS_env.yml")
+        conda: os.path.join(workflow.basedir, "meTAline_env.yml")
         shell:
             #Important, check that the bowtie2 index for your reference genome has been generated and provided to the config
             "bowtie2-align-s --local --threads {threads} -x {params.ref} -1 {input.read1} -2 {input.read2} -D {params.D} -R {params.R} -N {params.N} -L {params.L} -i {params.i} --score-min {params.score_min} | samtools sort -@ {threads} -O BAM -o {output.out} 2> {log};"
@@ -44,7 +44,7 @@ if reference_genome != None or reference_genome != "null":
         threads:
             config["Bowtie2"]["bowtie2_cores"]
 
-        conda: os.path.join(workflow.basedir, "WGS_env.yml")
+        conda: os.path.join(workflow.basedir, "meTAline_env.yml")
 
         shell:
             "samtools index {input.BAM} {output.BAI} 2> {log}"
@@ -58,7 +58,7 @@ if reference_genome != None or reference_genome != "null":
             intermediate=temp(alignment_out + "temp.bam")
         log: logs_dir + str(date) + "_"+sample+".bam2fasta.log"  
         threads: config["Bowtie2"]["bowtie2_cores"]
-        conda: os.path.join(workflow.basedir, "WGS_env.yml")
+        conda: os.path.join(workflow.basedir, "meTAline_env.yml")
         shell:
             #Generate unmaped bam file, use it and then remove it
             "samtools view -b -f 4 {input.BAM} > {output.intermediate};"
