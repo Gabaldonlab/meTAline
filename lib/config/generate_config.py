@@ -43,6 +43,7 @@ class CreateConfigurationFile(object):
         self.kraken_out = "KRAKEN_ASSIGN"              #Out directory of the Kraken2 reports
         self.krona_out = "KRONA_HTML"                  #Out directory of the Krona visualization tool
         self.extracted_fa_out = "EXTRACTED_FASTA"      #Out directory of the extracted fasta
+        self.ranalysis_out = "R_ANALYSIS"                  #Out directory of R analysis
     
         #WILDCARD PARAMETER
 
@@ -132,6 +133,7 @@ class CreateConfigurationFile(object):
         output_group.add_argument('--kraken-out', dest="kraken_out", help='Out directory of the Kraken2 taxonomic assignation step. Default "/%s"' % self.kraken_out)
         output_group.add_argument('--krona-out', dest="krona_out", help='Out directory of the Krona visualization tool. Default "/%s"' % self.krona_out)
         output_group.add_argument('--extracted-fa-out', dest="extracted_fa_out", help='Out directory of the extracted fasta reads. Default "/%s"' % self.extracted_fa_out)
+        output_group.add_argument('--ranalysis-out', dest="ranalysis_out", help='Out directory of the R analysis. Default "/%s"' % self.ranalysis_out)
 
 
     def register_wildcards(self, parser):
@@ -219,13 +221,9 @@ class CreateConfigurationFile(object):
             
         if args.reference_genome != None:
             args.reference_genome = os.path.abspath(args.reference_genome)
-        #else:
-        #    args.reference_genome = working_dir + "reference/genome.fa"
+
 
             if not os.path.exists(args.reference_genome):
-                #print("The reference genome has been not provided or it has not been found in "+args.reference_genome+". Enabling the taxonomic assignation of a environmental sample")
-                #parser.print_help()
-                #sys.exit(-1)
                 if not re.search('index', args.reference_genome):
                     print("A reference genome index (including index as suffix, ie:'HUMAN_index') has been not provided or it has not been found in "+args.reference_genome+". Enabling the taxonomic assignation of a environmental sample")
                     args.reference_genome = None
@@ -269,37 +267,43 @@ class CreateConfigurationFile(object):
         else:
             args.extracted_fa_out = args.basedir  + self.extracted_fa_out + "/"
 
+        if args.ranalysis_out:
+            args.ranalysis_out = os.path.abspath(args.ranalysis_out) + "/"
+        else:
+            args.ranalysis_out = args.basedir  + self.ranalysis_out + "/"
+
         ##Assign wildcards
 
         if args.fastqs == None:
             for r, d, f in os.walk(args.reads_directory):
                 for file in f:
-                    #Conditions for compressed files
                     if re.search('.fastq.gz', file) or re.search('.fq.gz', file):
-                        if file.endswith('_1.fastq.gz'):
-                            a = file.replace('_1.fastq.gz','')
-                        elif file.endswith('_2.fastq.gz'):
-                            a = file.replace('_2.fastq.gz','')
-                        elif file.endswith('_1.fq.gz'):
-                            a = file.replace('_1.fq.gz','')
-                        elif file.endswith('_2.fq.gz'):
-                            a = file.replace('_2.fq.gz','')
+                        if file.endswith('_1.fastq.gz') or file.endswith('_1.fq.gz'):
+                            if file.endswith('_1.fastq.gz'):
+                                a = file.replace('_1.fastq.gz','')
+                            elif file.endswith('_1.fq.gz'):
+                                a = file.replace('_1.fq.gz','')
+                        elif file.endswith('_2.fastq.gz') or file.endswith('_2.fastq.gz'):
+                            if file.endswith('_2.fastq.gz'):
+                                a = file.replace('_2.fastq.gz','')
+                            elif file.endswith('_2.fq.gz'):
+                                a = file.replace('_2.fq.gz','')
                         barcodes.append(a)
                         if args.fastqs == None:
                             args.fastqs = a
                         else:
                             args.fastqs += "," + a
-
-                    #Conditions for uncompressed files
                     elif re.search('.fastq', file) or re.search('.fq', file):
-                        if file.endswith('_1.fastq'):
-                            a = file.replace('_1.fastq','')
-                        elif file.endswith('_2.fastq'):
-                            a = file.replace('_2.fastq','')
-                        elif file.endswith('_1.fq'):
-                            a = file.replace('_1.fq','')
-                        elif file.endswith('_2.fq'):
-                            a = file.replace('_2.fq','')
+                        if file.endswith('_1.fastq') or file.endswith('_1.fq'):
+                            if file.endswith('_1.fastq'):
+                                a = file.replace('_1.fastq','')
+                            elif file.endswith('_1.fq'):
+                                a = file.replace('_1.fq.','')
+                        elif file.endswith('_2.fastq') or file.endswith('_2.fq'):
+                            if file.endswith('_2.fastq'):
+                                a = file.replace('_2.fastq','')
+                            elif file.endswith('_2.fq'):
+                                a = file.replace('_2.fq','')
                         barcodes.append(a)
                         if args.fastqs == None:
                             args.fastqs = a
@@ -341,6 +345,7 @@ class CreateConfigurationFile(object):
         self.outputParameters["kraken_out"] = args.kraken_out
         self.outputParameters["krona_out"] = args.krona_out
         self.outputParameters["extracted_fa_out"] = args.extracted_fa_out
+        self.outputParameters["ranalysis_out"] = args.ranalysis_out
         self.allParameters ["Outputs"] = self.outputParameters
 
     def storeWildcardParameters(self,args):
