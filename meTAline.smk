@@ -1,9 +1,10 @@
 shell.prefix("source ~/.bashrc; ")
 
+
 #Author: Diego Fuentes
 #Contact email: diego.fuentes@bsc.es
 #Barcelona
-#Date:2021-01-29
+#Date:2022-05-26
 
 import os
 from datetime import datetime
@@ -15,7 +16,7 @@ tmp2 = str.replace(tmp,":","")
 date = str.replace(tmp2,"-","")
 
 #First determine the config file, if changed by the user, need to either specified here or through snakemake commands (if using commands, comment the line below)
-configfile: os.path.join(workflow.basedir, "config.json")
+#configfile: os.path.join(workflow.basedir, "config.json")
 
 ##############
 # PARAMETERS #
@@ -35,6 +36,7 @@ trimmomatic_out = os.path.join(workingdir, config["Outputs"]["trimmomatic_out"])
 kraken_out = os.path.join(workingdir, config["Outputs"]["kraken_out"])
 krona_out = os.path.join(workingdir, config["Outputs"]["krona_out"])
 extracted_fa_out = os.path.join(workingdir, config["Outputs"]["extracted_fa_out"])
+ranalysis_out = os.path.join(workingdir, config["Outputs"]["ranalysis_out"])
 
 reference_genome = config["Inputs"]["reference_genome"]
 
@@ -74,6 +76,7 @@ files = config["Wildcards"]["fastqs"]
 include: "lib/rules/trimming.smk"
 include: "lib/rules/alignment.smk"
 include: "lib/rules/taxonomy.smk"
+include: "lib/rules/RAnalysis.smk"
 
 
 ##############
@@ -97,10 +100,16 @@ rule all:
         kraken_out= kraken_out + sample + ".kraken2.txt",
         kraken_report= kraken_out + sample + ".kraken2.report",
         bracken_report= kraken_out + sample + ".bracken_abundance.txt",
+        bracken_species_report = kraken_out + sample + "kraken2_bracken_species.report",
         krona_file= krona_out + sample + ".krona",
         krona_html= krona_out + sample + ".hmtl",
         ext1= extracted_fa_out + sample + ".1.fastq.gz",
-        ext2= extracted_fa_out + sample + ".2.fastq.gz"
+        ext2= extracted_fa_out + sample + ".2.fastq.gz",
+        biom_file= kraken_out + sample + ".Braken.biom",
+        phyloseq_object =  ranalysis_out + sample + ".rds",
+        rich_object =  ranalysis_out + sample + "_alpha_div.csv",
+        out_plot =  ranalysis_out + sample + "_Barplot_phyla.jpeg"
+
     log:
         logs_dir + str(date) + "_" + sample +".all.rule.log"
 
@@ -119,10 +128,15 @@ rule taxonomy_assignation:
         kraken_out= kraken_out + sample + ".kraken2.txt",
         kraken_report= kraken_out + sample + ".kraken2.report",
         bracken_report= kraken_out + sample + ".bracken_abundance.txt",
+        bracken_species_report = kraken_out + sample + "kraken2_bracken_species.report",
         krona_file= krona_out + sample + ".krona",
         krona_html= krona_out + sample + ".hmtl",
         ext1= extracted_fa_out + sample + ".1.fastq.gz",
-        ext2= extracted_fa_out + sample + ".2.fastq.gz"
+        ext2= extracted_fa_out + sample + ".2.fastq.gz",
+        biom_file= kraken_out + sample + ".Braken.biom",
+        phyloseq_object =  ranalysis_out + sample + ".rds",
+        rich_object =  ranalysis_out + sample + "_alpha_div.csv",
+        out_plot =  ranalysis_out + sample + "_Barplot_phyla.jpeg"
     log:
         logs_dir + str(date) + "_" + sample +".taxonomy_assignation.rule.log"
 
@@ -136,3 +150,22 @@ rule krona_and_reads:
         ext2= extracted_fa_out + sample + ".2.fastq.gz"
     log:
         logs_dir + str(date) + "_" + sample +".krona_and_reads.rule.log"
+
+#This rule is used if you already have the Kraken2 and bracken assignment and you want to pass from their reports to biom format for further analysis
+rule biom_format:
+    input:
+        bracken_species_report = kraken_out + sample + ".kraken2_bracken_species.report",
+        biom_file= kraken_out + sample + ".Braken.biom"
+    log:
+        logs_dir + str(date) + "_" + sample +".biom_format.rule.log"
+#This rule is used to make a basic R analysis
+rule R_Analysis:
+    input:
+        biom_file= kraken_out + sample + ".Braken.biom",
+        biom= rules.convert_biom.output.biom_file,
+        phyloseq_object =  ranalysis_out + sample + ".rds",
+        rich_object =  ranalysis_out + sample + "_alpha_div.csv",
+        out_plot =  ranalysis_out + sample + "_Barplot_phyla.jpeg"
+    log:
+        logs_dir + str(date) + "_" + sample +".R_analysis.rule.log"
+        
