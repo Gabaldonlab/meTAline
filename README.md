@@ -16,13 +16,15 @@ Alternatively, you can install:
 After installing conda, download and install the pipeline
 
 ```Shell
-# First clone the meTAgen repository
+# First clone the meTAline repository
 $ git clone https://github.com/Gabaldonlab/meTAline.git
 # Change to meTAline directory
 $ cd meTAline/
-# Set the conda environment with all the necessary dependencies
-$ conda env create -f meTAline_env.yml
-# Activate the conda environment
+# Set the conda environments with all the necessary dependencies
+$ conda env create -f meTAline_env.yml #The main environment 
+$ conda env create -f meTAline_Rrule.yml #You should also create this environment to be activated and used for the R rule
+
+# Activate the main conda environment
 $ conda activate meTAline
 ```
 
