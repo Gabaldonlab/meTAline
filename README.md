@@ -17,15 +17,15 @@ After installing conda, download and install the pipeline
 
 ```Shell
 # First clone the meTAline repository
-$ git clone https://github.com/Gabaldonlab/meTAline.git
-# Change to meTAline directory
-$ cd meTAline/
+git clone https://github.com/Gabaldonlab/meTAline.git
+# Change to meTAline/conda_envs directory
+cd meTAline/conda_envs
 # Set the conda environments with all the necessary dependencies
-$ conda env create -f meTAline_env.yml #The main environment 
-$ conda env create -f meTAline_Rrule.yml #You should also create this environment to be activated and used for the R rule
+conda env create -f meTAline_env.yml #The main environment 
+conda env create -f meTAline_Rrule.yml #You should also create this environment to be activated and used for the R rule
 
 # Activate the main conda environment
-$ conda activate meTAline
+conda activate meTAline
 ```
 
 # Input
@@ -35,9 +35,9 @@ More information is provided by using the help parameter of generate_config.py, 
 
 ```Shell
 # Always assuming the environment is active
-$ python3 lib/config/generate_config.py -h
+python3 lib/config/generate_config.py -h
 # An example of the real command
-$ python3 lib/config/generate_config.py --sample-barcode metagenomics_sample --reads-directory /path/to/the/reads/directory/ --reference-genome /path/to/reference_genomes/human_hg38/HUMAN_index --krakendb /path/to/KRAKEN2_DB_COMPLETE --kmer_dist /path/to/KRAKEN2_DB/KRAKEN2_DB_COMPLETE/database150mers.kmer_distrib --basedir /my/desired/directory/ --configFile config.json
+python3 lib/config/generate_config.py --sample-barcode metagenomics_sample --reads-directory /path/to/the/reads/directory/ --reference-genome /path/to/reference_genomes/human_hg38/HUMAN_index --krakendb /path/to/KRAKEN2_DB_COMPLETE --kmer_dist /path/to/KRAKEN2_DB/KRAKEN2_DB_COMPLETE/database150mers.kmer_distrib --basedir /my/desired/directory/ --configFile config.json
 
 ```
 
