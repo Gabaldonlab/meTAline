@@ -12,7 +12,5 @@
 #SBATCH --constraint=highmem
 module load ANACONDA/5.0.1
 ####################################
-source /apps/ANACONDA/2019.07/etc/profile.d/conda.sh
-conda activate meTAgen
 
-/apps/GREASY/2.2/INTEL/IMPI/bin/greasy
+/apps/GREASY/2.2/INTEL/IMPI/bin/greasy  joblist.txt
