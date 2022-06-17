@@ -44,7 +44,8 @@ rule Bracken:
     input:
         report = rules.Kraken2.output.report
     output:
-        abundance =  protected(kraken_out + sample + ".bracken_abundance.txt")
+        abundance =  protected(kraken_out + sample + ".bracken_abundance.txt"),
+        report =  protected(kraken_out + sample + ".kraken2_bracken_species.report")
     benchmark:
         os.path.join(benchmark_dir, (str(date) + sample +".bracken.benchmark.txt"))
     params:
@@ -54,7 +55,7 @@ rule Bracken:
     threads: config["Kraken2"]["kraken2_cores"]
     conda: os.path.join(workflow.basedir, "meTAline_env.yml")
     shell:
-        "est_abundance.py -i {input.report} -k {params.kmers} -l S -t 10 -o {output.abundance}; "
+        "est_abundance.py -i {input.report} -k {params.kmers} -l S -t 10 -o {output.abundance} --out-report {output.report}; "
 
 rule Krona:
     input:

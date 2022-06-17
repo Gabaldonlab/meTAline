@@ -91,7 +91,7 @@ else:
     read_processing.append(directory(trimmomatic_out +sample+"_qc"))
     read_processing.append(alignment_out + sample +".bowtie2.bam")
     read_processing.append(alignment_out + sample +".bowtie2.bam.bai")
-    read_processing.append(alignment_out + sample +".unammped.fastq.gz")
+    read_processing.append(alignment_out + sample +".unmapped.fastq.gz")
 
 #Rule by default, runs the complete pipeline
 rule all:
@@ -100,7 +100,7 @@ rule all:
         kraken_out= kraken_out + sample + ".kraken2.txt",
         kraken_report= kraken_out + sample + ".kraken2.report",
         bracken_report= kraken_out + sample + ".bracken_abundance.txt",
-        bracken_species_report = kraken_out + sample + "kraken2_bracken_species.report",
+        bracken_species_report = kraken_out + sample + ".kraken2_bracken_species.report",
         krona_file= krona_out + sample + ".krona",
         krona_html= krona_out + sample + ".hmtl",
         ext1= extracted_fa_out + sample + ".1.fastq.gz",
@@ -128,11 +128,11 @@ rule taxonomy_assignation:
         kraken_out= kraken_out + sample + ".kraken2.txt",
         kraken_report= kraken_out + sample + ".kraken2.report",
         bracken_report= kraken_out + sample + ".bracken_abundance.txt",
-        bracken_species_report = kraken_out + sample + "kraken2_bracken_species.report",
+        bracken_species_report = kraken_out + sample + ".kraken2_bracken_species.report",
         krona_file= krona_out + sample + ".krona",
         krona_html= krona_out + sample + ".hmtl",
-        ext1= extracted_fa_out + sample + ".1.fastq.gz",
-        ext2= extracted_fa_out + sample + ".2.fastq.gz",
+        #ext1= extracted_fa_out + sample + ".1.fastq.gz",
+        #ext2= extracted_fa_out + sample + ".2.fastq.gz",
         biom_file= kraken_out + sample + ".Braken.biom",
         phyloseq_object =  ranalysis_out + sample + ".rds",
         rich_object =  ranalysis_out + sample + "_alpha_div.csv",

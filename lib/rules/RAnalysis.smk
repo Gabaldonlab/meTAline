@@ -6,7 +6,7 @@
 #Rule to convert the bracken report to biom format. 
 rule convert_biom:
     input:
-        report= kraken_out + sample + ".kraken2_bracken_species.report" 
+        report= rules.Bracken.output.report
     output:
         biom_file = protected(kraken_out + sample + ".Braken.biom")
     benchmark:
@@ -30,7 +30,7 @@ rule Biom_to_Phyloseq:
     shell:
         r"""
         conda activate R_phyloS
-        Rscript R_scripts/Biom_to_Phyloseq.R {input.biom} {output.phyloseq_object}
+        Rscript lib/scripts/Biom_to_Phyloseq.R {input.biom} {output.phyloseq_object}
         """
 
 #Rule to calculate alpha diversity metrics
@@ -46,7 +46,7 @@ rule alpha_diversity:
     shell:
         r"""
         conda activate R_phyloS
-        Rscript R_scripts/alpha_diversity.R {input.phylo_object} {output.rich_object}
+        Rscript lib/scripts/alpha_diversity.R {input.phylo_object} {output.rich_object}
         """      
 
 #Rule that plots a barplot of relative abundances of the phyla corresponding to the top 25 taxa in the sample  
@@ -64,6 +64,6 @@ rule bar_plot_toptaxa:
     shell:
         r"""
         conda activate R_phyloS
-        Rscript R_scripts/bar_plot_toptaxa.R {input.phylo_object} {output.out_plot}
+        Rscript lib/scripts/bar_plot_toptaxa.R {input.phylo_object} {output.out_plot}
         """     
 

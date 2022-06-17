@@ -47,6 +47,8 @@ The target rules currently available to use are:
 - rule **all**: Outputs the [Kraken2](https://github.com/DerrickWood/kraken2) taxonomic assignation in [Krona](https://github.com/marbl/Krona) format, as well as extracting the desired reads.
 - rule **krona_and_reads**: This rule is used if you already have the kraken2 taxonomic assignation and you want to generate the krona images and extract reads
 - rule **taxonomy_assignation:**: This rule is used if you already have the concatenated/unmapped reads and you want to perform the taxonomic assignation¡ without running the initial steps of the pipeline
+- rule **biom_format**: This rule is used if you already have the Kraken2 and bracken assignment and you want to pass from their reports to biom format for further analysis
+- rule **R_Analysis**: This rule is used to make a basic R analysis and plotting alpha diversity.
 
 
 
@@ -55,10 +57,10 @@ In order to run the meTAline pipeline just use the following command
 
 ```Shell
 # Always assuming the environment is active
-$ snakemake -s meTAline.smk -r all -j 16 -n
+$ snakemake -s meTAline.smk -r taxonomy_assignation -j 16 -n
 
 #If you want to run it with thour ouwn configs (after commenting the config parameter in the meTAline.smk file)
-$ snakemake -s meTAline.smk -r all -j 16 -n --configfile myconfig.json
+$ snakemake -s meTAline.smk -r taxonomy_assignation -j 16 -n --configfile myconfig.json
 ```
 The -n option is for a dry run, avoding the execution of any job yet. -j is the number of threads provided to the pipeline.  In this specific example, we selected the rule all using the parameter -r. You can use different configs by adding the --configfile parameter but it requires that you comment the configfile argument in the main meTAline.smk.
 
