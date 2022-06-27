@@ -17,7 +17,7 @@ rule Trimmomatic:
         unpaired1 = temp(trimmomatic_out + "{file}_1_unpaired.fq.gz"),
         unpaired2 = temp(trimmomatic_out + "{file}_2_unpaired.fq.gz")
     params:
-        illuminaclip = config["Trimmomatic"]["illuminaclip"],
+        illuminaclip = os.path.join(workflow.basedir, config["Trimmomatic"]["illuminaclip"]),
         leading = config["Trimmomatic"]["leading"],
         trailing = config["Trimmomatic"]["trailing"],
         slidingwindow = config["Trimmomatic"]["slidingwindow"],
