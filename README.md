@@ -1,6 +1,7 @@
 # meTAline: metagenomics Taxonomic Assignation pipeline
 meTAline is taxonomic assignation pipeline implemented in SnakeMake for WGS metagenomics data.
 
+Additionally, you can use the bash wrapper located here: https://github.com/Gabaldonlab/meTAline/tree/bash_wrapper
 ## Getting Started
 First it is required to pre-install conda with either anaconda or miniconda3. 
 
@@ -14,7 +15,7 @@ Alternatively, you can install:
 After installing conda, download and install the pipeline
 
 ```Shell
-# First clone the meTAgen repository
+# First clone the meTAline repository
 git clone https://github.com/Dfupa/meTAline.git
 # Change to meTAline/conda_envs directory
 cd meTAline/conda_envs
