@@ -7,7 +7,7 @@ import re
 
 #Author: Diego Fuentes
 #Contact email: diegofupa@gmail.com
-#Date:2021-11-01
+#Date:2022-11-09
 
 barcodes = []    #List to store the barcodes
 
@@ -31,7 +31,7 @@ class CreateConfigurationFile(object):
         #INPUT PARAMETERS
 
         self.reads_directory = None              #Directory where the illumina fastqs are stored
-        self.reference_genome = None             #Indexed reference genome (bowtie2 index) path
+        self.reference_genome = None             #Indexed reference genome (Hisat2 index) path
         self.krakendb = None                     #Kraken2 DB path that is going to be used
         self.kmer_dist = None                    #Kraken2 kmer distribution path that is going to be used for Bracken
         self.taxid = 0                           #Default taxid used to extract reads, based on the kraken report. By default 0 -> unclassified
@@ -58,15 +58,9 @@ class CreateConfigurationFile(object):
         self.minlen = 35                       #min read lenght paramter
         self.illuminaclip = "TruSeq3-PE-2.fa:2:30:10"   #Illuminaclip
 
-        #BOWTIE PARAMETERS (set of default parameters for local-sensitive)
+        #HISAT PARAMETERS (set of default parameters for local-sensitive)
 
-        self.bowtie2_cores = 8                   #Number of threads to run the ngmlr aligner
-        self.bowtie2_D_param = 15                #D parameter: give up extending after <int> failed extends in a row 
-        self.bowtie2_R_param = 2                 #R parameter: for reads w/ repetitive seeds, try <int> sets of seeds
-        self.bowtie2_N_param = 0                 #N parameter: max # mismatches in seed alignment
-        self.bowtie2_L_param = 20                #L parameter: length of seed substrings; must be >3, <32
-        self.bowtie2_i_param = "S,1,0.75"        #i parameter: interval between seed substrings w/r/t read len (S,1,1.15)
-        self.bowtie2_score_min = "G,20,8"        #score min: min acceptable alignment score w/r/t read length(G,20,8 for local, L,-0.6,-0.6 for end-to-end)
+        self.hisat2_cores = 8                   #Number of threads to run the ngmlr aligner
 
         #KRAKEN2 PARAMETERS
 
@@ -80,7 +74,7 @@ class CreateConfigurationFile(object):
         self.outputParameters = {}
         self.wildcardParameters = {}
         self.TrimmomaticParameters = {}
-        self.Bowtie2Parameters = {}
+        self.hisat2Parameters = {}
         self.Kraken2Parameters = {}
         
 ####
@@ -93,7 +87,7 @@ class CreateConfigurationFile(object):
         self.register_output(parser)
         self.register_wildcards(parser)
         self.register_trimmomatic(parser)
-        self.register_bowtie2(parser)
+        self.register_hisat2(parser)
         self.register_kraken2(parser)
 
     def register_general(self, parser):
@@ -157,19 +151,14 @@ class CreateConfigurationFile(object):
         trimmomatic_group.add_argument('--minlen', type = int, dest="minlen", metavar="minlen", default=self.minlen, help='Minimum readl length parameter. Default %s.' % self.minlen)
         trimmomatic_group.add_argument('--illuminaclip', dest="illuminaclip", metavar="illuminaclip", default=self.illuminaclip, help='Illumina clip information. Default %s.' % self.illuminaclip)
 
-    def register_bowtie2(self, parser):
-        """Register all bowtie2 aligner parameters with the given
+    def register_hisat2(self, parser):
+        """Register all hisat2 aligner parameters with the given
         argparse parser
         parser -- the argparse parser
         """
-        bowtie2_group = parser.add_argument_group('Bowtie2 parameters')
-        bowtie2_group.add_argument('--bowtie2-cores', type=int, dest="bowtie2_cores", metavar="bowtie2_cores", default=self.bowtie2_cores, help='Number of threads to run the bowtie2 aligner. Default %s.' % self.bowtie2_cores)
-        bowtie2_group.add_argument('--bowtie2-D-param', type=float, dest="bowtie2_D_param", metavar="bowtie2_D_param", default=self.bowtie2_D_param, help='D parameter: give up extending after <int> failed extends in a row. Default %s.' % self.bowtie2_D_param)
-        bowtie2_group.add_argument('--bowtie2-R-param', type=int, dest="bowtie2_R_param", metavar="bowtie2_R_param", default=self.bowtie2_R_param, help='R parameter: for reads w/ repetitive seeds, try <int> sets of seeds. Default %s.' % self.bowtie2_R_param)
-        bowtie2_group.add_argument('--bowtie2-N-param', type=int, dest="bowtie2_N_param", metavar="bowtie2_N_param", default=self.bowtie2_N_param, help='N parameter: max # mismatches in seed alignment. Default %s.' % self.bowtie2_N_param)
-        bowtie2_group.add_argument('--bowtie2-L-param', type = int, dest="bowtie2_L_param", metavar="bowtie2_L_param", default=self.bowtie2_L_param, help='L parameter: length of seed substrings; must be >3, <32. Default %s.' % self.bowtie2_L_param)
-        bowtie2_group.add_argument('--bowtie2-i-param', dest="bowtie2_i_param", metavar="bowtie2_i_param", default=self.bowtie2_i_param, help='i parameter: interval between seed substrings w/r/t read len (S,1,1.15). Default %s.' % self.bowtie2_i_param)
-        bowtie2_group.add_argument('--bowtie2-score-min', dest="bowtie2_score_min", metavar="bowtie2_score_min", default=self.bowtie2_score_min, help='score min: min acceptable alignment score w/r/t read length(G,20,8 for local, L,-0.6,-0.6 for end-to-end). Default %s.' % self.bowtie2_score_min)
+        hisat2_group = parser.add_argument_group('hisat2 parameters')
+        hisat2_group.add_argument('--hisat2-cores', type=int, dest="hisat2_cores", metavar="hisat2_cores", default=self.hisat2_cores, help='Number of threads to run the hisat2 aligner. Default %s.' % self.hisat2_cores)
+    
 
     def register_kraken2(self, parser):
         """Register all sniffles sv caller parameters with the given
@@ -367,18 +356,12 @@ class CreateConfigurationFile(object):
         self.TrimmomaticParameters["illuminaclip"] = args.illuminaclip
         self.allParameters ["Trimmomatic"] = self.TrimmomaticParameters
 
-    def storeBowtie2Parameters(self,args):
+    def storehisat2Parameters(self,args):
         """Updates Ngmlr aligner parameters to the map of parameters to be store in a JSON file
         args -- set of parsed arguments
         """
-        self.Bowtie2Parameters["bowtie2_cores"] = args.bowtie2_cores
-        self.Bowtie2Parameters["bowtie2_D_param"] = args.bowtie2_D_param
-        self.Bowtie2Parameters["bowtie2_R_param"] = args.bowtie2_R_param
-        self.Bowtie2Parameters["bowtie2_N_param"] = args.bowtie2_N_param
-        self.Bowtie2Parameters["bowtie2_L_param"] = args.bowtie2_L_param
-        self.Bowtie2Parameters["bowtie2_i_param"] = args.bowtie2_i_param
-        self.Bowtie2Parameters["bowtie2_score_min"] = args.bowtie2_score_min
-        self.allParameters ["Bowtie2"] = self.Bowtie2Parameters
+        self.hisat2Parameters["hisat2_cores"] = args.hisat2_cores
+        self.allParameters ["hisat2"] = self.hisat2Parameters
 
 
     def storeKraken2Parameters(self,args):
@@ -414,7 +397,7 @@ configManager.storeInputParameters(args)
 configManager.storeOutputParameters(args)
 configManager.storeWildcardParameters(args)
 configManager.storeTrimmomaticParameters(args)
-configManager.storeBowtie2Parameters(args)
+configManager.storehisat2Parameters(args)
 configManager.storeKraken2Parameters(args)
 
 
