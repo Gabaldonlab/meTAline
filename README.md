@@ -50,7 +50,7 @@ The target rules currently available to use are:
 
 # Benchmark
 
-At the end of the procedure you might want to know the resources that were used. A folder called "Benchmark" will be created containing for each of the results the follwing parameters: 
+At the end of the procedure you might want to know the resources that were used. A folder called "Benchmark" will be created containing for each of the rules the following parameters: 
 
 **s**	--> Running time in seconds
 
