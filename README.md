@@ -48,6 +48,21 @@ The target rules currently available to use are:
 - rule **biom_format**: This rule is used if you already have the Kraken2 and bracken assignment and you want to pass from their reports to biom format for further analysis
 - rule **R_Analysis**: This rule is used to make a basic R analysis and plotting alpha diversity.
 
+# Benchmark
+
+At the end of the procedure you might want to know the resources that were used. A folder called "Benchmark" will be created containing for each of the results the follwing parameters: 
+
+**s**	--> Running time in seconds
+
+**h:m:s**	--> Running time in hours, minutes and seconds
+
+**max_rss**	--> "Maximum Resident Set Size". Total amount of physical memory.
+**max_vms** --> "Maximum Virtual Memory Size". Total amount of virtual memory. 
+**max_uss** --> "Unique Set Size".	Memory that is unique to a process. 
+**max_pss** --> "Proportional Set Size". Amount of memory shared with other processes.
+**io_in** --> MB read.
+**io_out** --> MB written.	
+**mean_load** --> CPU usage over time / Total running time.
 
 # How to run snakemake
 In order to run the meTAline pipeline just use the following command
@@ -62,3 +77,5 @@ snakemake -s meTAline.smk -r taxonomy_assignation -j 16 -n --configfile myconfig
 The -n option is for a dry run, avoding the execution of any job yet. -j is the number of threads provided to the pipeline.  In this specific example, we selected the rule all using the parameter -r. You can use different configs by adding the --configfile parameter but it requires that you comment the configfile argument in the main meTAline.smk.
 
 More information regarding Snakemake and its commands can be found through Snakemake [documentation](https://snakemake.readthedocs.io/en/stable/index.html).
+
+
