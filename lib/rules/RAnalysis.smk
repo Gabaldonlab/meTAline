@@ -25,12 +25,14 @@ rule Biom_to_Phyloseq:
         phyloseq_object =  ranalysis_out + sample + ".rds"
     benchmark:
         os.path.join(benchmark_dir, (str(date) + sample +".R_conversion.benchmark.txt"))
+    params:
+        script = os.path.join(workflow.basedir, "lib/scripts/Biom_to_Phyloseq.R")
     log:
         logs_dir + str(date) + ".R_phyloseq.log"
     shell:
         r"""
         conda activate R_phyloS
-        Rscript lib/scripts/Biom_to_Phyloseq.R {input.biom} {output.phyloseq_object}
+        Rscript {params.script} {input.biom} {output.phyloseq_object}
         """
 
 #Rule to calculate alpha diversity metrics
@@ -41,12 +43,14 @@ rule alpha_diversity:
         rich_object =  ranalysis_out + sample + "_alpha_div.csv"
     benchmark:
         os.path.join(benchmark_dir, (str(date) + sample +".R_alpha_div.benchmark.txt"))
+    params:
+        script = os.path.join(workflow.basedir, "lib/scripts/alpha_diversity.R")
     log:
         logs_dir + str(date) + ".R_alpha_div.log"
     shell:
         r"""
         conda activate R_phyloS
-        Rscript lib/scripts/alpha_diversity.R {input.phylo_object} {output.rich_object}
+        Rscript {params.script} {input.phylo_object} {output.rich_object}
         """      
 
 #Rule that plots a barplot of relative abundances of the phyla corresponding to the top 25 taxa in the sample  
@@ -59,11 +63,13 @@ rule bar_plot_toptaxa:
 
     benchmark:
         os.path.join(benchmark_dir, (str(date) + sample +".R_barplot.benchmark.txt"))
+    params:
+        script = os.path.join(workflow.basedir, "lib/scripts/bar_plot_toptaxa.R")
     log:
         logs_dir + str(date) + ".R_barplot.log"
     shell:
         r"""
         conda activate R_phyloS
-        Rscript lib/scripts/bar_plot_toptaxa.R {input.phylo_object} {output.out_plot}
+        Rscript {params.script} {input.phylo_object} {output.out_plot}
         """     
 
