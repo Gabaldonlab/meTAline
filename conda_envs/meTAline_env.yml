@@ -28,10 +28,10 @@ dependencies:
   - brotlipy=0.7.0=py36h8f6f2f9_1001
   - bwa=0.7.17=hed695b0_7
   - bzip2=1.0.8=h7f98852_4
-  - ca-certificates=2021.10.8=ha878542_0
+  - ca-certificates=2022.10.11=h06a4308_0
   - cachetools=4.2.1=pyhd8ed1ab_0
   - cairo=1.16.0=h7979940_1007
-  - certifi=2021.5.30=py36h5fab9bb_0
+  - certifi=2021.5.30=py36h06a4308_0
   - cffi=1.14.4=py36hc120d54_1
   - chardet=3.0.4=py36h9880bd3_1008
   - click=8.0.1=py36h5fab9bb_0
@@ -76,6 +76,7 @@ dependencies:
   - h5py=2.10.0=nompi_py36h513d04c_102
   - harfbuzz=2.7.4=h5cf4720_0
   - hdf5=1.10.5=nompi_h5b725eb_1114
+  - hisat2=2.2.1=h1b792b2_3
   - icu=68.1=h58526e2_0
   - idna=2.10=pyh9f0ad1d_0
   - idna_ssl=1.1.0=py36h9f0ad1d_1001
@@ -202,3 +203,4 @@ dependencies:
   - zipp=3.4.0=py_0
   - zlib=1.2.11=h516909a_1010
   - zstd=1.4.8=ha95c52a_1
+prefix: /home/bsc40/bsc40364/.conda/envs/meTAline

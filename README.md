@@ -1,6 +1,7 @@
 # meTAline: metagenomics Taxonomic Assignation pipeline
 meTAline is taxonomic assignation pipeline implemented in SnakeMake for WGS metagenomics data.
 
+Additionally, you can use the bash wrapper located here: https://github.com/Gabaldonlab/meTAline/tree/bash_wrapper
 ## Getting Started
 First it is required to pre-install conda with either anaconda or miniconda3. 
 
@@ -26,7 +27,7 @@ conda activate meTAline
 ```
 
 # Input
-This pipline uses as an input a config file located in the meTAline/lib/config/ directory.  The user can find in that directoy a script called generate_config.py which will build a config file with the parameters provided by the user.
+This pipline uses as an input a config file located in the meTAline/lib/config/ directory.  The user can find in that directory a script called generate_config.py which will build a config file with the parameters provided by the user.
 
 More information is provided by using the help parameter of generate_config.py, provide at least the mandatory arguments (the host reference genome index can be omitted if you are running an environmental sample).
 
@@ -82,3 +83,5 @@ snakemake -s meTAline.smk -r taxonomy_assignation -j 16 -n --configfile myconfig
 The -n option is for a dry run, avoding the execution of any job yet. -j is the number of threads provided to the pipeline.  In this specific example, we selected the rule all using the parameter -r. You can use different configs by adding the --configfile parameter but it requires that you comment the configfile argument in the main meTAline.smk.
 
 More information regarding Snakemake and its commands can be found through Snakemake [documentation](https://snakemake.readthedocs.io/en/stable/index.html).
+
+

@@ -4,7 +4,7 @@ shell.prefix("source ~/.bashrc; ")
 #Author: Diego Fuentes
 #Contact email: diego.fuentes@bsc.es
 #Barcelona
-#Date:2022-05-26
+#Date:2022-10-27
 
 import os
 from datetime import datetime
@@ -89,8 +89,8 @@ if reference_genome == None or reference_genome == "null":
     read_processing.append(directory(trimmomatic_out +sample+"_qc"))
 else:
     read_processing.append(directory(trimmomatic_out +sample+"_qc"))
-    read_processing.append(alignment_out + sample +".bowtie2.bam")
-    read_processing.append(alignment_out + sample +".bowtie2.bam.bai")
+    read_processing.append(alignment_out + sample +".hisat2.bam")
+    read_processing.append(alignment_out + sample +".hisat2.bam.bai")
     read_processing.append(alignment_out + sample +".unmapped.fastq.gz")
 
 #Rule by default, runs the complete pipeline
@@ -168,4 +168,3 @@ rule R_Analysis:
         out_plot =  ranalysis_out + sample + "_Barplot_phyla.jpeg"
     log:
         logs_dir + str(date) + "_" + sample +".R_analysis.rule.log"
-        
