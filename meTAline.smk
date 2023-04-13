@@ -1,4 +1,5 @@
-shell.prefix("source ~/.bashrc; ")
+#If you want to set up your environment PATH in the bashrc you can use the line below to source it
+#shell.prefix("source ~/.bashrc; ")
 
 
 #Author: Diego Fuentes
@@ -86,9 +87,9 @@ include: "lib/rules/RAnalysis.smk"
 read_processing = list()
 
 if reference_genome == None or reference_genome == "null":
-    read_processing.append(directory(trimmomatic_out +sample+"_qc"))
+    read_processing.append(trimmomatic_out +sample+"_qc")
 else:
-    read_processing.append(directory(trimmomatic_out +sample+"_qc"))
+    read_processing.append(trimmomatic_out +sample+"_qc")
     read_processing.append(alignment_out + sample +".hisat2.bam")
     read_processing.append(alignment_out + sample +".hisat2.bam.bai")
     read_processing.append(alignment_out + sample +".unmapped.fastq.gz")
@@ -102,7 +103,7 @@ rule all:
         bracken_report= kraken_out + sample + ".bracken_abundance.txt",
         bracken_species_report = kraken_out + sample + ".kraken2_bracken_species.report",
         krona_file= krona_out + sample + ".krona",
-        krona_html= krona_out + sample + ".hmtl",
+        krona_html= krona_out + sample + ".html",
         ext1= extracted_fa_out + sample + ".1.fastq.gz",
         ext2= extracted_fa_out + sample + ".2.fastq.gz",
         biom_file= kraken_out + sample + ".Braken.biom",
@@ -130,7 +131,7 @@ rule taxonomy_assignation:
         bracken_report= kraken_out + sample + ".bracken_abundance.txt",
         bracken_species_report = kraken_out + sample + ".kraken2_bracken_species.report",
         krona_file= krona_out + sample + ".krona",
-        krona_html= krona_out + sample + ".hmtl",
+        krona_html= krona_out + sample + ".html",
         #ext1= extracted_fa_out + sample + ".1.fastq.gz",
         #ext2= extracted_fa_out + sample + ".2.fastq.gz",
         biom_file= kraken_out + sample + ".Braken.biom",
@@ -145,7 +146,7 @@ rule krona_and_reads:
     input:
         bracken_report= kraken_out + sample + ".bracken_abundance.txt",
         krona_file= krona_out + sample + ".krona",
-        krona_html= krona_out + sample + ".hmtl",
+        krona_html= krona_out + sample + ".html",
         ext1= extracted_fa_out + sample + ".1.fastq.gz",
         ext2= extracted_fa_out + sample + ".2.fastq.gz"
     log:

@@ -62,13 +62,13 @@ rule Krona:
         report = rules.Kraken2.output.report
     output:
         krona_file = protected(krona_out + sample + ".krona"),
-        krona_html = protected(krona_out + sample + ".hmtl")
+        krona_html = protected(krona_out + sample + ".html")
     benchmark:
         os.path.join(benchmark_dir, (str(date) + "_" + sample +".krona.benchmark.txt"))
     log:
         logs_dir + str(date) + ".krona.log"
     threads: config["Kraken2"]["kraken2_cores"]
-    conda: 2
+    conda: os.path.join(workflow.basedir, "meTAline_env.yml")
     shell:
         "kreport2krona.py -r  {input.report} -o {output.krona_file}; ktImportText {output.krona_file} -o {output.krona_html}"
 
