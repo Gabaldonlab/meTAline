@@ -70,7 +70,6 @@ At the end of the procedure you might want to know the resources that were used.
 
 **mean_load** --> CPU usage over time / Total running time.
 
-
 # How to run snakemake
 In order to run the meTAline pipeline just use the following command
 
