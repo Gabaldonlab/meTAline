@@ -14,8 +14,8 @@ rule Trimmomatic:
     output:
         trim1 = protected(trimmomatic_out + "{file}_1_paired.fq.gz"),
         trim2 = protected(trimmomatic_out + "{file}_2_paired.fq.gz"),
-        unpaired1 = temp(trimmomatic_out + "{file}_1_unpaired.fq.gz"),
-        unpaired2 = temp(trimmomatic_out + "{file}_2_unpaired.fq.gz")
+        unpaired1 = protected(trimmomatic_out + "{file}_1_unpaired.fq.gz"),
+        unpaired2 = protected(trimmomatic_out + "{file}_2_unpaired.fq.gz")
     params:
         illuminaclip = os.path.join(workflow.basedir, config["Trimmomatic"]["illuminaclip"]),
         leading = config["Trimmomatic"]["leading"],
