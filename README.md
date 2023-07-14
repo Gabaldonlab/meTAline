@@ -1,9 +1,11 @@
 # meTAline: metagenomics Taxonomic Assignation pipeline
-meTAline is taxonomic assignation pipeline implemented in SnakeMake for WGS metagenomics data.
+meTAline is a taxonomic assignment pipeline implemented in SnakeMake for WGS metagenomics data.
 
 Additionally, you can use the bash wrapper located here: https://github.com/Gabaldonlab/meTAline/tree/bash_wrapper
+
 ## Getting Started
-First it is required to pre-install conda with either anaconda or miniconda3. 
+
+If you are member of GabaldonLab you can either use our shared pipeline and environment or download the pipeline here and pre-install conda with either anaconda or miniconda3. 
 
 **anaconda** - please follow these [instructions](https://docs.anaconda.com/anaconda/install/)
 
@@ -11,7 +13,40 @@ Alternatively, you can install:
 
 **miniconda3** - please follow these [instructions](https://conda.io/projects/conda/en/latest/user-guide/install/index.html)
 
-## Pipeline Installation
+## Pipeline usage within the cluster (Gabaldon Lab users)
+You should indicate in your jobs the following sourcing:
+```Shell
+source /gpfs/projects/bsc40/project/pipelines/anaconda3/etc/profile.d/conda.sh && conda activate meTAline
+```
+Important: In order to use the shared environments you will need to edit your bash source script, commenting or removing your personal conda path and adding the shared one:
+```Shell
+nano ~/.bashrc
+
+###################################Example of script .bashrc with shared path:
+
+# .bashrc
+
+# Source global definitions
+
+if [ -f /etc/bashrc ]; then
+        . /etc/bashrc
+fi
+
+# Uncomment the following line if you don't like systemctl's auto-paging featur$
+# export SYSTEMD_PAGER=
+
+# User specific aliases and functions
+
+#. /apps/ANACONDA/5.0.1/etc/profile.d/conda.sh ##this is the conda profile
+
+#If requiring the shared conda env for shared pipelines
+. /gpfs/projects/bsc40/project/pipelines/anaconda3/etc/profile.d/conda.sh
+
+###################################
+
+```
+
+## Pipeline Installation for external users
 After installing conda, download and install the pipeline
 
 ```Shell
@@ -44,7 +79,7 @@ The target rules currently available to use are:
 
 - rule **all**: Outputs the [Kraken2](https://github.com/DerrickWood/kraken2) taxonomic assignation in [Krona](https://github.com/marbl/Krona) format, as well as extracting the desired reads.
 - rule **krona_and_reads**: This rule is used if you already have the kraken2 taxonomic assignation and you want to generate the krona images and extract reads
-- rule **taxonomy_assignation:**: This rule is used if you already have the concatenated/unmapped reads and you want to perform the taxonomic assignation¡ without running the initial steps of the pipeline
+- rule **taxonomy_assignation:**: This rule is used if you already have the concatenated/unmapped reads and you want to perform the taxonomic assignment without running the initial steps of the pipeline
 - rule **biom_format**: This rule is used if you already have the Kraken2 and bracken assignment and you want to pass from their reports to biom format for further analysis
 - rule **R_Analysis**: This rule is used to make a basic R analysis and plotting alpha diversity.
 
