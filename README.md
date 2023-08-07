@@ -1,3 +1,4 @@
+[![DOI](https://zenodo.org/badge/431438117.svg)](https://zenodo.org/badge/latestdoi/431438117)
 # meTAline: metagenomics Taxonomic Assignation pipeline
 meTAline is taxonomic assignation pipeline implemented in SnakeMake for WGS metagenomics data.
 
