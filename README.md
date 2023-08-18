@@ -52,7 +52,7 @@ After installing conda, download and install the pipeline
 
 ```Shell
 # First clone the meTAline repository
-git clone https://github.com/Dfupa/meTAline.git
+git clone https://github.com/Gabaldonlab/meTAline.git
 # Change to meTAline/conda_envs directory
 cd meTAline/conda_envs
 # Set the conda environment with all the necessary dependencies
