@@ -1,5 +1,5 @@
 [![DOI](https://zenodo.org/badge/431438117.svg)](https://zenodo.org/badge/latestdoi/431438117)
-# meTAline: metagenomics Taxonomic Assignation pipeline
+# meTAline: metagenomics Taxonomic Assignment pipeline
 meTAline is a taxonomic assignment pipeline implemented in SnakeMake for WGS metagenomics data.
 
 Additionally, you can use the bash wrapper located here: https://github.com/Gabaldonlab/meTAline/tree/bash_wrapper
@@ -78,11 +78,12 @@ python3 lib/config/generate_config.py --sample-barcode metagenomics_sample --rea
 # Target rules
 The target rules currently available to use are:
 
-- rule **all**: Outputs the [Kraken2](https://github.com/DerrickWood/kraken2) taxonomic assignation in [Krona](https://github.com/marbl/Krona) format, as well as extracting the desired reads.
-- rule **krona_and_reads**: This rule is used if you already have the kraken2 taxonomic assignation and you want to generate the krona images and extract reads
-- rule **taxonomy_assignation:**: This rule is used if you already have the concatenated/unmapped reads and you want to perform the taxonomic assignment without running the initial steps of the pipeline
-- rule **biom_format**: This rule is used if you already have the Kraken2 and bracken assignment and you want to pass from their reports to biom format for further analysis
+- rule **all**: From trimming and filtering of the reads, to host removal (if indicated the host genome) to taxonomy assignment based on kraken2 and metaphlan4. Functional prediction based on Humann. It also includes other functuionalities such as representation of the taxonomy assignment by krona, extraction of desired reads, etc.
+- rule **krona_and_reads**: This rule is used if you already have the kraken2 taxonomic assignment and you want to generate the krona images and extract reads (e.g extraction of unclassified reads).
+- rule **taxonomy_assignment:**: This rule is used if you already have the concatenated/unmapped reads and you want to perform the taxonomic assignment without running the initial steps of the pipeline.
+- rule **biom_format**: This rule is used if you already have the Kraken2 assignment and you want to pass from their reports to biom format for further analysis
 - rule **R_Analysis**: This rule is used to make a basic R analysis and plotting alpha diversity.
+- Rule **BioBakery**: This rule is to perform the taxonomy and functional profiling using Biobakery tools based on gene markers: Metaphlan4 and Humann. 
 
 # Benchmark
 
