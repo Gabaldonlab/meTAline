@@ -1,29 +1,35 @@
-FROM python:3.9.1
+FROM python:3.10.14-bullseye
 
-LABEL base.image="python:3.9.1"
-LABEL version="0.7.0"
+LABEL base.image="python:3.10.14-bullseye"
+LABEL version="0.8.0-alpha"
 LABEL software="meTAline"
-LABEL software.version="Latest:0.7.0"
-LABEL description="Taxonomic assignation pipeline implementation in Snakemake for shotgun genome sequencing "
-LABEL website="https://github.com/Dfupa/meTAline"
+LABEL software.version="0.8.0-alpha"
+LABEL description="Taxonomic assignation pipeline implementation in Snakemake for shotgun genome sequencing."
+LABEL website="https://github.com/gabaldonlab/meTAline"
 LABEL license="GNU General Public License 3.0"
-LABEL maintainer="Diego Fuentes (BSC)"
+LABEL maintainer="Daniel Majer (BSC), Diego Fuentes (BSC)"
 
-#Set up bash and install basic dependencies
-SHELL ["/bin/bash", "-c"]
-
-# Install Java 11.
 RUN apt-get update
-RUN apt-get install -y openjdk-11-jre-headless
+RUN apt-get install -y \
+        curl \
+        software-properties-common
 RUN apt-get clean
 
-RUN apt-get update -qq
-RUN apt-get install -y \
+# Add apt-fast repository to install apt-fast,
+# which will make the package installation faster and concurrent.
+RUN /bin/bash -c "$(curl -sL https://git.io/vokNn)"
+
+RUN apt-get update
+RUN DEBCONF_NOWARNINGS="yes" \
+    TZ="Europe/Madrid" \
+    DEBIAN_FRONTEND=noninteractive \
+    apt-fast install -y \
+        pigz \
         perl \
         git \
         g++ \
         make \
-        nvim \
+        neovim \
         wget \
         parallel \
         automake \
@@ -33,11 +39,12 @@ RUN apt-get install -y \
         libncurses5-dev \
         libncursesw5-dev \
         default-jre \
-        python3-pip
+        r-base=4.0.4-1 \
+        r-base-dev=4.0.4-1 \
+        r-cran-ggplot2=3.3.3+dfsg-1 \
+        r-bioc-phyloseq=1.34.0+dfsg-1 \
+        r-bioc-biobase=2.50.0-1
 
-WORKDIR /bin
-
-# Download sources for:
 # - htslib
 # - samtools
 # - Trimmomatic
@@ -47,165 +54,145 @@ WORKDIR /bin
 # - Bracken
 # - Krona
 # - fastqc
-RUN parallel wget ::: \
-        "https://github.com/samtools/htslib/releases/download/1.16/htslib-1.16.tar.bz2" \
-        "https://github.com/samtools/samtools/releases/download/1.13/samtools-1.13.tar.bz2" \
-        "https://github.com/usadellab/Trimmomatic/files/5854859/Trimmomatic-0.39.zip" \
-        "http://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v0.12.1.zip" \
-        "https://github.com/DaehwanKimLab/hisat2/archive/refs/tags/v2.2.1.tar.gz" \
-        "https://github.com/DerrickWood/kraken2/archive/refs/tags/v2.1.3.tar.gz" \
-        "https://github.com/jenniferlu717/KrakenTools/archive/refs/tags/v1.2.tar.gz" \
-        "https://github.com/jenniferlu717/Bracken/archive/refs/tags/v2.9.tar.gz" \
-        "https://github.com/marbl/Krona/archive/refs/tags/v2.8.1.tar.gz"
-
-# UN-TAR .bz2 sources for:
-# - htslib
-# - samtools
-RUN parallel tar -vxjf ::: \
-        # htslib
-        "htslib-1.16.tar.bz2" \
-        # samtools
-        "samtools-1.13.tar.bz2"
-
-
-# UN-TAR .gz sources for:
-# - hisat2
-# - Kraken2
-# - KrakenTools
-# - Bracken
-# - Krona
-RUN parallel tar -zxvf ::: \
-        # hisat2
-        "v2.2.1.tar.gz" \
-        # Kraken2
-        "v2.1.3.tar.gz" \
-        # KrakenTools
-        "v1.2.tar.gz" \
-        # Bracken
-        "v2.9.tar.gz" \
-        # Krona
-        "v2.8.1.tar.gz"
-
-# UN-ZIP .zip sources for:
-# - Trimmomatic
-# - fastqc
-RUN parallel unzip ::: \
-        # Trimmomatic
-        "Trimmomatic-0.39.zip" \
-        # fastqc
-        "fastqc_v0.12.1.zip"
-
-# Remove all compressed files:
-# - htslib
-# - samtools
-# - Trimmomatic
-# - hisat2
-# - Kraken2
-# - KrakenTools
-# - Bracken
-# - Krona
-# - fastqc
-RUN parallel rm -rf ::: \
-        # htslib
-        "htslib-1.16.tar.bz2" \
-        # samtools
-        "samtools-1.13.tar.bz2" \
-        # hisat2
-        "v2.2.1.tar.gz" \
-        # Kraken2
-        "v2.1.3.tar.gz" \
-        # KrakenTools
-        "v1.2.tar.gz" \
-        # Bracken
-        "v2.9.tar.gz" \
-        # Krona
-        "v2.8.1.tar.gz" \
-        # Trimmomatic
-        "Trimmomatic-0.39.zip" \
-        # fastqc
-        "fastqc_v0.12.1.zip"
+# - extract_kraken_output_reads
+# - MetaPhlAn
+COPY ./external-sources /bin/
 
 # Install htslib from source
-RUN cd htslib-1.16 && make install
+WORKDIR /bin
+RUN tar -vxjf htslib-1.16.tar.bz2
+RUN rm -rf htslib-1.16.tar.bz2
+RUN cd /bin/htslib-1.16 && make install
 
-# Install samtools from source
-RUN cd samtools-1.13 && make install
+# Install Samtools from source
+WORKDIR /bin
+RUN tar -vxjf samtools-1.13.tar.bz2
+RUN cd /bin/samtools-1.13 && make install
 
-# Add "trimmomatic" alias the snakemake rules.
-RUN echo "alias trimmomatic='java -jar /bin/Trimmomatic-0.39/trimmomatic-0.39.jar'" >> ~/.bash_aliases
-RUN echo "source ~/.bash_aliases" >> ~/.bashrc
-
-# Install hisat2 from source
-RUN cd hisat2-2.2.1/ \
-        && make
+# Install Hisat2 from source
+WORKDIR /bin
+RUN tar -zxvf v2.2.1.tar.gz
+RUN cd /bin/hisat2-2.2.1/ && make
+RUN cp -r /bin/hisat2-2.2.1/hisat2-build* /bin/
+RUN cp -r  /bin/hisat2-2.2.1/hisat2-inspect* /bin/
+RUN cp -r  /bin/hisat2-2.2.1/hisat2-repeat* /bin/
+RUN cp -r  /bin/hisat2-2.2.1/hisat2-align* /bin/
+RUN cp -r  /bin/hisat2-2.2.1/hisat2 /bin/
 
 # Install Kraken2 from source
-RUN cd kraken2-2.1.3/ \
-        && ./install_kraken2.sh . \
-        && cp ./kraken2{,-build,-inspect} /bin
+WORKDIR /bin
+RUN tar -zxvf v2.1.3.tar.gz
+RUN rm -rf v2.1.3.tar.gz
+RUN cd /bin/kraken2-2.1.3/ && ./install_kraken2.sh .
+RUN cp -t /bin /bin/kraken2-2.1.3/kraken2 /bin/kraken2-2.1.3/kraken2-build /bin/kraken2-2.1.3/kraken2-inspect
 
 # Install KrakenTools from source
-RUN chmod +x KrakenTools-1.2/* \
-        && mv -t /bin KrakenTools-1.2/*.py
+WORKDIR /bin
+RUN tar -zxvf v1.2.tar.gz
+RUN rm -rf v1.2.tar.gz
+RUN cd /bin && chmod +x KrakenTools-1.2/*
+RUN mv -t /bin KrakenTools-1.2/*.py
 
 # Install Bracken from source
-RUN cd Bracken-2.9/ \
-        && bash install_bracken.sh \
-        && ln -s /bin/Bracken-2.9/src/est_abundance.py /bin/est_abundance.py
+WORKDIR /bin
+RUN tar -zxvf v2.9.tar.gz
+RUN rm -rf v2.9.tar.gz
+RUN cd /bin/Bracken-2.9/ && bash install_bracken.sh
+RUN ln -s /bin/Bracken-2.9/src/est_abundance.py /bin/est_abundance.py
 
 # Install Krona from source
-RUN cd Krona-2.8.1/KronaTools \
-        && mkdir taxonomy \
-        && ./install.pl --prefix /bin \
-        && mv -t /bin /bin/bin/* \
-        && rmdir /bin/bin
+WORKDIR /bin
+RUN tar -zxvf v2.8.1.tar.gz
+RUN rm -rf v2.8.1.tar.gz
+RUN cd /bin/Krona-2.8.1/KronaTools
+RUN mkdir taxonomy
+RUN cd /bin/Krona-2.8.1/KronaTools && ./install.pl --prefix /bin
+RUN mv -t /bin/ /bin/bin/*
+RUN rm -rf /bin/bin
 
-# IMPORTANT!
-# To avoid a humongous size of the image, the following line is commented.
-# If you require to use taxonomy for Kronatools, uncomment the line or execute it in your env.
-# RUN cd /bin/Krona-2.8.1/KronaTools && bash updateTaxonomy.sh && bash updateAccessions.sh
+WORKDIR /bin
+RUN unzip Trimmomatic-0.39.zip
+RUN rm -rf Trimmomatic-0.39.zip
 
-# ================================
-# END OF REFACTORED PART! TBC HERE
-# ================================
+WORKDIR /bin
+RUN unzip fastqc_v0.12.1.zip
+RUN rm -rf fastqc_v0.12.1.zip
 
-##Install from source htslib, samtools, trimmomatic, hisat2, Kraken2, KrakenTools, Bracken, Krona
-# RUN cd /bin && wget https://github.com/samtools/htslib/releases/download/1.16/htslib-1.16.tar.bz2 && tar -vxjf htslib-1.16.tar.bz2 && rm htslib-1.16.tar.bz2 && cd htslib-1.16 && make install
-# RUN cd /bin && wget https://github.com/samtools/samtools/releases/download/1.13/samtools-1.13.tar.bz2 && tar -vxjf samtools-1.13.tar.bz2  && rm samtools-1.13.tar.bz2 && cd samtools-1.13 && make install
-# RUN cd /bin && wget http://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v0.12.1.zip && unzip fastqc_v0.12.1.zip  && rm fastqc_v0.12.1.zip
-# RUN cd /bin && wget https://github.com/usadellab/Trimmomatic/files/5854859/Trimmomatic-0.39.zip && \
-#         unzip Trimmomatic-0.39.zip && rm Trimmomatic-0.39.zip && \
-#         #Added the following alias for nomenclature sake in the snakemake rules
-#         echo "alias trimmomatic='java -jar /bin/Trimmomatic-0.39/trimmomatic-0.39.jar'" >> ~/.bash_aliases && \
-#         echo "source ~/.bash_aliases" >> ~/.bashrc
-# RUN cd /bin && wget https://github.com/DaehwanKimLab/hisat2/archive/refs/tags/v2.2.1.tar.gz && tar -zxvf v2.2.1.tar.gz && rm v2.2.1.tar.gz && cd hisat2-2.2.1/ && make
-# RUN cd /bin && wget https://github.com/DerrickWood/kraken2/archive/refs/tags/v2.1.3.tar.gz && tar -zxvf v2.1.3.tar.gz && rm v2.1.3.tar.gz && cd kraken2-2.1.3/ && ./install_kraken2.sh . && cp ./kraken2{,-build,-inspect} /bin
-# RUN cd /bin && wget https://github.com/jenniferlu717/KrakenTools/archive/refs/tags/v1.2.tar.gz && tar -zxvf v1.2.tar.gz && rm v1.2.tar.gz && chmod +x KrakenTools-1.2/* && mv -t /bin KrakenTools-1.2/*.py
-# RUN cd /bin && wget https://github.com/jenniferlu717/Bracken/archive/refs/tags/v2.9.tar.gz && tar -zxvf v2.9.tar.gz && rm v2.9.tar.gz && cd Bracken-2.9/ && bash install_bracken.sh && ln -s /bin/Bracken-2.9/src/est_abundance.py /bin/est_abundance.py
-# RUN cd /bin && wget https://github.com/marbl/Krona/archive/refs/tags/v2.8.1.tar.gz  && tar -zxvf v2.8.1.tar.gz && rm v2.8.1.tar.gz && cd Krona-2.8.1/KronaTools && mkdir taxonomy && ./install.pl --prefix /bin && mv -t /bin /bin/bin/* && rmdir /bin/bin
-####IMPORTANT: to avoid a humongous size of the image, the following line is commented. If you require to use taxonomy for Kronatools, uncomment the line or execute it in your env
-#RUN cd /bin/Krona-2.8.1/KronaTools && bash updateTaxonomy.sh && bash updateAccessions.sh
+# # IMPORTANT!
+# # To avoid a humongous size of the image, the following line is commented.
+# # If you require to use taxonomy for Kronatools, uncomment the line or execute it in your env.
+# # RUN cd /bin/Krona-2.8.1/KronaTools && bash updateTaxonomy.sh && bash updateAccessions.sh
 
-##Install and upgrade python dependencies with pip as well as installing snakemake from source
-RUN python3 -m pip install --upgrade pip && pip3 install --upgrade kraken-biom snakemake==7.32.4 pulp==2.6 numpy pysam biopython pandas pandarallel pybedtools
-##Download R from source, compile and set up dependencies. Tends to be a long process. TODO: add the necessary dependencies for the Phylo_R rules
-RUN apt-get upgrade -y gfortran libreadline6-dev libx11-dev libxt-dev libpng-dev libjpeg-dev libcairo2-dev xvfb libzstd-dev libcurl4-openssl-dev texinfo texlive texlive-fonts-extra screen libpcre2-dev
-RUN test -d /usr/local/src || mkdir -p /usr/local/src && cd /usr/local/src && wget https://cran.r-project.org/src/base/R-3/R-3.6.1.tar.gz && tar zxvf R-3.6.1.tar.gz && rm R-3.6.1.tar.gz && cd R-3.6.1/ && ./configure --enable-R-shlib && make && make install 
-RUN Rscript -e 'install.packages("ggplot2", repos = "http://cran.us.r-project.org")'
-RUN Rscript -e 'install.packages("BiocManager", repos="http://cran.us.r-project.org")'
-RUN Rscript -e 'BiocManager::install("Biobase", force=TRUE, ask=FALSE)'
-RUN Rscript -e 'BiocManager::install(c("phyloseq", "bioformat"), force=TRUE, ask=FALSE)'
+# Install and upgrade python dependencies with pip as well as installing snakemake from source.
+RUN python3 -m pip install --upgrade pip
+RUN pip3 install --upgrade \
+        kraken-biom \
+        snakemake==7.32.4 \
+        pulp==2.6 \
+        numpy \
+        pysam \
+        biopython \
+        pandas \
+        pandarallel \
+        pybedtools \
+        humann==3.9
+        # MetaPhlAn==4.1.1 \
 
-#TODO: add the metaline release instead of the version 
-RUN test -d /usr/share || mkdir -p /usr/share && cd /usr/share/ && git clone https://github.com/Gabaldonlab/meTAline.git
-#Copy the hisat dependencies to /bin path
-RUN cd /bin/hisat2-2.2.1/ && cp ./hisat2-build* ./hisat2-inspect* ./hisat2-repeat* ./hisat2-align* ./hisat2 /bin/
-#Add pigz
-RUN apt-get install -y pigz
-#Purge unnecessary dependencies
-RUN apt purge -y git make g++ zlib1g-dev python3-pip automake wget make zlib1g-dev libbz2-dev libncurses5-dev libncursesw5-dev liblzma-dev libzstd-dev libreadline6-dev libx11-dev libxt-dev libpng-dev libjpeg-dev libcairo2-dev git ant && rm -rf /var/lib/apt/lists/*
-#Export patths and test that every dependency works
-RUN export PATH="/bin/"
+# Install MetaPhlAn 4.1.1 from source.
+# This is a fixed fork of the original "biobakery/MetaPhlAn" one.
+# For now we use the fork, while waiting for them to merge the fix.
+RUN cd /bin/MetaPhlAn && pip install .
+
+# Install the extract_kraken_output_reads tool derived from the "extract_reads_of_interest.py" script.
+RUN cd /bin/extract_kraken_output_reads && make install
+
+# Download R from source, compile and set up dependencies. Tends to be a long process.
+# TODO: add the necessary dependencies for the Phylo_R rules.
+RUN DEBCONF_NOWARNINGS="yes" \
+    TZ="Europe/Madrid" \
+    DEBIAN_FRONTEND=noninteractive \
+    apt-fast upgrade -y \
+        build-essential \
+        libreadline-dev \
+        libicu-dev \
+        libxml2-dev \
+        gfortran \
+        libreadline6-dev \
+        libx11-dev \
+        libxt-dev \
+        libpng-dev \
+        libjpeg-dev \
+        libcairo2-dev \
+        xvfb \
+        libzstd-dev \
+        libcurl4-openssl-dev \
+        texinfo \
+        texlive \
+        texlive-fonts-extra \
+        screen \
+        libpcre2-dev
+
+COPY ./meTAline /meTAline
+
+# Add bash wrappers to make them global executables.
+# This is a better way to do, than creating bash aliases.
+RUN echo '#!/bin/bash' >> /bin/trimmomatic
+RUN echo 'java -jar /bin/Trimmomatic-0.39/trimmomatic-0.39.jar "$@"' >> /bin/trimmomatic
+RUN chmod 777 /bin/trimmomatic
+
+RUN echo '#!/bin/bash' >> /bin/fastqc
+RUN echo '/bin/FastQC/fastqc "$@"' >> /bin/fastqc
+RUN chmod 777 /bin/fastqc
+
+RUN echo '#!/bin/bash' >> /bin/metaline-generate-config
+RUN echo 'python3 /meTAline/lib/config/generate_config.py "$@"' >> /bin/metaline-generate-config
+RUN chmod 777 /bin/metaline-generate-config
+
+RUN echo '#!/bin/bash' >> /bin/metaline
+RUN echo 'snakemake -s /meTAline/meTAline.smk "$@"' >> /bin/metaline
+RUN chmod 777 /bin/metaline
+
+# Test that every dependency works
 RUN R --version
 RUN Rscript --version
 RUN snakemake --version
@@ -216,10 +203,6 @@ RUN kraken-biom -h
 RUN est_abundance.py -h
 RUN kreport2krona.py -h
 RUN ktImportText
-RUN extract_kraken_reads.py -h
-#Need to fix the path for trimmomatic adding an entrypoint so the bashrc is used in non-login shells. ie: ENTRYPOINT ["/bin/bash", "-c", "source ~/.bashrc && exec \"$@\"", "-"]
-#In the meantime, add full path to the rule using sed.
-RUN java -jar /bin/Trimmomatic-0.39/trimmomatic-0.39.jar PE -version
-RUN /bin/FastQC/fastqc --help
-RUN sed -i 's|trimmomatic|java -jar /bin/Trimmomatic-0.39/trimmomatic-0.39.jar|' /usr/share/meTAline/lib/rules/trimming.smk
-RUN sed -i 's|fastqc|/bin/FastQC/fastqc|' /usr/share/meTAline/lib/rules/trimming.smk
+RUN extract_kraken_output_reads -h
+RUN trimmomatic PE -version
+RUN fastqc --help
