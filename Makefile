@@ -21,4 +21,4 @@ metaline-debug-sandbox:
 	sudo singularity build --sandbox ./metaline-debug metaline.sif
 
 metaline-recompile-from-debug-sandbox:
-	sudo singularity build metaline.sif ./debug
+	sudo singularity build metaline.sif ./metaline-debug
