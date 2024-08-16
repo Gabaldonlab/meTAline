@@ -15,8 +15,6 @@
 
 module load singularity
 
-rm -rf /gpfs/projects/bsc40/current/dmajer/metaline-testy-output/*
-
 singularity run --cleanenv metaline.sif python3 /meTAline/lib/config/generate_config.py \
     --configFile corachan_kraken2_standard.json \
     --extension fq.gz \

@@ -64,7 +64,6 @@ singularity run --cleanenv metaline.sif metaline-generate-config \
 ```
 
 For further information about the flags, run:
-
 ```bash
 singularity run --cleanenv metaline.sif metaline-generate-config -h
 ```
@@ -148,8 +147,7 @@ singularity run --cleanenv metaline.sif metaline-generate-config \
     --n_db /hpc-cluster-data/projects/my_project/metaline_testing/WGS/humann_db \
     --protein_db /hpc-cluster-data/projects/my_project/metaline_testing/WGS/uniref
 
-singularity run --cleanenv metaline.sif \
-    metaline \
+singularity run --cleanenv metaline.sif metaline \
     -r all \
     -j 16 \
     --configfile test_kraken2_standard.json
