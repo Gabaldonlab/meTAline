@@ -29,8 +29,9 @@ wget --directory-prefix=./external-sources "https://github.com/jenniferlu717/Bra
 # marbl/Krona
 wget --directory-prefix=./external-sources "https://github.com/marbl/Krona/archive/refs/tags/v2.8.1.tar.gz" &
 
+# BenLangmead/bowtie2
+wget --directory-prefix=./external-sources "https://github.com/BenLangmead/bowtie2/releases/download/v2.3.5.1/bowtie2-2.3.5.1-linux-x86_64.zip" &
+
 # Gabaldonlab/extract-kraken-output-reads
 git clone https://github.com/Gabaldonlab/extract-kraken-output-reads ./external-sources/extract_kraken_output_reads && rm -rf ./external-sources/extract_kraken_output_reads/.git
 
-# heloint/MetaPhlAn (Fork of the original: biobakery/MetaPhlAn)
-git clone https://github.com/heloint/MetaPhlAn ./external-sources/MetaPhlAn

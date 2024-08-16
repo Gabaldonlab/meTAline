@@ -135,16 +135,16 @@ RUN pip3 install --upgrade \
         pandas \
         pandarallel \
         pybedtools \
+        MetaPhlAn==4.1.1 \
         humann==3.9
-        # MetaPhlAn==4.1.1 \
-
-# Install MetaPhlAn 4.1.1 from source.
-# This is a fixed fork of the original "biobakery/MetaPhlAn" one.
-# For now we use the fork, while waiting for them to merge the fix.
-RUN cd /bin/MetaPhlAn && pip install .
 
 # Install the extract_kraken_output_reads tool derived from the "extract_reads_of_interest.py" script.
 RUN cd /bin/extract_kraken_output_reads && make install
+
+WORKDIR /bin
+RUN unzip bowtie2-2.3.5.1-linux-x86_64.zip
+RUN rm -rf bowtie2-2.3.5.1-linux-x86_64.zip
+RUN cp /bin/bowtie2-2.3.5.1-linux-x86_64/bowtie2* /usr/local/bin/
 
 # Download R from source, compile and set up dependencies. Tends to be a long process.
 # TODO: add the necessary dependencies for the Phylo_R rules.
