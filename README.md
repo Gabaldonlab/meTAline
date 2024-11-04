@@ -159,6 +159,18 @@ You can run it with:
 sbatch ./example_hpc_sbatch.job
 ```
 
+Available Kraken2 databases at MN5:
+
+```bash
+KRAKEN2_DB_COMPLETE	(v1, 20210308) -->	/gpfs/projects/bsc40/project/pipelines/WGS/KRAKEN2_DB/KRAKEN2_DB_COMPLETE
+eupathDB_kraken2_prebuilt_db	(v1, 20211004) --> /gpfs/projects/bsc40/project/pipelines/WGS/KRAKEN2_DB/eupathDB_kraken2_prebuilt_db
+Broad_fungal_microbiome_db	(v1, 20230512	--> /gpfs/projects/bsc40/project/pipelines/WGS/KRAKEN2_DB/Broad_fungal_microbiome_db
+Broad_gut_microbiome_db	(v1, 20240111	)	-->	/gpfs/projects/bsc40/project/pipelines/WGS/KRAKEN2_DB/Broad_gut_microbiome_db
+HumGut_DB	(v1	, 20210702	)	-->	/gpfs/projects/bsc40/project/pipelines/WGS/KRAKEN2_DB/HumGut_DB
+HumGut_DB_plus_human	(v1	, 20210709) -->		/gpfs/projects/bsc40/project/pipelines/WGS/KRAKEN2_DB/HumGut_db_plus_human
+
+```
+
 ---
 
 ## Output directory example:
