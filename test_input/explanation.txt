@@ -1,0 +1,1 @@
+Input required for meTAline pipeline is raw data in a fastq format (both forward and reverse reads). 
