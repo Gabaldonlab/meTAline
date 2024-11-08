@@ -180,7 +180,7 @@ HumGut_DB_plus_human	(v1	, 20210709) -->		/gpfs/projects/bsc40/project/pipelines
 
 ```
 
-Other templates to run the pipeline for large-scale datasets are found in "<https://github.com/Gabaldonlab/meTAline/tree/main/meTAline/Helper_scripts_MN5>"
+Other templates to run the pipeline for large-scale datasets (using array of greasies for parallelization) are found in "<https://github.com/Gabaldonlab/meTAline/tree/main/meTAline/Helper_scripts_MN5>"
 
 ---
 
