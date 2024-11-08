@@ -64,7 +64,7 @@ singularity run --cleanenv metaline.sif metaline-generate-config \
     --n_db <Humann database to do the nucleotide search (based on already built annotations.)> \
     --protein_db <Humann database to do the translation search (by deafult this is by-passed).>
 
-If you run the pipeline in marenostrum5, remember to specify the shared sif image: /gpfs/projects/bsc40/project/pipelines/meTAline/meTAline-0.8.0-alpha/metaline.sif
+#If you run the pipeline in marenostrum5, remember to specify the shared sif image: /gpfs/projects/bsc40/project/pipelines/meTAline/meTAline-0.8.0-alpha/metaline.sif
 
 ```
 
@@ -176,89 +176,99 @@ HumGut_DB_plus_human	(v1	, 20210709) -->		/gpfs/projects/bsc40/project/pipelines
 
 ```
 
-Other templates to run the pipeline for large-scale datasets are found in "https://github.com/Gabaldonlab/meTAline/tree/main/meTAline/Helper_scripts_MN5"
+Other templates to run the pipeline for large-scale datasets are found in "<https://github.com/Gabaldonlab/meTAline/tree/main/meTAline/Helper_scripts_MN5>"
 
 ---
 
-## Output directory example:
+## Test sample and output directory example:
+
+Here, in the test folder (<https://github.com/Gabaldonlab/meTAline/tree/main/test_input>) we provide a test mock sample ( V300091236_L01_100_1.fq.gz , V300091236_L01_100_2.fq.gz) to try the pipeline.
+
+The expected output to obtain running all the rules:
 
 ```bash
 metaline-test-output/
 ├── BAM
-│   ├── my_metaline_job.hisat2.bam
-│   ├── my_metaline_job.hisat2.bam.bai
-│   └── my_metaline_job.unmapped.fastq.gz
+│   ├── mock.hisat2.bam
+│   ├── mock.hisat2.bam.bai
+│   └── mock.unmapped.fastq.gz
 ├── Benchmark
-│   ├── 20240815.230537.312432_my_metaline_job.PONSJIG_165.E5-NEB-UDI.trimming.benchmark.txt
-│   ├── 20240815.230537.312432_my_metaline_job.alignment.benchmark.txt
-│   ├── 20240815.230537.312432_my_metaline_job.biom.benchmark.txt
-│   ├── 20240815.230537.312432_my_metaline_job.concat.benchmark.txt
-│   ├── 20240815.230537.312432_my_metaline_job.extracted_reads.benchmark.txt
-│   ├── 20240815.230537.312432_my_metaline_job.fastqc.benchmark.txt
-│   ├── 20240815.230537.312432_my_metaline_job.krona.benchmark.txt
-│   ├── 20240815.230537.312432my_metaline_job.R_alpha_div.benchmark.txt
-│   ├── 20240815.230537.312432my_metaline_job.R_barplot.benchmark.txt
-│   ├── 20240815.230537.312432my_metaline_job.R_conversion.benchmark.txt
-│   └── my_metaline_job.kraken2.benchmark.txt
+│   ├── 20241108.102621.871345_mock.alignment.benchmark.txt
+│   ├── 20241108.102621.871345_mock.biom.benchmark.txt
+│   ├── 20241108.102621.871345_mock.concat.benchmark.txt
+│   ├── 20241108.102621.871345_mock.extracted_reads.benchmark.txt
+│   ├── 20241108.102621.871345_mock.fastqc.benchmark.txt
+│   ├── 20241108.102621.871345_mock.krona.benchmark.txt
+│   ├── 20241108.102621.871345mock.R_alpha_div.benchmark.txt
+│   ├── 20241108.102621.871345mock.R_barplot.benchmark.txt
+│   ├── 20241108.102621.871345mock.R_conversion.benchmark.txt
+│   ├── 20241108.102621.871345_mock.V300091236_L01_100.trimming.benchmark.txt
+│   └── mock.kraken2.benchmark.txt
+├── err_out
+│   ├── jobnm_11453585.err
+│   └── jobnm_11453585.out
 ├── EXTRACTED_FASTA
-│   ├── my_metaline_job.1.fastq.gz
-│   ├── my_metaline_job.2.fastq.gz
-│   ├── my_metaline_job1.fastq
-│   └── my_metaline_job2.fastq
+│   ├── mock1.fastq
+│   ├── mock.1.fastq.gz
+│   ├── mock2.fastq
+│   └── mock.2.fastq.gz
 ├── KRAKEN_ASSIGN
-│   ├── my_metaline_job.Kraken2.biom
-│   ├── my_metaline_job.kraken2.report
-│   └── my_metaline_job.kraken2.txt
+│   ├── mock.Kraken2.biom
+│   ├── mock.kraken2.report
+│   └── mock.kraken2.txt
 ├── KRONA_HTML
-│   ├── my_metaline_job.html
-│   └── my_metaline_job.krona
+│   ├── mock.html
+│   └── mock.krona
 ├── METAPHLAN4
-│   ├── my_metaline_job.bz2
-│   ├── my_metaline_job.vsc.txt
-│   ├── my_metaline_job_profiled.txt
-│   └── my_metaline_jobsam.bz2
+│   ├── mock
+│   │   ├── mock.unmapped_genefamilies.tsv
+│   │   ├── mock.unmapped_humann_temp
+│   │   │   └── mock.unmapped.log
+│   │   ├── mock.unmapped_pathabundance.tsv
+│   │   └── mock.unmapped_pathcoverage.tsv
+│   ├── mock.bz2
+│   ├── mock_profiled.txt
+│   ├── mocksam.bz2
+│   └── mock.vsc.txt
 ├── R_ANALYSIS
-│   ├── my_metaline_job.rds
-│   ├── my_metaline_job_Barplot_phyla.jpeg
-│   └── my_metaline_job_alpha_div.csv
+│   ├── mock_alpha_div.csv
+│   ├── mock_Barplot_phyla.jpeg
+│   └── mock.rds
 ├── TRIMMOMATIC
-│   ├── PONSJIG_165.E5-NEB-UDI_1_paired.fq.gz
-│   ├── PONSJIG_165.E5-NEB-UDI_1_unpaired.fq.gz
-│   ├── PONSJIG_165.E5-NEB-UDI_2_paired.fq.gz
-│   ├── PONSJIG_165.E5-NEB-UDI_2_unpaired.fq.gz
-│   ├── my_metaline_job.1.fastq.gz
-│   ├── my_metaline_job.2.fastq.gz
-│   └── my_metaline_job_qc
-│       ├── my_metaline_job.1_fastqc.html
-│       ├── my_metaline_job.1_fastqc.zip
-│       ├── my_metaline_job.2_fastqc.html
-│       └── my_metaline_job.2_fastqc.zip
-├── WGS_logs
-│   ├── 20240815.230537.312432.PONSJIG_165.E5-NEB-UDI.trimmomatic.log
-│   ├── 20240815.230537.312432.R_alpha_div.log
-│   ├── 20240815.230537.312432.R_barplot.log
-│   ├── 20240815.230537.312432.R_phyloseq.log
-│   ├── 20240815.230537.312432.biom.log
-│   ├── 20240815.230537.312432.concatenation.log
-│   ├── 20240815.230537.312432.extracted_reads.log
-│   ├── 20240815.230537.312432.fastqc.log
-│   ├── 20240815.230537.312432.illumina_kraken2.log
-│   ├── 20240815.230537.312432.krona.log
-│   ├── 20240815.230537.312432_my_metaline_job.alignment.log
-│   ├── 20240815.230537.312432_my_metaline_job.all.rule.log
-│   ├── 20240815.230537.312432_my_metaline_job.bam2fasta.log
-│   ├── 20240815.230537.312432_my_metaline_job.index_bam.log
-│   └── 20240815.231914.859216.illumina_kraken2.log
-└── err_out
-    ├── jobnm_4734683.err
-    └── jobnm_4734683.out
+│   ├── mock.1.fastq.gz
+│   ├── mock.2.fastq.gz
+│   ├── mock_qc
+│   │   ├── mock.1_fastqc.html
+│   │   ├── mock.1_fastqc.zip
+│   │   ├── mock.2_fastqc.html
+│   │   └── mock.2_fastqc.zip
+│   ├── V300091236_L01_100_1_paired.fq.gz
+│   ├── V300091236_L01_100_1_unpaired.fq.gz
+│   ├── V300091236_L01_100_2_paired.fq.gz
+│   └── V300091236_L01_100_2_unpaired.fq.gz
+└── WGS_logs
+    ├── 20241108.102621.871345.biom.log
+    ├── 20241108.102621.871345.concatenation.log
+    ├── 20241108.102621.871345.extracted_reads.log
+    ├── 20241108.102621.871345.fastqc.log
+    ├── 20241108.102621.871345.illumina_kraken2.log
+    ├── 20241108.102621.871345.krona.log
+    ├── 20241108.102621.871345_mock.alignment.log
+    ├── 20241108.102621.871345_mock.all.rule.log
+    ├── 20241108.102621.871345_mock.bam2fasta.log
+    ├── 20241108.102621.871345_mock.index_bam.log
+    ├── 20241108.102621.871345.R_alpha_div.log
+    ├── 20241108.102621.871345.R_barplot.log
+    ├── 20241108.102621.871345.R_phyloseq.log
+    ├── 20241108.102621.871345.V300091236_L01_100.trimmomatic.log
+    └── 20241108.102909.408489.illumina_kraken2.log
 ```
 
 ---
 
 ## Benchmark
 
-At the end of the procedure you might want to know the resources that were used. A folder called "Benchmark" will be created containing for each of the rules the following parameters:
+At the end of the procedure you might want to know the resources that were used. A folder called "Benchmark" will be created containing for each of some of the rules the following parameters:
 
 **s** --> Running time in seconds
 
