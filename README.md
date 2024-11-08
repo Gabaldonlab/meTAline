@@ -1,16 +1,18 @@
 [![DOI](https://zenodo.org/badge/431438117.svg)](https://zenodo.org/badge/latestdoi/431438117)
 
-# meTAline: metagenomics Taxonomic Assignment pipeline
+# MeTAline: a snakemake pipeline for the study of metagenomes
 
-meTAline is a taxonomic assignment pipeline implemented in SnakeMake for WGS metagenomics data.
+MeTAline, is a snakemake pipeline for metagenomics analysis. MeTAline, facilitates an efficient workflow to preprocess short reads metagenomics data: from read trimming and filtering, through host read subtraction to taxonomic classification using both k-mer and gene marker-based approaches, and functional profiling of the samples
 
 ---
 
 ## Build and deploy Singularity image
 
-**NOTE: YOU WILL ALWAYS HAVE TO BUILD THE SINGULARITY IMAGES ON YOUR LOCAL MACHINE, BECAUSE IT REQUIRES SUDO AND THAT YOU WON'T HAVE IN YOUR REMOTE HPC ENVIRONMENT!**
+**IMPORTANT: If you are going to run the pipeline in marenostrum5, skip this section!**
 
-To be able to build the Singularity image of MetaLine, you will need to install Singularity first:
+*Note: you will always have to build the singularity images on your local machine, because it requires sudo and that you won't have in your remote hpc environment!*
+
+To be able to build the Singularity image of MeTAline, you will need to install Singularity first:
 
 1. Download from [HERE](https://github.com/sylabs/singularity/releases/tag/v4.1.5) the corresponding installation package (_.deb or _.rpm) to your operating system. (E.G.: Ubuntu 24.04 needs the "singularity-ce_4.1.5-noble_amd64.deb" file).
 2. Install it from the downloaded package. Example command for the above mentioned version:
@@ -43,7 +45,7 @@ rsync ./metaline.sif <cluster_user>@<cluster_transfer_address>:</path/to/your/de
 
 ---
 
-## Usage of Singularity image
+## Usage of Singularity image 
 
 1. MeTAline uses Snakemake under the hood using .json configuration files, so first you will need to generate the said file with the following command example:
 
@@ -61,6 +63,9 @@ singularity run --cleanenv metaline.sif metaline-generate-config \
     --metaphlan_Index <Index of the metaphlan4 database.> \
     --n_db <Humann database to do the nucleotide search (based on already built annotations.)> \
     --protein_db <Humann database to do the translation search (by deafult this is by-passed).>
+
+If you run the pipeline in marenostrum5, remember to specify the shared sif image: /gpfs/projects/bsc40/project/pipelines/meTAline/meTAline-0.8.0-alpha/metaline.sif
+
 ```
 
 For further information about the flags, run:
