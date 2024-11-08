@@ -1,12 +1,12 @@
 #!/bin/bash
 
-#SBATCH --job-name=Meta_analysis_2
+#SBATCH --job-name=AECC_Riga
 #SBATCH --qos=gp_bscls
 #SBATCH --account=bsc40
-#SBATCH --output=/gpfs/projects/bsc40/current/okhannous/Meta-analysis/DATA/PRJEB10878/err_out/jobnm_%j.out # Output file
-#SBATCH --error=/gpfs/projects/bsc40/current/okhannous/Meta-analysis/DATA/PRJEB10878/err_out/jobnm_%j.err # File where the error is written
+#SBATCH --output=/gpfs/projects/bsc40/current/okhannous/AECC_MGI_IRB/Preprocessing/OUT/L02/err_out/jobnm_%j.out # Output file
+#SBATCH --error=/gpfs/projects/bsc40/current/okhannous/AECC_MGI_IRB/Preprocessing/OUT/L02/err_out/jobnm_%j.err # File where the error is written
 
-#SBATCH --array=1-64 # The number of jobs in the array
+#SBATCH --array=1-4 # The number of jobs in the array
 #SBATCH --ntasks=2 # The number of parallel tasks
 #SBATCH --tasks-per-node=2
 #SBATCH --cpus-per-task=24 # Number of CPUs per run task
@@ -15,4 +15,4 @@
 
 module load greasy
 # Print the task id
-$(sed -n "${SLURM_ARRAY_TASK_ID}p" /gpfs/projects/bsc40/current/okhannous/Meta-analysis/DATA/PRJEB10878/list_greasy.txt)
+$(sed -n "${SLURM_ARRAY_TASK_ID}p" /gpfs/projects/bsc40/current/okhannous/AECC_MGI_IRB/Preprocessing/OUT/L02/list_greasy.txt)
