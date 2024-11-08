@@ -6,7 +6,7 @@ MeTAline, is a snakemake pipeline for metagenomics analysis. MeTAline, facilitat
 
 Example of the entire workflow of the pipeline using a test mock sample:
 
-![metaline_pipe-1](https://github.com/user-attachments/assets/8bdf9e14-b479-459d-869c-ee4cb2622668)
+![metaline_pipe-1](https://github.com/user-attachments/assets/8bdf9e14-b479-459d-869c-ee4cb2622668  | width=100)
 
 ---
 
