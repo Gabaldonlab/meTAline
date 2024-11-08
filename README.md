@@ -64,7 +64,7 @@ singularity run --cleanenv metaline.sif metaline-generate-config \
     --n_db <Humann database to do the nucleotide search (based on already built annotations.)> \
     --protein_db <Humann database to do the translation search (by deafult this is by-passed).>
 
-#If you run the pipeline in marenostrum5, remember to specify the shared sif image: /gpfs/projects/bsc40/project/pipelines/meTAline/meTAline-0.8.0-alpha/metaline.sif
+#If you run the pipeline in marenostrum5, remember to specify the shared sif image: ~/project/pipelines/meTAline/meTAline-0.8.0-alpha/metaline.sif
 
 ```
 
