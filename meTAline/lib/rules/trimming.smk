@@ -1,12 +1,13 @@
 #Author: Diego Fuentes and Olfat Khannous
 #Contact email: olfat.khannous@bsc.es
 #Barcelona
-#Date:2024-07-17
+#Date:2024-12-02
 
 ###################
 # TRIMMING AND QC #
 ###################
 
+#Trimming of raw data
 rule Trimmomatic:
     input:
         read1 = config["Inputs"]["reads_directory"] + "{file}_1."+config["Parameters"]["extension"],
@@ -34,6 +35,7 @@ rule Trimmomatic:
     shell:
         "trimmomatic PE -threads {threads} -phred33 {input.read1} {input.read2} {output.trim1} {output.unpaired1} {output.trim2} {output.unpaired2} ILLUMINACLIP:{params.illuminaclip} LEADING:{params.leading} TRAILING:{params.trailing} SLIDINGWINDOW:{params.slidingwindow} MINLEN:{params.minlen} ;"
 
+#Concatenation of reads in case the samples are sequenced in different sequencing lanes
 rule Concat_reads:
     input:
         trim1 = lambda wildcards: expand(rules.Trimmomatic.output.trim1, file=files.split(',')),
@@ -53,6 +55,7 @@ rule Concat_reads:
     shell:
         "zcat {input.trim1} | pigz -p {threads} -c  > {output.concat1}; zcat {input.trim2} | pigz -p {threads} -c  > {output.concat2}; "
 
+#Quality assessment of the trimmed reads, using fastqc
 rule fastqc:
     input:
         reads1 = rules.Concat_reads.output.concat1,

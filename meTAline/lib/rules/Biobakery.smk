@@ -1,17 +1,27 @@
 #Author: Diego Fuentes and Olfat Khannous
 #Contact email: olfat.khannous@bsc.es
 #Barcelona
-#Date:2024-07-23
+#Date:2024-12-02
 
 ###################
-# BIOBAKERY_TOOLS (Metaphlan4 and Humann) #
+# BIOBAKERY_TOOLS (Metaphlan4 and Humann) #Taxonomy and functional profiling based on marker genes. 
 ###################
 
-#This is a rule for both taxonomy and functional profiling, based on gene markers. It will only be run if there is previously a host removal (indicated by reference genome) and the user indicates a metaphlan database
+#This is a rule for both taxonomy and functional profiling, based on gene markers. 
+
+
+#Check whether we use the filtered reads or the unmapped reads, which happens when the host genome is provided. In case for instance of an environmental sample the trimmed reads are the ones that will be used. s
+if reference_genome == None or reference_genome == "null":
+    read1_selected = rules.Concat_reads.output.concat1,
+    read2_selected = rules.Concat_reads.output.concat2
+else:
+    read1_selected = rules.extracted_unmapped_reads.output.fastq,
+    read2_selected = rules.extracted_unmapped_reads.output.fastq
 
 rule metaphlan4:
     input:
-        unmapped_in = rules.extracted_unmapped_reads.output.fastq
+        read1 = read1_selected,
+        read2 = read2_selected
     output:
         out_bz2 = metaphlan4_out + sample +".bz2",
         out_sam = metaphlan4_out + sample + "sam.bz2",
@@ -19,17 +29,35 @@ rule metaphlan4:
         out_vsc = metaphlan4_out + sample + ".vsc.txt"
     params:
         outdir = config["Outputs"]["metaphlan4_out"],
-        metaphlan_db = config["Inputs"]["metaphlan_db"], #/gpfs/projects/bsc40/current/okhannous/Metaphlan4/db
-        metaphlan_index = config["Inputs"]["metaphlan_Index"] #mpa_vJun23_CHOCOPhlAnSGB_202307
+        metaphlan_db = config["Inputs"]["metaphlan_db"], 
+        metaphlan_index = config["Inputs"]["metaphlan_Index"] 
+    benchmark:
+        benchmark_dir + "/" + sample +".metaphlan4.benchmark.txt"
 
-    shell:
-        """
-        metaphlan --bowtie2db {params.metaphlan_db} --index {params.metaphlan_index} {input.unmapped_in} --input_type fastq --bowtie2out {output.out_bz2} -s {output.out_sam} --profile_vsc -o {output.out_profile} --nproc 4 --vsc_out {output.out_vsc};
-        """
+    #Run interpretes the following block as python code, keep python synthax
+    run:
+        if reference_genome == None or reference_genome == "null":
+            #Running kraken2 for paired data
+            shell("metaphlan --bowtie2db {params.metaphlan_db} --index {params.metaphlan_index} {input.read1},{input.read2} --input_type fastq --bowtie2out {output.out_bz2} -s {output.out_sam} --profile_vsc -o {output.out_profile} --nproc 4 --vsc_out {output.out_vsc}")
+
+        else:
+            #Running metaphlan for reads extracted from BAM file
+            shell("metaphlan --bowtie2db {params.metaphlan_db} --index {params.metaphlan_index} {input.read1} --input_type fastq --bowtie2out {output.out_bz2} -s {output.out_sam} --profile_vsc -o {output.out_profile} --nproc 4 --vsc_out {output.out_vsc}")
+
+
+
+#Check again if reference genome is provided
+if reference_genome == None or reference_genome == "null":
+    read1_selected = rules.Concat_reads.output.concat1,
+    read2_selected = rules.Concat_reads.output.concat2
+else:
+    read1_selected = rules.extracted_unmapped_reads.output.fastq,
+    read2_selected = rules.extracted_unmapped_reads.output.fastq
 
 rule humann:
-    input: 
-        unmapped_f = rules.extracted_unmapped_reads.output.fastq,
+    input:
+        read1 = read1_selected,
+        read2 = read2_selected,
         profiled_sample = rules.metaphlan4.output.out_profile
     output:
         outdir_h = directory(config["Outputs"]["metaphlan4_out"] + "{sample}")
@@ -38,8 +66,15 @@ rule humann:
         metaphlan_index = config["Inputs"]["metaphlan_Index"],
         metaphlan_db = config["Inputs"]["metaphlan_db"],
         n_db = config["Inputs"]["n_db"]
+    benchmark:
+        benchmark_dir + "/" + sample +".humann.benchmark.txt"
 
-    shell:
-        """
-        humann --taxonomic-profile {input.profiled_sample} --input {input.unmapped_f} --output {output.outdir_h} --nucleotide-database {params.n_db} --protein-database {params.protein_db} --metaphlan-options "--bowtie2db {params.metaphlan_db}" --metaphlan-options "--index {params.metaphlan_index}" --bypass-translated-search;
-        """
+    #Run interpretes the following block as python code, keep python synthax
+    run:
+        if reference_genome == None or reference_genome == "null":
+            #Running kraken2 for paired data
+            shell("humann --taxonomic-profile {input.profiled_sample} --input {input.read1},{input.read2} --output {output.outdir_h} --nucleotide-database {params.n_db} --protein-database {params.protein_db} --metaphlan-options "--bowtie2db {params.metaphlan_db}" --metaphlan-options "--index {params.metaphlan_index}" --bypass-translated-search")
+
+        else:
+            #Running metaphlan for reads extracted from BAM file
+            shell("humann --taxonomic-profile {input.profiled_sample} --input {input.read1} --output {output.outdir_h} --nucleotide-database {params.n_db} --protein-database {params.protein_db} --metaphlan-options "--bowtie2db {params.metaphlan_db}" --metaphlan-options "--index {params.metaphlan_index}" --bypass-translated-search")
