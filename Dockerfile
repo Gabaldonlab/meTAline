@@ -55,7 +55,6 @@ RUN DEBCONF_NOWARNINGS="yes" \
 # - Krona
 # - fastqc
 # - extract_kraken_output_reads
-# - MetaPhlAn
 COPY ./external-sources /bin/
 
 # Install htslib from source
