@@ -5,7 +5,7 @@
 #Author: Diego Fuentes and Olfat Khannous Lleiffe
 #Contact email: olfat.khannous@bsc.es
 #Barcelona
-#Date:2024-12-02
+#Date:2024-12-16
 
 import os
 from datetime import datetime
@@ -124,7 +124,7 @@ rule all:
 
 
 #Rule in case you want to only perform trimming and qualiy assessment of the data
-rule Trimmomatic:
+rule Trimming:
     input:
         read_processing
     log:
@@ -135,7 +135,7 @@ rule Trimmomatic:
 if reference_genome != None or reference_genome != "null":
     rule host_depletion:
         input:
-            fastq = protected(alignment_out + sample +".unmapped.fastq.gz")
+            fastq = alignment_out + sample +".unmapped.fastq.gz"
         log:
             logs_dir + str(date) + "_" + sample +".alignment.rule.log"
 
