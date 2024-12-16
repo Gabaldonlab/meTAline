@@ -1,7 +1,7 @@
 #Author: Diego Fuentes and Olfat Khannous
 #Contact email: olfat.khannous@bsc.es
 #Barcelona
-#Date:2024-12-02
+#Date:2024-12-16
 
 ###################
 # BIOBAKERY_TOOLS (Metaphlan4 and Humann) #Taxonomy and functional profiling based on marker genes. 
@@ -46,7 +46,7 @@ rule metaphlan4:
 
 
 
-#Check again if reference genome is provided
+# Check again if reference genome is provided
 if reference_genome == None or reference_genome == "null":
     read1_selected = rules.Concat_reads.output.concat1,
     read2_selected = rules.Concat_reads.output.concat2
@@ -60,21 +60,22 @@ rule humann:
         read2 = read2_selected,
         profiled_sample = rules.metaphlan4.output.out_profile
     output:
+        combined_reads = config["Outputs"]["metaphlan4_out"] + "{sample}.fastq", 
         outdir_h = directory(config["Outputs"]["metaphlan4_out"] + "{sample}")
     params:
         protein_db = config["Inputs"]["protein_db"],
         metaphlan_index = config["Inputs"]["metaphlan_Index"],
         metaphlan_db = config["Inputs"]["metaphlan_db"],
         n_db = config["Inputs"]["n_db"]
-    benchmark:
-        benchmark_dir + "/" + sample +".humann.benchmark.txt"
+    # benchmark: # Uncomment if benchmark is needed
+    #     benchmark_dir + "/" + sample + ".humann.benchmark.txt"
 
-    #Run interpretes the following block as python code, keep python synthax
     run:
         if reference_genome == None or reference_genome == "null":
-            #Running kraken2 for paired data
-            shell("humann --taxonomic-profile {input.profiled_sample} --input {input.read1},{input.read2} --output {output.outdir_h} --nucleotide-database {params.n_db} --protein-database {params.protein_db} --metaphlan-options "--bowtie2db {params.metaphlan_db}" --metaphlan-options "--index {params.metaphlan_index}" --bypass-translated-search")
-
+            # Concatenate paired-end reads using zcat if gzipped
+            shell("zcat {input.read1} {input.read2} > {output.combined_reads}")
+            # Run humann on the concatenated reads
+            shell("humann --taxonomic-profile {input.profiled_sample} --input {output.combined_reads} --output {output.outdir_h} --nucleotide-database {params.n_db} --protein-database {params.protein_db} --metaphlan-options '--bowtie2db {params.metaphlan_db} --index {params.metaphlan_index}' --bypass-translated-search")
         else:
-            #Running metaphlan for reads extracted from BAM file
-            shell("humann --taxonomic-profile {input.profiled_sample} --input {input.read1} --output {output.outdir_h} --nucleotide-database {params.n_db} --protein-database {params.protein_db} --metaphlan-options "--bowtie2db {params.metaphlan_db}" --metaphlan-options "--index {params.metaphlan_index}" --bypass-translated-search")
+            # Running humann for unmapped reads to the human genome
+            shell("humann --taxonomic-profile {input.profiled_sample} --input {input.read1} --output {output.outdir_h} --nucleotide-database {params.n_db} --protein-database {params.protein_db} --metaphlan-options '--bowtie2db {params.metaphlan_db} --index {params.metaphlan_index}' --bypass-translated-search")
