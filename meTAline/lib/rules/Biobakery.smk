@@ -69,7 +69,6 @@ rule humann:
         n_db = config["Inputs"]["n_db"]
     # benchmark: # Uncomment if benchmark is needed
     #     benchmark_dir + "/" + sample + ".humann.benchmark.txt"
-
     run:
         if reference_genome == None or reference_genome == "null":
             # Concatenate paired-end reads using zcat if gzipped
@@ -78,4 +77,6 @@ rule humann:
             shell("humann --taxonomic-profile {input.profiled_sample} --input {output.combined_reads} --output {output.outdir_h} --nucleotide-database {params.n_db} --protein-database {params.protein_db} --metaphlan-options '--bowtie2db {params.metaphlan_db} --index {params.metaphlan_index}' --bypass-translated-search")
         else:
             # Running humann for unmapped reads to the human genome
-            shell("humann --taxonomic-profile {input.profiled_sample} --input {input.read1} --output {output.outdir_h} --nucleotide-database {params.n_db} --protein-database {params.protein_db} --metaphlan-options '--bowtie2db {params.metaphlan_db} --index {params.metaphlan_index}' --bypass-translated-search")
+            #shell("humann --taxonomic-profile {input.profiled_sample} --input {input.read1} --output {output.outdir_h} --nucleotide-database {params.n_db} --protein-database {params.protein_db} --metaphlan-options '--bowtie2db {params.metaphlan_db} --index {params.metaphlan_index}' --bypass-translated-search")
+            shell("zcat {input.read1} > {output.combined_reads}")
+            shell("humann --taxonomic-profile {input.profiled_sample} --input {output.combined_reads} --output {output.outdir_h} --nucleotide-database {params.n_db} --protein-database {params.protein_db} --metaphlan-options '--bowtie2db {params.metaphlan_db}' --metaphlan-options '--index {params.metaphlan_index}' --bypass-translated-search;")
