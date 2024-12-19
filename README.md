@@ -299,7 +299,9 @@ At the end of the procedure you might want to know the resources that were used.
 To debug the **meTAline** pipeline efficiently, use the `--bind` flag in Singularity to mount your modified source code into the container without rebuilding the image.
 
 ### Accessing the meTAline Source Code in the Image
-The **meTAline** source code inside the Singularity image (`metaline.sif`) is located at `/meTAline`. You can verify this with:
+The **meTAline** source code inside the Singularity image (`metaline.sif`) is located at `/meTAline`.
+
+You can verify this with:
 *E.G.:*
 ```bash
 [user@host workspace]$ singularity run --cleanenv <path/to/metaline.sif> ls /meTAline
@@ -308,10 +310,14 @@ Helper_scripts_MN5  Illumina_MGI_adapters.fa  README.md  adapter_list_new.txt  c
 ```
 
 ### Overwriting Source Code with --bind
-To test modifications to the pipeline, replace the source code in the image with your local version during execution. Use the --bind flag to mount your local repository into the container, overwriting the existing directory.
+To test modifications to the pipeline, replace the source code in the image with your local version during execution.
+Use the --bind flag to mount your local repository into the container, overwriting the existing directory.
 
 #### Example
-If your current working directory contains the cloned meTAline repository:
+For this example you have the current working directory is inside the cloned meTAline repository, which looks like this:
+
+*Note that the meTAline snakemake source code, ./meTAline, is right next to the built ./metaline.sif file!*
+
 ```bash
 [user@host workspace]$ ls -lisah <path/to/cloned/meTAline/repository>
 total 2.7G
