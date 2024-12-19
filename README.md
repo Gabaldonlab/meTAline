@@ -378,7 +378,7 @@ breakpoint()
 print(z)
 ```
 
-For further information about pdb refer to the [official documentation](https://docs.python.org/3/library/pdb.html).
+For further information about pdb refer to the [official Python 3 documentation](https://docs.python.org/3/library/pdb.html).
 
 ---
 
