@@ -49,7 +49,7 @@ rsync ./metaline.sif <cluster_user>@<cluster_transfer_address>:</path/to/your/de
 
 ---
 
-## Usage of Singularity image 
+## Usage of Singularity image
 
 1. MeTAline uses Snakemake under the hood using .json configuration files, so first you will need to generate the said file with the following command example:
 
@@ -297,26 +297,7 @@ At the end of the procedure you might want to know the resources that were used.
 
 ## Setup Singularity image for debugging
 
-Adding print statements in the source code, then each time recompile the Singularity image can be cumbersome, because an image is **inmutable**.
-To solve this issue, we can use a **sandbox** version of the already compiled Singularity image, by running:
-
-```bash
-make metaline-debug-sandbox
-```
-
-**NOTE: THIS COMMAND REQUIRES sudo!**
-
-This command will unpack the compiled image into a directory ("./metaline-debug"), which then can be modified and run as a normal image, E.G.:
-
-```bash
-singularity run --cleanenv ./metalinedebug ...
-```
-
-If you want to build again an **inmutable** image from this "./metaline-debug" directory, you can use the following command:
-
-```bash
-make metaline-recompile-from-debug-sandbox
-```
+TODO: Rewrite here the debugging technique for singularity images with the "--bind" flag!
 
 Unfortunately, IDE debuggers with Singularity images don't work always, but the majority of the pipeline uses Python scripts, so you will still have **pdb (Python DeBugger)** in your toolbox to initialize an interactive debugger session.
 
