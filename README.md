@@ -12,7 +12,8 @@ MeTAline, is a snakemake pipeline for metagenomics analysis. MeTAline, facilitat
 
 ## Build and deploy Singularity image
 
-**IMPORTANT: If you are going to run the pipeline in marenostrum5, skip this section!**
+### Install Singularity on Debian based Linux.
+**IMPORTANT: If you are going to run the pipeline in an HPC environment, skip this section!**
 
 *Note: you will always have to build the singularity images on your local machine, because it requires sudo and that you won't have in your remote hpc environment!*
 
@@ -31,7 +32,12 @@ sudo apt install ./singularity-ce_4.1.5-noble_amd64.deb
 singularity --version
 ```
 
-Now do the build:
+**NOTE:**
+The sanbdox builds after version 4.1.0. has some bugs (like stripped '%runscript' section, not found '/bin/sh' symbolic links, etc..).
+These kind of problems can be found in the Singularity-CE and Apptainer versions too!
+E.G.: [runscript is being wiped out during build process #2561](https://github.com/apptainer/apptainer/issues/2561)
+
+### Now do the build:
 
 1. cd into the root directory of MeTAline (where the Dockerfile and the Makefile is)
 2. Run the following command (**REQUIRES "sudo" PERMISSIONS! + This might take several minutes!**):
