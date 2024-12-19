@@ -1,7 +1,7 @@
 #Author: Diego Fuentes and Olfat Khannous
 #Contact email: olfat.khannous@bsc.es
 #Barcelona
-#Date:2024-08-05
+#Date:2024-12-16
 
 #Rule to convert the Kraken2 report to biom format. 
 rule convert_biom:
@@ -29,8 +29,6 @@ rule Biom_to_Phyloseq:
         script = os.path.join(workflow.basedir, "lib/scripts/Biom_to_Phyloseq.R")
     log:
         logs_dir + str(date) + ".R_phyloseq.log"
-    conda: "/gpfs/projects/bsc40/current/okhannous/WGS/000-MeTAline_july_2024_changes/meTAline-main/conda_envs/meTAline_Rrule.yml"
-    #conda: "/home/okhannou/Escriptori/mount/current/okhannous/WGS/000-MeTAline_july_2024_changes/meTAline-main/conda_envs/meTAline_Rrule.yml" #This is the environment in local
     shell:
         r"""
         Rscript {params.script} {input.biom} {output.phyloseq_object}
@@ -48,8 +46,6 @@ rule alpha_diversity:
         script = os.path.join(workflow.basedir, "lib/scripts/alpha_diversity.R")
     log:
         logs_dir + str(date) + ".R_alpha_div.log"
-    #conda: "/home/okhannou/Escriptori/mount/current/okhannous/WGS/000-MeTAline_july_2024_changes/meTAline-main/conda_envs/meTAline_Rrule.yml" #This is the environment in local
-    conda: "/gpfs/projects/bsc40/current/okhannous/WGS/000-MeTAline_july_2024_changes/meTAline-main/conda_envs/meTAline_Rrule.yml"
     shell:
         r"""
         Rscript {params.script} {input.phylo_object} {output.rich_object}
@@ -69,8 +65,6 @@ rule bar_plot_toptaxa:
         script = os.path.join(workflow.basedir, "lib/scripts/bar_plot_toptaxa.R")
     log:
         logs_dir + str(date) + ".R_barplot.log"
-    #conda: "/home/okhannou/Escriptori/mount/current/okhannous/WGS/000-MeTAline_july_2024_changes/meTAline-main/conda_envs/meTAline_Rrule.yml" #This is the environment in local
-    conda: "/gpfs/projects/bsc40/current/okhannous/WGS/000-MeTAline_july_2024_changes/meTAline-main/conda_envs/meTAline_Rrule.yml"
     shell:
         r"""
         Rscript {params.script} {input.phylo_object} {output.out_plot}

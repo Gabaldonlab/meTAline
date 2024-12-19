@@ -33,7 +33,6 @@ class CreateConfigurationFile(object):
         self.reads_directory = None              #Directory where the illumina fastqs are stored
         self.reference_genome = None             #Indexed reference genome (Hisat2 index) path
         self.krakendb = None                     #Kraken2 DB path that is going to be used
-        self.kmer_dist = None                    #Kraken2 kmer distribution path that is going to be used for Bracken
         self.taxid = 0                           #Default taxid used to extract reads, based on the kraken report. By default 0 -> unclassified
         self.metaphlan_db = None                 #Metaphlan4 database path
         self.metaphlan_Index = None              #Metaphlan4 index (last release of the database)
@@ -124,7 +123,6 @@ class CreateConfigurationFile(object):
         input_group.add_argument('--reads-directory', dest="reads_directory", metavar="reads_directory", help='Directory where the Illumina fastqs are stored. Default %s.' % self.reads_directory)
         input_group.add_argument('--reference-genome', dest="reference_genome", metavar="reference_genome", help='Indexed reference genome path (ie: reference/Human_index). Your path is  %s.' % self.reference_genome)
         input_group.add_argument('--krakendb', dest="krakendb", metavar="krakendb", help='Kraken2 database used for the taxonomic assignment. Your path is  %s.' % self.krakendb) 
-        input_group.add_argument('--kmer_dist', dest="kmer_dist", metavar="kmer_dist", help='Kraken2 kmer distribution path used for Bracken. Your path is  %s.' % self.kmer_dist) 
         input_group.add_argument('--taxid', dest="taxid", metavar="taxid", default=self.taxid, help='Selects the taxid used for exctracting fasta reads. You can add more than one using space as the separator. Default \"%s\".' % self.taxid)
         input_group.add_argument('--metaphlan_db', dest="metaphlan_db" , metavar="metaphlan_db", default=self.metaphlan_db, help='Path of the Metaphlan4 database. Default \"%s\".' % self.metaphlan_db)
         input_group.add_argument('--metaphlan_Index', dest="metaphlan_Index" , metavar="metaphlan_Index", default=self.metaphlan_Index, help='Index of the metaphlan4 database.Default \"%s\".' % self.metaphlan_Index)
@@ -253,12 +251,6 @@ class CreateConfigurationFile(object):
             parser.print_help()
             sys.exit(-1)
 
-        if args.kmer_dist != None:
-            args.kmer_dist = os.path.abspath(args.kmer_dist)
-
-            if not os.path.exists(args.kmer_dist):
-                    print("A bracken database has not been provided. Skipping the bracken estimation")
-                    args.kmer_dist = None
 
         if args.alignment_out:
             args.alignment_out = os.path.abspath(args.alignment_out) + "/"
@@ -355,7 +347,6 @@ class CreateConfigurationFile(object):
         self.inputParameters["reads_directory"] = args.reads_directory
         self.inputParameters["reference_genome"] = args.reference_genome
         self.inputParameters["krakendb"] = args.krakendb
-        self.inputParameters["kmer_dist"] = args.kmer_dist
         self.inputParameters["taxid"] = args.taxid
         self.inputParameters["metaphlan_db"] = args.metaphlan_db
         self.inputParameters["metaphlan_Index"] = args.metaphlan_Index
