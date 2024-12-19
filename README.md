@@ -315,7 +315,7 @@ Use the --bind flag to mount your local repository into the container, overwriti
 #### Example
 For this example you have the current working directory inside the cloned meTAline repository, which looks like this:
 
-*Note that the meTAline snakemake source code, ./meTAline, is right next to the built ./metaline.sif file!*
+*Note that the meTAline snakemake directory, ./meTAline, is right next to the built ./metaline.sif file!*
 
 ```bash
 [user@host workspace]$ ls -lisah <path/to/cloned/meTAline/repository>
