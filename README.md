@@ -302,7 +302,6 @@ To debug the **meTAline** pipeline efficiently, use the `--bind` flag in Singula
 The **meTAline** source code inside the Singularity image (`metaline.sif`) is located at `/meTAline`.
 
 You can verify this with:
-*E.G.:*
 ```bash
 [user@host workspace]$ singularity run --cleanenv <path/to/metaline.sif> ls /meTAline
 Helper_scripts_MN5  Illumina_MGI_adapters.fa  README.md  adapter_list_new.txt  conda_envs  debug.greasy.job  lib  meTAline.smk
