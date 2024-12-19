@@ -313,7 +313,7 @@ To test modifications to the pipeline, replace the source code in the image with
 Use the --bind flag to mount your local repository into the container, overwriting the existing directory.
 
 #### Example
-For this example you have the current working directory is inside the cloned meTAline repository, which looks like this:
+For this example you have the current working directory inside the cloned meTAline repository, which looks like this:
 
 *Note that the meTAline snakemake source code, ./meTAline, is right next to the built ./metaline.sif file!*
 
