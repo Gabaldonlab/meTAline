@@ -5,8 +5,9 @@
 
 MeTAline, is a snakemake pipeline for metagenomics analysis. MeTAline, facilitates an efficient workflow to preprocess short reads metagenomics data: from read trimming and filtering, through host read subtraction to taxonomic classification using both k-mer and gene marker-based approaches, and functional profiling of the samples.
 
-<img src="https://github.com/user-attachments/assets/1c248a72-625f-480a-97ad-9022714a3dbc" width=60% height=60%>
-
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/1c248a72-625f-480a-97ad-9022714a3dbc" width="60%" height="60%">
+</div>
 ---
 
 ## Build and deploy Singularity image
