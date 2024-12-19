@@ -37,7 +37,7 @@ The sanbdox builds after version 4.1.0. has some bugs (like stripped '%runscript
 These kind of problems can be found in the Singularity-CE and Apptainer versions too!
 E.G.: [runscript is being wiped out during build process #2561](https://github.com/apptainer/apptainer/issues/2561)
 
-### Now do the build:
+### Now do the image build
 
 1. cd into the root directory of MeTAline (where the Dockerfile and the Makefile is)
 2. Run the following command (**REQUIRES "sudo" PERMISSIONS! + This might take several minutes!**):
