@@ -12,7 +12,8 @@ MeTAline, is a snakemake pipeline for metagenomics analysis. MeTAline, facilitat
 
 ## Build and deploy Singularity image
 
-**IMPORTANT: If you are going to run the pipeline in marenostrum5, skip this section!**
+### Install Singularity on Debian based Linux.
+**IMPORTANT: If you are going to run the pipeline in an HPC environment, skip this section!**
 
 *Note: you will always have to build the singularity images on your local machine, because it requires sudo and that you won't have in your remote hpc environment!*
 
@@ -31,7 +32,12 @@ sudo apt install ./singularity-ce_4.1.5-noble_amd64.deb
 singularity --version
 ```
 
-Now do the build:
+**NOTE:**
+The sanbdox builds after version 4.1.0. has some bugs (like stripped '%runscript' section, not found '/bin/sh' symbolic links, etc..).
+These kind of problems can be found in the Singularity-CE and Apptainer versions too!
+E.G.: [runscript is being wiped out during build process #2561](https://github.com/apptainer/apptainer/issues/2561)
+
+### Now do the image build
 
 1. cd into the root directory of MeTAline (where the Dockerfile and the Makefile is)
 2. Run the following command (**REQUIRES "sudo" PERMISSIONS! + This might take several minutes!**):
@@ -49,7 +55,7 @@ rsync ./metaline.sif <cluster_user>@<cluster_transfer_address>:</path/to/your/de
 
 ---
 
-## Usage of Singularity image 
+## Usage of Singularity image
 
 1. MeTAline uses Snakemake under the hood using .json configuration files, so first you will need to generate the said file with the following command example:
 
@@ -296,35 +302,89 @@ At the end of the procedure you might want to know the resources that were used.
 ---
 
 ## Setup Singularity image for debugging
+To debug the **meTAline** pipeline efficiently, use the `--bind` flag in Singularity to mount your modified source code into the container without rebuilding the image.
 
-Adding print statements in the source code, then each time recompile the Singularity image can be cumbersome, because an image is **inmutable**.
-To solve this issue, we can use a **sandbox** version of the already compiled Singularity image, by running:
+### Accessing the meTAline Source Code in the Image
+The **meTAline** source code inside the Singularity image (`metaline.sif`) is located at `/meTAline`.
 
+You can verify this with:
 ```bash
-make metaline-debug-sandbox
+[user@host workspace]$ singularity run --cleanenv <path/to/metaline.sif> ls /meTAline
+Helper_scripts_MN5  Illumina_MGI_adapters.fa  README.md  adapter_list_new.txt  conda_envs  debug.greasy.job  lib  meTAline.smk
+[user@host workspace]$
 ```
 
-**NOTE: THIS COMMAND REQUIRES sudo!**
+### Overwriting Source Code with --bind
+To test modifications to the pipeline, replace the source code in the image with your local version during execution.
+Use the --bind flag to mount your local repository into the container, overwriting the existing directory.
 
-This command will unpack the compiled image into a directory ("./metaline-debug"), which then can be modified and run as a normal image, E.G.:
+#### Example
+For this example you have the current working directory inside the cloned meTAline repository, which looks like this:
+
+*Note that the meTAline snakemake directory, ./meTAline, is right next to the built ./metaline.sif file!*
 
 ```bash
-singularity run --cleanenv ./metalinedebug ...
+[user@host workspace]$ ls -lisah <path/to/cloned/meTAline/repository>
+total 2.7G
+75807561554 1.0K drwxrwxr-x  9 user bsc40 4.0K Dec 19 14:27 .
+ 6980952720 1.0K drwxr-sr-x 25 user bsc40 4.0K Dec 19 10:43 ..
+75825726583 1.0K drwxrwxr-x  8 user bsc   4.0K Dec 11 11:22 .git
+75825726584 1.0K drwxrwxr-x  3 user bsc   4.0K Dec 11 11:22 .github
+75825726590  512 -rw-rw-r--  1 user bsc   3.2K Dec 11 11:22 .gitignore
+75825726591  16K -rw-rw-r--  1 user bsc   5.8K Dec 11 11:22 Dockerfile
+75825726592  48K -rw-rw-r--  1 user bsc    35K Dec 11 11:22 LICENSE
+75825726595  512 -rw-rw-r--  1 user bsc    798 Dec 11 11:22 Makefile
+75825726597  32K -rwxrwxr-x  1 user bsc    17K Dec 11 11:22 README.md
+75825726599  512 -rw-rw-r--  1 user bsc   1.7K Dec 11 11:22 example_hpc_sbatch.job
+75825726600  512 -rw-rw-r--  1 user bsc   1.7K Dec 11 11:22 example_job_def_mn5.job
+75825726585 1.0K drwxrwxr-x  3 user bsc   4.0K Dec 11 11:22 external-sources
+75825726586 1.0K drwxrwxr-x  5 user bsc   4.0K Dec 19 10:41 meTAline
+75825726603  16K -rw-rw-r--  1 user bsc   5.2K Dec 11 11:54 metaline-singularity.def
+75810056215 2.7G -rwxr-xr-x  1 user bsc   2.7G Dec 19 11:00 metaline.sif
+75825726588 1.0K drwxrwxr-x  2 user bsc   4.0K Dec 11 11:22 scripts
+75825726589 1.0K drwxrwxr-x  2 user bsc   4.0K Dec 11 11:22 test_input
+[user@host workspace]$
 ```
 
-If you want to build again an **inmutable** image from this "./metaline-debug" directory, you can use the following command:
+Modify the command as follows:
 
+**Original Command:**
 ```bash
-make metaline-recompile-from-debug-sandbox
+singularity run --cleanenv metaline.sif \
+    metaline \
+    -r all \
+    -j 16 \
+    --configfile my_metaline_config.json
 ```
 
-Unfortunately, IDE debuggers with Singularity images don't work always, but the majority of the pipeline uses Python scripts, so you will still have **pdb (Python DeBugger)** in your toolbox to initialize an interactive debugger session.
+**Modified command:**
+```bash
+singularity run --cleanenv --bind ./meTAline:/meTAline metaline.sif \
+    metaline \
+    -r all \
+    -j 16 \
+    --configfile my_metaline_config.json
+```
 
-To set a breakpoint in one of the scripts, just call the **breakpoint** method:
+This allows you to test modifications to the pipeline without needing to rebuild or recompile the Singularity image, significantly speeding up development and debugging iterations.
+
+#### Debugging tools
+While IDE debuggers may not always work with Singularity images, most of the pipeline uses Python scripts, allowing you to utilize pdb (Python Debugger) for interactive debugging sessions.
+
+To set a breakpoint in a Python script, use the **breakpoint()** function:
 
 ```bash
+x = 10
+y = 'Hi'
+z = 'Hello'
+print(y)
+
 breakpoint()
+
+print(z)
 ```
+
+For further information about pdb refer to the [official Python 3 documentation](https://docs.python.org/3/library/pdb.html).
 
 ---
 
