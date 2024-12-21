@@ -1,4 +1,4 @@
-FROM python:3.10.14-bullseye
+FROM python:3.10.16-slim-bullseye
 
 LABEL base.image="python:3.10.14-bullseye"
 LABEL version="0.8.0-alpha"
@@ -11,9 +11,10 @@ LABEL maintainer="Daniel Majer (BSC), Diego Fuentes (BSC)"
 
 RUN apt-get update
 RUN apt-get install -y \
+        wget \
         curl \
+        libcurl4-openssl-dev \
         software-properties-common
-RUN apt-get clean
 
 # Add apt-fast repository to install apt-fast,
 # which will make the package installation faster and concurrent.
@@ -67,6 +68,7 @@ RUN cd /bin/htslib-1.16 && make install
 WORKDIR /bin
 RUN tar -vxjf samtools-1.13.tar.bz2
 RUN cd /bin/samtools-1.13 && make install
+RUN rm -rf samtools-1.13.tar.bz2
 
 # Install Hisat2 from source
 WORKDIR /bin
@@ -77,6 +79,8 @@ RUN cp -r  /bin/hisat2-2.2.1/hisat2-inspect* /bin/
 RUN cp -r  /bin/hisat2-2.2.1/hisat2-repeat* /bin/
 RUN cp -r  /bin/hisat2-2.2.1/hisat2-align* /bin/
 RUN cp -r  /bin/hisat2-2.2.1/hisat2 /bin/
+RUN rm -rf v2.2.1.tar.gz
+RUN rm -rf /bin/hisat2-2.2.1
 
 # Install Kraken2 from source
 WORKDIR /bin
@@ -91,6 +95,7 @@ RUN tar -zxvf v1.2.tar.gz
 RUN rm -rf v1.2.tar.gz
 RUN cd /bin && chmod +x KrakenTools-1.2/*
 RUN mv -t /bin KrakenTools-1.2/*.py
+RUN rm -rf KrakenTools-1.2
 
 # Install Bracken from source
 WORKDIR /bin
@@ -144,32 +149,7 @@ WORKDIR /bin
 RUN unzip bowtie2-2.3.5.1-linux-x86_64.zip
 RUN rm -rf bowtie2-2.3.5.1-linux-x86_64.zip
 RUN cp /bin/bowtie2-2.3.5.1-linux-x86_64/bowtie2* /usr/local/bin/
-
-# Download R from source, compile and set up dependencies. Tends to be a long process.
-# TODO: add the necessary dependencies for the Phylo_R rules.
-RUN DEBCONF_NOWARNINGS="yes" \
-    TZ="Europe/Madrid" \
-    DEBIAN_FRONTEND=noninteractive \
-    apt-fast upgrade -y \
-        build-essential \
-        libreadline-dev \
-        libicu-dev \
-        libxml2-dev \
-        gfortran \
-        libreadline6-dev \
-        libx11-dev \
-        libxt-dev \
-        libpng-dev \
-        libjpeg-dev \
-        libcairo2-dev \
-        xvfb \
-        libzstd-dev \
-        libcurl4-openssl-dev \
-        texinfo \
-        texlive \
-        texlive-fonts-extra \
-        screen \
-        libpcre2-dev
+RUN rm -rf /bin/bowtie2-2.3.5.1-linux-x86_64
 
 COPY ./meTAline /meTAline
 
@@ -190,6 +170,9 @@ RUN chmod 777 /bin/metaline-generate-config
 RUN echo '#!/bin/bash' >> /bin/metaline
 RUN echo 'snakemake -s /meTAline/meTAline.smk "$@"' >> /bin/metaline
 RUN chmod 777 /bin/metaline
+
+RUN rm -rf /var/lib/apt/lists/* /var/tmp/*
+RUN apt-get clean
 
 # Test that every dependency works
 RUN R --version
