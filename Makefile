@@ -6,7 +6,7 @@
 	docker singularity
 
 download-external-sources:
-	./scripts/download-external-sources.sh
+	./_scripts_singularity/download-external-sources.sh
 
 docker-image:
 	@docker image build -t metaline:latest .
@@ -19,6 +19,6 @@ docker-interactive:
 	@docker container -dit --name metaline metaline:latest
 
 singularity:
-	./scripts/get_singularity_def_file_from_dockerfile.sh
+	./_scripts_singularity/get_singularity_def_file_from_dockerfile.sh
 	sudo singularity build metaline.sif metaline-singularity.def
 
