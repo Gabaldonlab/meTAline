@@ -30,9 +30,7 @@ RUN DEBCONF_NOWARNINGS="yes" \
         git \
         g++ \
         make \
-        neovim \
         wget \
-        parallel \
         automake \
         zlib1g-dev \
         libbz2-dev \
