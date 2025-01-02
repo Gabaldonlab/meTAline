@@ -1,7 +1,7 @@
 [![DOI](https://zenodo.org/badge/431438117.svg)](https://zenodo.org/badge/latestdoi/431438117)
 *Paper in preparation.*
 
-# MeTAline: a snakemake pipeline for the study of metagenomes
+# MeTAline: a snakemake pipeline for the study of metagenomes <a id="metaline" />
 
 MeTAline, is a snakemake pipeline for metagenomics analysis. MeTAline, facilitates an efficient workflow to preprocess short reads metagenomics data: from read trimming and filtering, through host read subtraction to taxonomic classification using both k-mer and gene marker-based approaches, and functional profiling of the samples.
 
@@ -11,9 +11,41 @@ MeTAline, is a snakemake pipeline for metagenomics analysis. MeTAline, facilitat
 
 ---
 
-## Build and deploy Singularity image
+# Table of content
 
-### Install Singularity on Debian based Linux.
+- [Build and deploy Singularity image](#build-deploy-singularity-image)
+    - [Install Singularity on Debian based Linux.](#install-singularity)
+    - [Now do the image build](#singularity-image-build)
+- [Usage of Singularity image](#singularity-image-usage)
+- [Target rules](#target-rules)
+- [Running in HPC environment:](#running-in-hpc)
+- [Test sample and output directory example](#test-sample-and-output-directory-example)
+- [Benchmark](#benchmark)
+- [Setup Singularity image for debugging](#singularity-debugging)
+    - [Accessing the meTAline Source Code in the Image](#enter-into-image)
+    - [Overwriting Source Code with --bind](#overwrite-with-bind-flag)
+        - [Example](#example)
+    - [Debugging tools](#debugging-tools)
+- [4. Citations / Acknowledgments](#citations)
+    - [4.1. Snakemake](#snakemake)
+    - [4.2. Kraken2](#kraken2)
+    - [4.3. KrakenTools](#kraken-tools)
+    - [4.4. GNU Parallel](#gnu-parallel)
+    - [4.5. Trimmomatic](#trimmomatic)
+    - [4.6 Bracken](#bracken)
+    - [4.7 Krona](#krona)
+    - [4.8 HTSlib](#hts-lib)
+    - [4.9 Samtools](#samtools)
+    - [4.10 Hisat2](#hisat2)
+    - [4.11 MetaPhlAn](#metaphlan)
+    - [4.12 Humann](#humann)
+    - [4.13 FastQC](#fastqc)
+
+---
+
+## Build and deploy Singularity image <a id="build-deploy-singularity-image" />
+
+### Install Singularity on Debian based Linux. <a id="install-singularity" />
 **IMPORTANT: If you are going to run the pipeline in an HPC environment, skip this section!**
 
 *Note: you will always have to build the singularity images on your local machine, because it requires sudo and that you won't have in your remote hpc environment!*
@@ -38,7 +70,7 @@ The sanbdox builds after version 4.1.0. has some bugs (like stripped '%runscript
 These kind of problems can be found in the Singularity-CE and Apptainer versions too!
 E.G.: [runscript is being wiped out during build process #2561](https://github.com/apptainer/apptainer/issues/2561)
 
-### Now do the image build
+### Now do the image build <a id="singularity-image-build" />
 
 1. cd into the root directory of MeTAline (where the Dockerfile and the Makefile is)
 2. Run the following command (**REQUIRES "sudo" PERMISSIONS! + This might take several minutes!**):
@@ -56,7 +88,7 @@ rsync ./metaline.sif <cluster_user>@<cluster_transfer_address>:</path/to/your/de
 
 ---
 
-## Usage of Singularity image
+## Usage of Singularity image <a id="singularity-image-usage" />
 
 1. MeTAline uses Snakemake under the hood using .json configuration files, so first you will need to generate the said file with the following command example:
 
@@ -111,7 +143,7 @@ _More information regarding Snakemake and its commands can be found through Snak
 
 ---
 
-## Target rules
+## Target rules <a id="target-rules" />
 
 The target rules currently available to use are:
 
@@ -125,7 +157,7 @@ The target rules currently available to use are:
 
 ---
 
-## Running in HPC environment:
+## Running in HPC environment: <a id="running-in-hpc" />
 
 The MeTAline pipeline is intended to be used in HPC environment, because of its high RAM runtime requirement.
 You can find an example job definition file for the SLURM schedular (usually this is used in HPCs) in **./example_hpc_sbatch.job** file.
@@ -192,7 +224,7 @@ Other templates to run the pipeline for large-scale datasets (using array of gre
 
 ---
 
-## Test sample and output directory example:
+## Test sample and output directory example <a id="test-sample-and-output-directory-example" />
 
 Here, in the test folder (<https://github.com/Gabaldonlab/meTAline/tree/main/test_input>) we provide a test mock sample ( V300091236_L01_100_1.fq.gz , V300091236_L01_100_2.fq.gz) to try the pipeline.
 
@@ -278,7 +310,7 @@ metaline-test-output/
 
 ---
 
-## Benchmark
+## Benchmark <a id="benchmark" />
 
 At the end of the procedure you might want to know the resources that were used. A folder called "Benchmark" will be created containing for each of some of the rules the following parameters:
 
@@ -302,10 +334,10 @@ At the end of the procedure you might want to know the resources that were used.
 
 ---
 
-## Setup Singularity image for debugging
+## Setup Singularity image for debugging <a id="singularity-debugging" />
 To debug the **meTAline** pipeline efficiently, use the `--bind` flag in Singularity to mount your modified source code into the container without rebuilding the image.
 
-### Accessing the meTAline Source Code in the Image
+### Accessing the meTAline Source Code in the Image <a id="enter-into-image" />
 The **meTAline** source code inside the Singularity image (`metaline.sif`) is located at `/meTAline`.
 
 You can verify this with:
@@ -315,11 +347,11 @@ Helper_scripts_MN5  Illumina_MGI_adapters.fa  README.md  adapter_list_new.txt  c
 [user@host workspace]$
 ```
 
-### Overwriting Source Code with --bind
+### Overwriting Source Code with --bind <a id="overwrite-with-bind-flag" />
 To test modifications to the pipeline, replace the source code in the image with your local version during execution.
 Use the --bind flag to mount your local repository into the container, overwriting the existing directory.
 
-#### Example
+#### Example <a id="example" />
 For this example you have the current working directory inside the cloned meTAline repository, which looks like this:
 
 *Note that the meTAline snakemake directory, ./meTAline, is right next to the built ./metaline.sif file!*
@@ -369,7 +401,7 @@ singularity run --cleanenv --bind ./meTAline:/meTAline metaline.sif \
 
 This allows you to test modifications to the pipeline without needing to rebuild or recompile the Singularity image, significantly speeding up development and debugging iterations.
 
-#### Debugging tools
+### Debugging tools <a id="debugging-tools" />
 While IDE debuggers may not always work with Singularity images, most of the pipeline uses Python scripts, allowing you to utilize pdb (Python Debugger) for interactive debugging sessions.
 
 To set a breakpoint in a Python script, use the **breakpoint()** function:
@@ -389,17 +421,17 @@ For further information about pdb refer to the [official Python 3 documentation]
 
 ---
 
-## 4. Citations / Acknowledgments
+## 4. Citations / Acknowledgments <a id="citations" />
 
-### 4.1. Snakemake
+### 4.1. Snakemake <a id="snakemake" />
 
 [Sustainable data analysis with Snakemake](<(https://doi.org/10.12688/f1000research.29032.1)>)
 
-### 4.2. Kraken2
+### 4.2. Kraken2 <a id="kraken2" />
 
 (Improved metagenomic analysis with Kraken 2)[https://genomebiology.biomedcentral.com/articles/10.1186/s13059-019-1891-0]
 
-### 4.3. KrakenTools
+### 4.3. KrakenTools <a id="kraken-tools" />
 
 [KrakenTools - Github](https://github.com/jenniferlu717/KrakenTools)
 
@@ -413,42 +445,42 @@ Relevant paper for usage of KrakenTools:
 3. [KrakenUniq](https://github.com/fbreitwieser/krakenuniq)
 4. [Bracken](https://github.com/jenniferlu717/Bracken)
 
-### 4.4. GNU Parallel
+### 4.4. GNU Parallel <a id="gnu-parallel" />
 
 [Tange, O. (2021, August 22). GNU Parallel 20210822 ('Kabul'). Zenodo.](https://doi.org/10.5281/zenodo.5233953)
 
-### 4.5. Trimmomatic
+### 4.5. Trimmomatic <a id="trimmomatic" />
 
 [Trimmomatic: a flexible trimmer for Illumina sequence data](https://doi.org/10.1093/bioinformatics/btu170)
 
-### 4.6 Bracken
+### 4.6 Bracken <a id="bracken" />
 
 [Bracken: estimating species abundance in metagenomics data](https://peerj.com/articles/cs-104/)
 
-### 4.7 Krona
+### 4.7 Krona <a id="krona" />
 
 [Ondov BD, Bergman NH, and Phillippy AM. Interactive metagenomic visualization in a Web browser. BMC Bioinformatics. 2011 Sep 30; 12(1):385.](http://www.ncbi.nlm.nih.gov/pubmed/21961884)
 
-### 4.8 HTSlib
+### 4.8 HTSlib <a id="hts-lib" />
 
 [HTSlib: C library for reading/writing high-throughput sequencing data; James K Bonfield, John Marshall, Petr Danecek, Heng Li, Valeriu Ohan, Andrew Whitwham, Thomas Keane, Robert M Davies GigaScience, Volume 10, Issue 2, February 2021, giab007](https://doi.org/10.1093/gigascience/giab007)
 
-### 4.9 Samtools
+### 4.9 Samtools <a id="samtools" />
 
 [Twelve years of SAMtools and BCFtools; Petr Danecek, James K Bonfield, Jennifer Liddle, John Marshall, Valeriu Ohan, Martin O Pollard, Andrew Whitwham, Thomas Keane, Shane A McCarthy, Robert M Davies, Heng Li GigaScience, Volume 10, Issue 2, February 2021, giab008](https://doi.org/10.1093/gigascience/giab008)
 
-### 4.10 Hisat2
+### 4.10 Hisat2 <a id="hisat2" />
 
 [Graph-based genome alignment and genotyping with HISAT2 and HISAT-genotype](https://www.nature.com/articles/s41587-019-0201-4)
 
-### 4.11 MetaPhlAn
+### 4.11 MetaPhlAn <a id="metaphlan" />
 
 [Extending and improving metagenomic taxonomic profiling with uncharacterized species using MetaPhlAn 4.](https://doi.org/10.1038/s41587-023-01688-w)
 
-### 4.12 Humann
+### 4.12 Humann <a id="humann" />
 
 [Integrating taxonomic, functional, and strain-level profiling of diverse microbial communities with bioBakery 3](https://doi.org/10.7554/eLife.65088)
 
-### 4.13 FastQC
+### 4.13 FastQC <a id="fastqc" />
 
 [FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
