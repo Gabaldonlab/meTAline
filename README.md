@@ -1,5 +1,4 @@
 [![DOI](https://zenodo.org/badge/431438117.svg)](https://zenodo.org/badge/latestdoi/431438117)
-*Paper in preparation.*
 
 # MeTAline: a snakemake pipeline for the study of metagenomes <a id="metaline" />
 
