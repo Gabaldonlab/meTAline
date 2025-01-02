@@ -157,7 +157,7 @@ The target rules currently available to use are:
 
 ---
 
-## Running in HPC environment: <a id="running-in-hpc" />
+## Running in HPC environment <a id="running-in-hpc" />
 
 The MeTAline pipeline is intended to be used in HPC environment, because of its high RAM runtime requirement.
 You can find an example job definition file for the SLURM schedular (usually this is used in HPCs) in **./example_hpc_sbatch.job** file.
