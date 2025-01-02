@@ -28,8 +28,8 @@ Conducts both taxonomic and functional profiling using gene marker-based tools, 
 
 ---
 
-
 # New Features
+N/A
 
 ---
 
@@ -45,14 +45,21 @@ N/A
 
 # Build from source
 
+## Docker image:
+```bash
+make docker-image
+make docker-container
+```
 
----
-
-# Using pre-built Docker image
+## Singularity image
+```bash
+make singularity
+```
 
 ---
 
 # Using pre-built Singularity image
+[Singularity usage](https://github.com/Gabaldonlab/meTAline/blob/main/README.md#singularity-image-usage)
 
 ---
 
