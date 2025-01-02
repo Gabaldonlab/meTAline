@@ -8,6 +8,7 @@ MeTAline, is a snakemake pipeline for metagenomics analysis. MeTAline, facilitat
 <div align="center">
   <img src="https://github.com/user-attachments/assets/1c248a72-625f-480a-97ad-9022714a3dbc" width="60%" height="60%">
 </div>
+
 ---
 
 ## Build and deploy Singularity image
