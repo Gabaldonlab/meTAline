@@ -17,6 +17,7 @@ MeTAline, is a snakemake pipeline for metagenomics analysis. MeTAline, facilitat
     - [Install Singularity on Debian based Linux.](#install-singularity)
     - [Now do the image build](#singularity-image-build)
 - [Usage of Singularity image](#singularity-image-usage)
+- [Build / Pull Docker](#docker-build-pull)
 - [Target rules](#target-rules)
 - [Running in HPC environment:](#running-in-hpc)
 - [Test sample and output directory example](#test-sample-and-output-directory-example)
@@ -141,6 +142,21 @@ _The -n option is for a dry run, avoding the execution of any job yet. -j is the
 
 _More information regarding Snakemake and its commands can be found through Snakemake [documentation](https://snakemake.readthedocs.io/en/stable/index.html)._
 
+---
+
+## Build / Pull Docker <a id="docker-build-pull" />
+
+BUILD:
+```bash
+make docker-image
+make docker-container
+```
+
+PULL:
+```bash
+docker pull cgenomics/metaline:latest
+docker container run -dit --name metaline cgenomics/metaline:latest
+```
 ---
 
 ## Target rules <a id="target-rules" />
