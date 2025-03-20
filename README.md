@@ -20,7 +20,7 @@ MeTAline, is a snakemake pipeline for metagenomics analysis. MeTAline, facilitat
 #### [Build Singularity image](https://github.com/Gabaldonlab/meTAline/wiki/Build-meTAline-singularity-image)
 #### [Run with Singularity](https://github.com/Gabaldonlab/meTAline/wiki/Run-meTAline-with-singularity)
 
-## meTaline with Docker
+## meTAline with Docker
 #### [Build Docker image](https://github.com/Gabaldonlab/meTAline/wiki/Build-meTAline-docker-image)
 #### [Run with Docker](https://github.com/Gabaldonlab/meTAline/wiki/Run-meTAline-with-docker)
 
