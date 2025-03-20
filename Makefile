@@ -18,3 +18,5 @@ singularity:
 	./_scripts_singularity/get_singularity_def_file_from_dockerfile.sh
 	sudo singularity build metaline.sif metaline-singularity.def
 
+download-test-datasets:
+	./_scripts/download_test_datasets

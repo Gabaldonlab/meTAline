@@ -1,0 +1,46 @@
+#!/bin/sh
+
+set -e
+METAPHLAN_DB_PATH=./test_input/test_datasets/metaphlan_dbs
+OTHER_DATASETS_DIR=./test_input/test_datasets/
+
+mkdir -p $METAPHLAN_DB_PATH
+mkdir -p $OTHER_DATASETS_DIR
+
+cat <<EOF | sed '/^#/d; /^$/d' | xargs -I {} -n 1 -P 5 sh -c 'echo "Downloading: {}" && wget -c --no-check-certificate --progress=bar:force:noscroll -P "$0" "{}"' "$METAPHLAN_DB_PATH"
+# [--metaphlan_Index]
+# [Metaphlan databases](http://cmprod1.cibio.unitn.it/biobakery4/metaphlan_databases/)
+
+# [mpa_vJun23_CHOCOPhlAnSGB_202307.md5]
+http://cmprod1.cibio.unitn.it/biobakery4/metaphlan_databases/mpa_vJun23_CHOCOPhlAnSGB_202307.md5
+
+# [mpa_vJun23_CHOCOPhlAnSGB_202307.tar]
+http://cmprod1.cibio.unitn.it/biobakery4/metaphlan_databases/mpa_vJun23_CHOCOPhlAnSGB_202307.tar
+
+# [mpa_vJun23_CHOCOPhlAnSGB_202307_marker_info.txt.bz2]
+http://cmprod1.cibio.unitn.it/biobakery4/metaphlan_databases/mpa_vJun23_CHOCOPhlAnSGB_202307_marker_info.txt.bz2
+
+# [mpa_vJun23_CHOCOPhlAnSGB_202307_species.txt.bz2]
+http://cmprod1.cibio.unitn.it/biobakery4/metaphlan_databases/mpa_vJun23_CHOCOPhlAnSGB_202307_species.txt.bz2
+EOF
+
+cat <<EOF | sed '/^#/d; /^$/d' | xargs -I {} -n 1 -P 5 sh -c 'echo "Downloading: {}" && wget -c --no-check-certificate --progress=bar:force:noscroll -P "$0" "{}"' "$OTHER_DATASETS_DIR"
+# [--reference-genome Example] of human index corresponding to version GRCh38
+https://genome-idx.s3.amazonaws.com/hisat/grch38_genome.tar.gz
+# ================
+
+# [--krakendb] Different databases are provided for kraken2, you can use Minikraken v2 for a fast trial
+# [Kraken databases](https://benlangmead.github.io/aws-indexes/k2)
+https://genome-idx.s3.amazonaws.com/kraken/minikraken2_v2_8GB_201904.tgz
+# ================
+
+# [--protein_db](https://github.com/biobakery/humann?tab=readme-ov-file#download-a-translated-search-database)
+# [uniref90_ec_filtered_diamond]
+http://huttenhower.sph.harvard.edu/humann_data/uniprot/uniref_ec_filtered/uniref90_annotated_v4_alpha_ec_filtered.tar.gz
+# ================
+
+# [--n_db]
+# [Humann chocoplan](https://github.com/biobakery/humann?tab=readme-ov-file#download-the-chocophlan-database)
+# [EC_FILTERED]
+http://huttenhower.sph.harvard.edu/humann_data/chocophlan/chocophlan_EC_FILTERED.v4_alpha.tar.gz
+EOF
