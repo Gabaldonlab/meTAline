@@ -26,22 +26,22 @@ https://github.com/Gabaldonlab/meTAline/wiki/
 
 ## meTAline with Singularity
   ### Build Singularity image
-    - [Install Singularity on Debian based Linux. ](https://github.com/Gabaldonlab/meTAline/wiki/Build-meTAline-singularity-image)
-    - [Execute the image build and setup in cluster ](https://github.com/Gabaldonlab/meTAline/wiki/Build-meTAline-singularity-image)
+  - [Install Singularity on Debian based Linux. ](https://github.com/Gabaldonlab/meTAline/wiki/Build-meTAline-singularity-image)
+  - [Execute the image build and setup in cluster ](https://github.com/Gabaldonlab/meTAline/wiki/Build-meTAline-singularity-image)
 
   ### Run with Singularity
-    - [Creation of the config file](https://github.com/Gabaldonlab/meTAline/wiki/Run-meTAline-with-singularity)
-    - [Run of the pipeline, indicating the config file with all the details](https://github.com/Gabaldonlab/meTAline/wiki/Run-meTAline-with-singularity)
+  - [Creation of the config file](https://github.com/Gabaldonlab/meTAline/wiki/Run-meTAline-with-singularity)
+  - [Run of the pipeline, indicating the config file with all the details](https://github.com/Gabaldonlab/meTAline/wiki/Run-meTAline-with-singularity)
 
 ## meTaline with Docker
   ### Build Docker image
-    - [Install Docker.](https://github.com/Gabaldonlab/meTAline/wiki/Build-meTAline-docker-image)
-    - [Get the Docker image](https://github.com/Gabaldonlab/meTAline/wiki/Build-meTAline-docker-image)
+  - [Install Docker.](https://github.com/Gabaldonlab/meTAline/wiki/Build-meTAline-docker-image)
+  - [Get the Docker image](https://github.com/Gabaldonlab/meTAline/wiki/Build-meTAline-docker-image)
 
   ### Run with Docker
-    - [Base Docker command](https://github.com/Gabaldonlab/meTAline/wiki/Run-meTAline-with-docker)
-    - [Creation of the config file](https://github.com/Gabaldonlab/meTAline/wiki/Run-meTAline-with-docker)
-    - [Run of the pipeline, indicating the config file with all the details](https://github.com/Gabaldonlab/meTAline/wiki/Run-meTAline-with-docker)
+  - [Base Docker command](https://github.com/Gabaldonlab/meTAline/wiki/Run-meTAline-with-docker)
+  - [Creation of the config file](https://github.com/Gabaldonlab/meTAline/wiki/Run-meTAline-with-docker)
+  - [Run of the pipeline, indicating the config file with all the details](https://github.com/Gabaldonlab/meTAline/wiki/Run-meTAline-with-docker)
 
 ## Run meTAline in HPC environment
 - [Running in HPC environment ](https://github.com/Gabaldonlab/meTAline/wiki/Run-meTAline-in-HPC-environment)
