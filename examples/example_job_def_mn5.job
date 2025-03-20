@@ -1,0 +1,35 @@
+#!/bin/bash
+
+#SBATCH --job-name=metaline_singu_testy # Job’s name (to trace in)
+#SBATCH --output=/gpfs/projects/bsc40/current/dmajer/metaline-testy-output/err_out/jobnm_%j.out # Output file, where
+#SBATCH --error=/gpfs/projects/bsc40/current/dmajer/metaline-testy-output/err_out/jobnm_%j.err # File where the error is written
+
+#SBATCH --ntasks=1 # The number of parallel tasks
+#SBATCH --cpus-per-task=24 # Number of CPUs per run task
+#SBATCH --tasks-per-node=1 # The number of allocated task/node
+
+#SBATCH --qos=gp_bscls # The queue for the job
+#SBATCH --account=bsc40
+#SBATCH --time=24:00:00 # The time you request for the job
+#SBATCH --constraint=highmem # To run in highmem nodes
+
+module load singularity
+
+singularity run --cleanenv metaline.sif metaline-generate-config \
+    --configFile corachan_kraken2_standard.json \
+    --extension fq.gz \
+    --basedir /gpfs/projects/bsc40/current/dmajer/metaline-testy-output \
+    --reads-directory /gpfs/projects/bsc40/current/okhannous/Clinical_cases/Corachan/raw_data \
+    --reference-genome /gpfs/projects/bsc40/current/asukhorukova/index/T2T/T2T \
+    --krakendb /gpfs/projects/bsc40/project/pipelines/WGS/KRAKEN2_DB/Broad_gut_microbiome_db \
+    --sample-barcode corachan \
+    --fastqs PONSJIG_165.E5-NEB-UDI \
+    --metaphlan_db /gpfs/projects/bsc40/current/okhannous/Metaphlan4/db \
+    --metaphlan_Index mpa_vJun23_CHOCOPhlAnSGB_202307 \
+    --n_db /gpfs/projects/bsc40/project/pipelines/WGS/metaPhlan/metaPhla-db/chocophlan \
+    --protein_db /gpfs/projects/bsc40/project/pipelines/WGS/metaPhlan/metaPhla-db/uniref
+
+singularity run --cleanenv metaline.sif metaline \
+    -r all \
+    -j 16 \
+    --configfile corachan_kraken2_standard.json
