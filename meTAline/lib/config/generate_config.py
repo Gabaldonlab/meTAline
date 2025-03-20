@@ -241,7 +241,7 @@ class CreateConfigurationFile(object):
 
             if not os.path.exists(args.reference_genome):
                 if not re.search('index', args.reference_genome):
-                    print("A reference genome index (including index as suffix, ie:'HUMAN_index') has been not provided or it has not been found in "+args.reference_genome+". Enabling the taxonomic assignment of a environmental sample")
+                    print("A reference genome index (including index as suffix, ie:'HUMAN_index') has been not provided or it has not been found in "+args.reference_genome+". Enabling the taxonomic assignment of a environmental sample.")
                     args.reference_genome = None
 
         if args.krakendb:
