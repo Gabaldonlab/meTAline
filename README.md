@@ -14,6 +14,8 @@ MeTAline, is a snakemake pipeline for metagenomics analysis. MeTAline, facilitat
 ### [About](https://github.com/Gabaldonlab/meTAline/wiki/MeTAline)
 ### [Quick Start & Try Out](https://github.com/Gabaldonlab/meTAline/wiki/Quick-Start-&-Try‐Out)
 
+---
+
 ### meTAline with Singularity
 #### [Build Singularity image](https://github.com/Gabaldonlab/meTAline/wiki/Build-meTAline-singularity-image)
 #### [Run with Singularity](https://github.com/Gabaldonlab/meTAline/wiki/Run-meTAline-with-singularity)
@@ -24,6 +26,8 @@ MeTAline, is a snakemake pipeline for metagenomics analysis. MeTAline, facilitat
 
 ## meTAline with HPC
 #### [Running in HPC environment ](https://github.com/Gabaldonlab/meTAline/wiki/Run-meTAline-in-HPC-environment)
+
+---
 
 ### [Available target rules](https://github.com/Gabaldonlab/meTAline/wiki/Available-target-rules)
 ### [Benchmark outputs](https://github.com/Gabaldonlab/meTAline/wiki/Benchmark-outputs)
