@@ -12,13 +12,7 @@ MeTAline, is a snakemake pipeline for metagenomics analysis. MeTAline, facilitat
 
 # Table of content
 
-- [Build and deploy Singularity image](#build-deploy-singularity-image)
-    - [Install Singularity on Debian based Linux.](#install-singularity)
-    - [Now do the image build](#singularity-image-build)
-- [Usage of Singularity image](#singularity-image-usage)
-- [Build / Pull Docker](#docker-build-pull)
-- [Target rules](#target-rules)
-- [Running in HPC environment:](#running-in-hpc)
+- [Running in HPC environment](#running-in-hpc)
 - [Test sample and output directory example](#test-sample-and-output-directory-example)
 - [Benchmark](#benchmark)
 - [Setup Singularity image for debugging](#singularity-debugging)
@@ -43,132 +37,6 @@ MeTAline, is a snakemake pipeline for metagenomics analysis. MeTAline, facilitat
 
 ---
 
-## Build and deploy Singularity image <a id="build-deploy-singularity-image" />
-
-### Install Singularity on Debian based Linux. <a id="install-singularity" />
-**IMPORTANT: If you are going to run the pipeline in an HPC environment, skip this section!**
-
-*Note: you will always have to build the singularity images on your local machine, because it requires sudo and that you won't have in your remote hpc environment!*
-
-To be able to build the Singularity image of MeTAline, you will need to install Singularity first:
-
-1. Download from [HERE](https://github.com/sylabs/singularity/releases/tag/v4.1.5) the corresponding installation package (_.deb or _.rpm) to your operating system. (E.G.: Ubuntu 24.04 needs the "singularity-ce_4.1.5-noble_amd64.deb" file).
-2. Install it from the downloaded package. Example command for the above mentioned version:
-
-```bash
-sudo apt install ./singularity-ce_4.1.5-noble_amd64.deb
-```
-
-3. Test if the installation is OK.
-
-```bash
-singularity --version
-```
-
-**NOTE:**
-The sanbdox builds after version 4.1.0. has some bugs (like stripped '%runscript' section, not found '/bin/sh' symbolic links, etc..).
-These kind of problems can be found in the Singularity-CE and Apptainer versions too!
-E.G.: [runscript is being wiped out during build process #2561](https://github.com/apptainer/apptainer/issues/2561)
-
-### Now do the image build <a id="singularity-image-build" />
-
-1. cd into the root directory of MeTAline (where the Dockerfile and the Makefile is)
-2. Run the following command (**REQUIRES "sudo" PERMISSIONS! + This might take several minutes!**):
-   **NOTE: This will install a SingularityCE provided tool with pip3 (spython) to translate the Dockerfile to Singularity!**
-
-```bash
-make singularity
-```
-
-3. Copy the output **metaline.sif** file to your cluster with the **rsync** command. Example:
-
-```bash
-rsync ./metaline.sif <cluster_user>@<cluster_transfer_address>:</path/to/your/destination>
-```
-
----
-
-## Usage of Singularity image <a id="singularity-image-usage" />
-
-1. MeTAline uses Snakemake under the hood using .json configuration files, so first you will need to generate the said file with the following command example:
-
-```bash
-singularity run --cleanenv metaline.sif metaline-generate-config \
-    --configFile my_metaline_config.json \
-    --extension fq.gz \
-    --basedir </path/to/your/metaline/output/directory> \
-    --reads-directory </path/to/your/directory with the raw reads data> \
-    --reference-genome </path/to/your/directory with the reference genome data> \
-    --krakendb </path/to/your/directory with the kraken database> \
-    --sample-barcode my_metaline_job \
-    --fastqs <the prefix of your fastq files> \
-    --metaphlan_db </path/to/the/metaphlan database> \
-    --metaphlan_Index <Index of the metaphlan4 database.> \
-    --n_db <Humann database to do the nucleotide search (based on already built annotations.)> \
-    --protein_db <Humann database to do the translation search (by deafult this is by-passed).>
-
-#If you run the pipeline in marenostrum5, remember to specify the shared sif image: ~/project/pipelines/meTAline/meTAline-0.8.0-alpha/metaline.sif
-
-```
-
-For further information about the flags, run:
-```bash
-singularity run --cleanenv metaline.sif metaline-generate-config -h
-```
-
-2. Run the pipeline:
-
-```bash
-singularity run --cleanenv metaline.sif \
-    metaline \
-    -r all \
-    -j 16 \
-    --configfile my_metaline_config.json
-```
-
-**OR test it with dry run only!**
-
-```bash
-singularity run --cleanenv metaline.sif \
-    metaline \
-    -r all \
-    -j 16 \
-    --configfile my_metaline_config.json \
-    -n
-```
-
-_The -n option is for a dry run, avoding the execution of any job yet. -j is the number of threads provided to the pipeline. In this specific example, we selected the rule all using the parameter -r. You can use different configs by adding the --configfile parameter but it requires that you comment the configfile argument in the main meTAline.smk._
-
-_More information regarding Snakemake and its commands can be found through Snakemake [documentation](https://snakemake.readthedocs.io/en/stable/index.html)._
-
----
-
-## Build / Pull Docker <a id="docker-build-pull" />
-
-BUILD:
-```bash
-make docker-image
-make docker-container
-```
-
-PULL:
-```bash
-docker pull cgenomics/metaline:latest
-docker container run -dit --name metaline cgenomics/metaline:latest
-```
----
-
-## Target rules <a id="target-rules" />
-
-The target rules currently available to use are:
-
--   rule **all**: From trimming and filtering of the reads, to host removal (if provided the indexed host genome to make an alignment of the reads) to taxonomy assignment based on both a k-mer and gene marker approach. Functional prediction based on Humann. It also includes other functionalities such as representation of the taxonomy assignment by krona, extraction of desired reads, etc.
-
-- rule **trimming**: Trimming of the reads, quality assessment and concatenation (useful when having samples that are sequenced in different sequencing lanes).
-- rule **host_depletion**: This rule is to take trimmed reads and align them to an indexed reference genome, for host substraction.
-- rule **kmer_taxonomy**: This rule is used if you already have the concatenated/unmapped reads and you want to perform the taxonomic assignment based on k-mers, without running the initial steps of the pipeline.
-- rule **RAnalysis**: This rule is used to make a basic R analysis and plotting alpha diversity.
-- rule **BioBakery**: This rule is to perform the taxonomy and functional profiling using Biobakery tools based on gene markers: Metaphlan4 and Humann.
 
 ---
 
@@ -176,6 +44,11 @@ The target rules currently available to use are:
 
 The MeTAline pipeline is intended to be used in HPC environment, because of its high RAM runtime requirement.
 You can find an example job definition file for the SLURM schedular (usually this is used in HPCs) in **./example_hpc_sbatch.job** file.
+
+In the following example SLURM .job file we use some Mare Nostrum 5 (Barcelon Supercomputing Center) specific additional configurations that you can ignore.
+Also, the base commands are through the generated Singularity image, which first you need to build on your local machine (because it requires "sudo" permissions, which in most cases not available in HPC machines), then you can copy that built image into the remote HPC machine.
+
+For further information about the build and setup process, visit our Wiki on [Build meTAline singularity image](https://github.com/Gabaldonlab/meTAline/wiki/Build-meTAline-singularity-image)
 
 **EXAMPLE'S CONTENT**
 
@@ -241,11 +114,37 @@ Other templates to run the pipeline for large-scale datasets (using array of gre
 
 ## Test sample and output directory example <a id="test-sample-and-output-directory-example" />
 
-Here, in the test folder (<https://github.com/Gabaldonlab/meTAline/tree/main/test_input>) we provide a test mock sample ( V300091236_L01_100_1.fq.gz , V300091236_L01_100_2.fq.gz) to try the pipeline.
+To try the pipeline we provide test mock samples and a selection of external datasets to download:
 
-The expected output to obtain running all the rules:
+`test_input` directory:
+```sh
+tree -L 1 ./test_input/
+./test_input/
+├── explanation.txt
+├── V300091236_L01_100_1.fq.gz
+└── V300091236_L01_100_2.fq.gz
+```
 
-```bash
+Download the `test_datasets` directory's datasets by running the following command:
+```sh
+./scripts/download_test_datasets
+```
+
+```sh
+tree -L 1 ./test_data
+test_data
+├── chocophlan.v4_alpha.tar.gz
+├── grch38_genome.tar.gz
+├── minikraken2_v2_8GB_201904.tgz
+├── mpa_vJun23_CHOCOPhlAnSGB_202307_marker_info.txt.bz2
+├── mpa_vJun23_CHOCOPhlAnSGB_202307.md5
+├── mpa_vJun23_CHOCOPhlAnSGB_202307_species.txt.bz2
+├── mpa_vJun23_CHOCOPhlAnSGB_202307.tar
+└── uniref90_annotated_v4_alpha_ec_filtered.tar.gz
+```
+
+An output sample of the pipeline, after running all the rules:
+```sh
 metaline-test-output/
 ├── BAM
 │   ├── mock.hisat2.bam
