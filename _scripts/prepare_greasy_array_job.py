@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from pathlib import Path
 from argparse import ArgumentParser
 import shutil
+from subprocess import getstatusoutput
 import sys
+from typing import TypedDict
+
 
 @dataclass
 class PrepareGreasyArrayJobArgs:
@@ -14,8 +18,13 @@ class PrepareGreasyArrayJobArgs:
     reference_genome: str
     krakendb: str
     reads_directory: str
+    fastq_extension: str
+    metaphlan_db: str
+    metaphlan_index: str
+    n_db: str
+    protein_db: str
+    max_workers: int
 
-    ...
     @classmethod
     def get_arguments(cls, args=sys.argv[1:]) -> PrepareGreasyArrayJobArgs:
         parser = ArgumentParser(
@@ -25,7 +34,7 @@ class PrepareGreasyArrayJobArgs:
             "--basedir",
             type=str,
             required=True,
-            help="Base directory in which the pipeline will create output"
+            help="Base directory in which the pipeline will create output",
         )
         parser.add_argument(
             "--generate_config_cmd",
@@ -54,7 +63,45 @@ class PrepareGreasyArrayJobArgs:
             default="singularity run --cleanenv ./metaline.sif metaline-generate-config",
             help="Path to the directory containing the reads.",
         )
+        parser.add_argument(
+            "--fastq_extension",
+            type=str,
+            default="fq.gz",
+            help="Extension of the fastq files.",
+        )
+
+        parser.add_argument(
+            "--metaphlan_db",
+            type=str,
+            required=True,
+            help="Path to the Metaphlan database directory.",
+        )
+        parser.add_argument(
+            "--metaphlan_index",
+            type=str,
+            required=True,
+            help="Name of the index in the given Metaphlan database directory.",
+        )
+        parser.add_argument(
+            "--n-db",
+            type=str,
+            required=True,
+            help="Path to the database to do the nucleotide search. (*.tar.gz)",
+        )
+        parser.add_argument(
+            "--protein-db",
+            type=str,
+            required=True,
+            help="Path to the database to do the translation search.",
+        )
+        parser.add_argument(
+            "--max_workers",
+            type=int,
+            default=4,
+            help="Number of max. workers to use.",
+        )
         return PrepareGreasyArrayJobArgs(**vars(parser.parse_args(args)))
+
 
 def extract_reads_prefixes(reads_directory: Path | str) -> list[str]:
     reads_prefixes: list[str] = []
@@ -65,9 +112,60 @@ def extract_reads_prefixes(reads_directory: Path | str) -> list[str]:
     # Process each file
     for file_path in files:
         file_name = file_path.name  # Extract filename
-        file_prefix = file_name.rsplit(".", 2)[0].rsplit("1", 1)[0].rstrip("._-")  # Extract prefix
+        file_prefix = (
+            file_name.rsplit(".", 2)[0].rsplit("1", 1)[0].rstrip("._-")
+        )  # Extract prefix
         reads_prefixes.append(file_prefix)
     return reads_prefixes
+
+class PreparedConfigGenCmd(TypedDict):
+    config_output_file: Path
+    config_gen_cmd: str
+
+
+def prepare_config_generation_commands(
+    args: PrepareGreasyArrayJobArgs,
+    reads_prefixes: list[str],
+    config_file_output_dir: Path,
+) -> list[PreparedConfigGenCmd]:
+    config_gen_cmds: list[PreparedConfigGenCmd] = []
+    for prefix in reads_prefixes:
+        cmd: str = (
+            f"{args.generate_config_cmd} "
+            f"--configFile config.{prefix}.json"
+            f"--extension {args.fastq_extension}"
+            f"--basedir {args.basedir}"
+            f"--reads-directory {args.reads_directory}"
+            f"--reference-genome {args.reference_genome}"
+            f"--krakendb {args.krakendb}"
+            f"--sample-barcode {prefix}"
+            f"--fastqs {prefix}"
+            f"--metaphlan_db {args.metaphlan_db}"
+            f"--metaphlan_Index {args.metaphlan_index}"
+            f"--n_db {args.n_db}"
+            f"--protein_db {args.protein_db}"
+        )
+        config_output_file = config_file_output_dir / f"config.{prefix}.json"
+        config_gen_cmds.append(
+            {
+                "config_output_file": config_output_file,
+                "config_gen_cmd": cmd,
+            }
+        )
+    return config_gen_cmds
+
+
+def _exec_shell_cmd(cmd: str) -> str:
+    exit_code, output = getstatusoutput(cmd)
+    if exit_code != 0:
+        raise ChildProcessError(output)
+    return output
+
+
+def _run_shell_cmds_parallel(cmds: list[str], max_workers: int = 4) -> tuple[str, ...]:
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        results = tuple(executor.map(_exec_shell_cmd, cmds))
+    return results
 
 
 def main() -> int:
@@ -77,10 +175,19 @@ def main() -> int:
     shutil.rmtree(str(config_file_output_dir), ignore_errors=True)
     config_file_output_dir.mkdir(parents=True, exist_ok=True)
     reads_prefixes = extract_reads_prefixes(args.reads_directory)
+    gen_config_cmds = prepare_config_generation_commands(
+        args,
+        reads_prefixes,
+        config_file_output_dir,
+    )
+    cmd_entries = [entry["config_gen_cmd"] for entry in gen_config_cmds]
+    _ = _run_shell_cmds_parallel(cmd_entries, args.max_workers)
 
+    generated_config_files = [entry["config_output_file"] for entry in gen_config_cmds]
     # 2. make job list and greasy list (./_scripts/make_joblist_and_greasy_list.sh)
     # 3. [OPTIONAL] submit directly the .job file
     return 0
+
 
 if __name__ == "__main__":
     raise SystemExit(main())

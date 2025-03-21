@@ -33,8 +33,6 @@ do
 
     foo=${fo%[[:punct:]]*1.f*q.gz}
 
-    echo $foo
-done
     #Running the config creation python script. Leaving default taxid, output directories, log directory, trimmomatic parameters and using the same number of cores for all tools
 
     singularity run --cleanenv /gpfs/projects/bsc40/project/pipelines/meTAline/meTAline-0.8.0-alpha/metaline.sif python3 /meTAline/lib/config/generate_config.py \
