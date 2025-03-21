@@ -27,6 +27,10 @@ MeTAline, is a snakemake pipeline for metagenomics analysis. MeTAline, facilitat
 ## meTAline with HPC
 #### [Running in HPC environment ](https://github.com/Gabaldonlab/meTAline/wiki/Run-meTAline-in-HPC-environment)
 
+## parallelize meTAline
+#### [In HPC cluster](https://github.com/Gabaldonlab/meTAline/wiki/Parallelize-meTAline-in-HPC-environment)
+#### [On local machine](https://github.com/Gabaldonlab/meTAline/wiki/Parallelize-meTAline-on-local-machine)
+
 ---
 
 ### [Available target rules](https://github.com/Gabaldonlab/meTAline/wiki/Available-target-rules)
