@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import shutil
+import sys
+from argparse import ArgumentParser
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from pathlib import Path
-from argparse import ArgumentParser
-import shutil
 from subprocess import getstatusoutput
-import sys
 from typing import TypedDict
 
 
@@ -244,7 +244,7 @@ def write_slurm_job_file_template(
     if joblist_num == 1:
         array_range = "1"
     template = f"""
-    #!/bin/bash
+#!/bin/bash
 
 #SBATCH --job-name=metaline
 #SBATCH --qos=gp_bscls
