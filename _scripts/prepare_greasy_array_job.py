@@ -15,6 +15,8 @@ from typing import TypedDict
 class PrepareGreasyArrayJobArgs:
     basedir: str
     generate_config_cmd: str
+    metaline_cmd: str
+    greasy_cmd: str
     reference_genome: str
     krakendb: str
     reads_directory: str
@@ -24,6 +26,7 @@ class PrepareGreasyArrayJobArgs:
     n_db: str
     protein_db: str
     max_workers: int
+    joblist_size: int
 
     @classmethod
     def get_arguments(cls, args=sys.argv[1:]) -> PrepareGreasyArrayJobArgs:
@@ -41,6 +44,18 @@ class PrepareGreasyArrayJobArgs:
             type=str,
             default="singularity run --cleanenv ./metaline.sif metaline-generate-config",
             help="The external command to generate the config files.",
+        )
+        parser.add_argument(
+            "--metaline_cmd",
+            type=str,
+            default="singularity run --cleanenv ./metaline.sif metaline",
+            help="The external command to run metaline with the config files.",
+        )
+        parser.add_argument(
+            "--greasy_cmd",
+            type=str,
+            default="module load greasy && greasy/2.2.4.1",
+            help="The external command to run greasy with the job files.",
         )
         parser.add_argument(
             "--reference_genome",
@@ -100,7 +115,22 @@ class PrepareGreasyArrayJobArgs:
             default=4,
             help="Number of max. workers to use.",
         )
+        parser.add_argument(
+            "--joblist_size",
+            type=int,
+            default=2,
+            help=(
+                "Max. number of commands to be contained in"
+                " a single joblist file. (Greasy array will "
+                "contain multiple of these files to be launched parallel.)"
+            ),
+        )
         return PrepareGreasyArrayJobArgs(**vars(parser.parse_args(args)))
+
+
+class PreparedConfigGenCmd(TypedDict):
+    config_output_file: Path
+    config_gen_cmd: str
 
 
 def extract_reads_prefixes(reads_directory: Path | str) -> list[str]:
@@ -117,10 +147,6 @@ def extract_reads_prefixes(reads_directory: Path | str) -> list[str]:
         )  # Extract prefix
         reads_prefixes.append(file_prefix)
     return reads_prefixes
-
-class PreparedConfigGenCmd(TypedDict):
-    config_output_file: Path
-    config_gen_cmd: str
 
 
 def prepare_config_generation_commands(
@@ -168,10 +194,56 @@ def _run_shell_cmds_parallel(cmds: list[str], max_workers: int = 4) -> tuple[str
     return results
 
 
+def write_joblist_files(
+    metaline_cmds_splits: list[list[str]], basedir: Path
+) -> list[Path]:
+    joblist_output_files: list[Path] = []
+    for idx, cmds_split in enumerate(metaline_cmds_splits):
+        joblist_output_file = basedir / f"joblist{idx}.txt"
+        with open(joblist_output_file, "w", encoding="UTF-8") as file:
+            file.writelines(cmds_split)
+        joblist_output_files.append(joblist_output_file)
+    return joblist_output_files
+
+
+def write_greasy_list(
+    basedir: Path, joblist_output_files: list[Path], greasy_cmd: str
+) -> Path:
+    output_greasy_list_file = basedir / "list_greasy.txt"
+    greasy_list_lines = [f"{greasy_cmd} {joblist}" for joblist in joblist_output_files]
+    with open(output_greasy_list_file, "w", encoding="UTF-8") as file:
+        file.writelines(greasy_list_lines)
+    return output_greasy_list_file
+
+
+def slurm_job_file_template() -> str:
+    return """
+    #!/bin/bash
+
+#SBATCH --job-name=metaline_samples
+#SBATCH --qos=gp_bscls
+#SBATCH --account=bsc40
+#SBATCH --output=/gpfs/projects/bsc40/current/okhannous/MeTAline_paper/BMC_version/raw_data/OUT/err_out/jobnm_%j.out # Output file, where
+#SBATCH --error=/gpfs/projects/bsc40/current/okhannous/MeTAline_paper/BMC_version/raw_data/OUT/err_out/jobnm_%j.err # File where the error is written
+
+#SBATCH --array=1-2 # The number of jobs in the array
+#SBATCH --ntasks=2 # The number of parallel tasks
+#SBATCH --tasks-per-node=2
+#SBATCH --cpus-per-task=24 # Number of CPUs per run task
+#SBATCH --constraint=highmem
+#SBATCH --time=24:00:00
+
+module load greasy
+# Print the task id
+$(sed -n "${SLURM_ARRAY_TASK_ID}p" /gpfs/projects/bsc40/current/okhannous/MeTAline_paper/BMC_version/raw_data/OUT/list_greasy.txt)
+
+"""
+
+
 def main() -> int:
     args = PrepareGreasyArrayJobArgs.get_arguments()
-    # 1. make config files (./_scripts/make_configs.sh)
-    config_file_output_dir = Path(args.basedir) / "configs"
+    basedir = Path(args.basedir)
+    config_file_output_dir = basedir / "configs"
     shutil.rmtree(str(config_file_output_dir), ignore_errors=True)
     config_file_output_dir.mkdir(parents=True, exist_ok=True)
     reads_prefixes = extract_reads_prefixes(args.reads_directory)
@@ -184,8 +256,21 @@ def main() -> int:
     _ = _run_shell_cmds_parallel(cmd_entries, args.max_workers)
 
     generated_config_files = [entry["config_output_file"] for entry in gen_config_cmds]
-    # 2. make job list and greasy list (./_scripts/make_joblist_and_greasy_list.sh)
-    # 3. [OPTIONAL] submit directly the .job file
+    metaline_cmds = [f"{args.metaline_cmd} {file}" for file in generated_config_files]
+    metaline_cmds_splits = [
+        metaline_cmds[i : i + args.joblist_size]
+        for i in range(0, len(metaline_cmds), args.joblist_size)
+    ]
+    joblist_output_files = write_joblist_files(
+        basedir=basedir,
+        metaline_cmds_splits=metaline_cmds_splits,
+    )
+    # Write greasy list
+    greasy_list = write_greasy_list(
+        basedir=basedir,
+        greasy_cmd=args.greasy_cmd,
+        joblist_output_files=joblist_output_files,
+    )
     return 0
 
 
