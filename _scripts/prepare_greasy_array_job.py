@@ -133,6 +133,12 @@ class PreparedConfigGenCmd(TypedDict):
     config_gen_cmd: str
 
 
+class WriteJoblistFileArgs(TypedDict):
+    idx: int
+    basedir: Path
+    cmds_split: list[str]
+
+
 def extract_reads_prefixes(reads_directory: Path | str) -> list[str]:
     reads_prefixes: list[str] = []
     # Define the directory containing the files
@@ -194,20 +200,30 @@ def _run_shell_cmds_parallel(cmds: list[str], max_workers: int = 4) -> tuple[str
     return results
 
 
+def _write_joblist_file(args: WriteJoblistFileArgs) -> Path:
+    joblist_output_file = args["basedir"] / f"joblist{["idx"]}.txt"
+    with open(joblist_output_file, "w", encoding="UTF-8") as file:
+        file.writelines(args["cmds_split"])
+    return joblist_output_file
+
+
 def write_joblist_files(
-    metaline_cmds_splits: list[list[str]], basedir: Path
-) -> list[Path]:
+    max_workers: int, metaline_cmds_splits: list[list[str]], basedir: Path
+) -> tuple[Path, ...]:
     joblist_output_files: list[Path] = []
-    for idx, cmds_split in enumerate(metaline_cmds_splits):
-        joblist_output_file = basedir / f"joblist{idx}.txt"
-        with open(joblist_output_file, "w", encoding="UTF-8") as file:
-            file.writelines(cmds_split)
-        joblist_output_files.append(joblist_output_file)
-    return joblist_output_files
+    write_joblist_args: list[WriteJoblistFileArgs] = [
+        {"idx": idx, "cmds_split": cmds_split, "basedir": basedir}
+        for idx, cmds_split in enumerate(metaline_cmds_splits)
+    ]
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        res = tuple(executor.map(_write_joblist_file, write_joblist_args))
+        return res
 
 
 def write_greasy_list(
-    basedir: Path, joblist_output_files: list[Path], greasy_cmd: str
+    basedir: Path,
+    joblist_output_files: tuple[Path, ...],
+    greasy_cmd: str,
 ) -> Path:
     output_greasy_list_file = basedir / "list_greasy.txt"
     greasy_list_lines = [f"{greasy_cmd} {joblist}" for joblist in joblist_output_files]
@@ -216,28 +232,39 @@ def write_greasy_list(
     return output_greasy_list_file
 
 
-def slurm_job_file_template() -> str:
-    return """
+def write_slurm_job_file_template(
+    basedir: Path,
+    greasy_list_path,
+    joblist_num: int,
+    jobslist_max_size: int,
+) -> Path:
+    output_job_file = basedir / "launch_metaline.job"
+    log_output_directory = str(basedir).rstrip("/")
+    array_range = f"1-{joblist_num}"
+    if joblist_num == 1:
+        array_range = "1"
+    template = f"""
     #!/bin/bash
 
-#SBATCH --job-name=metaline_samples
+#SBATCH --job-name=metaline
 #SBATCH --qos=gp_bscls
 #SBATCH --account=bsc40
-#SBATCH --output=/gpfs/projects/bsc40/current/okhannous/MeTAline_paper/BMC_version/raw_data/OUT/err_out/jobnm_%j.out # Output file, where
-#SBATCH --error=/gpfs/projects/bsc40/current/okhannous/MeTAline_paper/BMC_version/raw_data/OUT/err_out/jobnm_%j.err # File where the error is written
+#SBATCH --output={log_output_directory}/jobnm_%j.out # Output file, where
+#SBATCH --error={log_output_directory}/jobnm_%j.err # File where the error is written
 
-#SBATCH --array=1-2 # The number of jobs in the array
-#SBATCH --ntasks=2 # The number of parallel tasks
-#SBATCH --tasks-per-node=2
+#SBATCH --array={array_range} # The number of jobs in the array
+#SBATCH --ntasks={joblist_num} # The number of parallel tasks
+#SBATCH --tasks-per-node={jobslist_max_size}
 #SBATCH --cpus-per-task=24 # Number of CPUs per run task
 #SBATCH --constraint=highmem
 #SBATCH --time=24:00:00
 
 module load greasy
 # Print the task id
-$(sed -n "${SLURM_ARRAY_TASK_ID}p" /gpfs/projects/bsc40/current/okhannous/MeTAline_paper/BMC_version/raw_data/OUT/list_greasy.txt)
-
+$(sed -n "${{SLURM_ARRAY_TASK_ID}}p" {greasy_list_path})
 """
+    output_job_file.write_text(template)
+    return output_job_file
 
 
 def main() -> int:
@@ -261,15 +288,22 @@ def main() -> int:
         metaline_cmds[i : i + args.joblist_size]
         for i in range(0, len(metaline_cmds), args.joblist_size)
     ]
+
     joblist_output_files = write_joblist_files(
+        max_workers=args.max_workers,
         basedir=basedir,
         metaline_cmds_splits=metaline_cmds_splits,
     )
-    # Write greasy list
     greasy_list = write_greasy_list(
         basedir=basedir,
         greasy_cmd=args.greasy_cmd,
         joblist_output_files=joblist_output_files,
+    )
+    write_slurm_job_file_template(
+        basedir=basedir,
+        greasy_list_path=greasy_list,
+        joblist_num=len(joblist_output_files),
+        jobslist_max_size=args.joblist_size,
     )
     return 0
 
