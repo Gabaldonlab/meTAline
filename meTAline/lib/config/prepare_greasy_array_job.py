@@ -320,23 +320,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-
-
-"""
-EXAMPLE CMD:
-python3 prepare_greasy_array_job.py \
-    --basedir /gpfs/projects/bsc40/current/dmajer/metaline-greasy-testy \
-    --generate_config_cmd singularity run --cleanenv /gpfs/projects/bsc40/project/pipelines/meTAline/meTAline-0.8.0-alpha/metaline.sif metaline-generate-config \
-    --metaline_cmd module load singularity && singularity run --cleanenv /gpfs/projects/bsc40/project/pipelines/meTAline/meTAline-0.8.0-alpha/metaline.sif metaline -r all -j 16 --configfile \
-    --greasy_cmd /apps/GPP/GREASY/2.2.4.1/INTEL/IMPI/bin/greasy \
-    --reference_genome /gpfs/projects/bsc40/project/pipelines/WGS/reference_genomes/index/T2T/T2T \
-    --krakendb /gpfs/projects/bsc40/project/pipelines/WGS/KRAKEN2_DB/KRAKEN2_DB_COMPLETE \
-    --reads_directory /gpfs/projects/bsc40/current/okhannous/MeTAline_paper/BMC_version/raw_data \
-    --fastq_extension fq.gz \
-    --metaphlan-db /gpfs/projects/bsc40/current/okhannous/Metaphlan4/db \
-    --metaphlan-index mpa_vJun23_CHOCOPhlAnSGB_202307 \
-    --n_db /gpfs/projects/bsc40/project/pipelines/WGS/metaPhlan/metaPhla-db/chocophlan \
-    --protein-db /gpfs/projects/bsc40/project/pipelines/WGS/metaPhlan/metaPhla-db/uniref \
-    --max_workers 4 \
-    --joblist_size 2
-"""
