@@ -256,7 +256,7 @@ def write_slurm_job_file_template(
     array_range = f"1-{joblist_num}"
     if joblist_num == 1:
         array_range = "1"
-    template = f"""
+    template = f"""\
 #!/bin/bash
 
 #SBATCH --job-name=metaline
