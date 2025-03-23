@@ -165,6 +165,11 @@ RUN echo '#!/bin/bash' >> /bin/metaline-generate-config
 RUN echo 'python3 /meTAline/lib/config/generate_config.py "$@"' >> /bin/metaline-generate-config
 RUN chmod 777 /bin/metaline-generate-config
 
+RUN echo '#!/bin/bash' >> /bin/metaline-prepare-greasy-array-job
+RUN echo 'python3 /meTAline/lib/config/prepare_greasy_array_job.py "$@"' >> /bin/metaline-prepare-greasy-array-job
+RUN chmod 777 /bin/metaline-prepare-greasy-array-job
+
+
 RUN echo '#!/bin/bash' >> /bin/metaline
 RUN echo 'snakemake -s /meTAline/meTAline.smk "$@"' >> /bin/metaline
 RUN chmod 777 /bin/metaline

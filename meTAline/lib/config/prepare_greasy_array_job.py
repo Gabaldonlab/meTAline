@@ -87,7 +87,6 @@ class PrepareGreasyArrayJobArgs:
             default="fq.gz",
             help="Extension of the fastq files.",
         )
-
         parser.add_argument(
             "--metaphlan-db",
             type=str,
@@ -294,14 +293,12 @@ def main() -> int:
     )
     cmd_entries = [entry["config_gen_cmd"] for entry in gen_config_cmds]
     _ = _run_shell_cmds_parallel(cmd_entries, args.max_workers)
-
     generated_config_files = [entry["config_output_file"] for entry in gen_config_cmds]
     metaline_cmds = [f"{args.metaline_cmd} {file}" for file in generated_config_files]
     metaline_cmds_splits = [
         metaline_cmds[i : i + args.joblist_size]
         for i in range(0, len(metaline_cmds), args.joblist_size)
     ]
-
     joblist_output_files = write_joblist_files(
         max_workers=args.max_workers,
         basedir=basedir,
@@ -326,6 +323,7 @@ if __name__ == "__main__":
 
 
 """
+EXAMPLE CMD:
 python3 prepare_greasy_array_job.py \
     --basedir /gpfs/projects/bsc40/current/dmajer/metaline-greasy-testy \
     --generate_config_cmd singularity run --cleanenv /gpfs/projects/bsc40/project/pipelines/meTAline/meTAline-0.8.0-alpha/metaline.sif metaline-generate-config \
