@@ -1,14 +1,17 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import os
+import re
 import shutil
+import string
 import sys
 from argparse import ArgumentParser
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from pathlib import Path
 from subprocess import getstatusoutput
-from typing import TypedDict
+from typing import Counter, TypedDict
 
 
 @dataclass
@@ -86,13 +89,13 @@ class PrepareGreasyArrayJobArgs:
         )
 
         parser.add_argument(
-            "--metaphlan_db",
+            "--metaphlan-db",
             type=str,
             required=True,
             help="Path to the Metaphlan database directory.",
         )
         parser.add_argument(
-            "--metaphlan_index",
+            "--metaphlan-index",
             type=str,
             required=True,
             help="Name of the index in the given Metaphlan database directory.",
@@ -139,20 +142,28 @@ class WriteJoblistFileArgs(TypedDict):
     cmds_split: list[str]
 
 
+def get_common_prefixes_for_fasta_pairs(paths: tuple[Path, ...]) -> list[str]:
+    filenames = [
+        (path1.name, path2.name)
+        for path1 in paths
+        for path2 in paths
+        if path1.name != path2.name
+    ]
+    raw_common_prefixes = [os.path.commonprefix(pair) for pair in filenames]
+    common_prefixes_counts = Counter(raw_common_prefixes)
+    filtered_common_prefixes = [
+        prefix.strip(string.punctuation)
+        for prefix, count in common_prefixes_counts.items()
+        if count == 2
+    ]
+    return filtered_common_prefixes
+
+
 def extract_reads_prefixes(reads_directory: Path | str) -> list[str]:
-    reads_prefixes: list[str] = []
-    # Define the directory containing the files
     reads_dir = Path(reads_directory)  # Update with your actual path
-    # Find and sort matching files
-    files = sorted(reads_dir.glob("*[!a-zA-Z0-9]1.f*q.gz"))
-    # Process each file
-    for file_path in files:
-        file_name = file_path.name  # Extract filename
-        file_prefix = (
-            file_name.rsplit(".", 2)[0].rsplit("1", 1)[0].rstrip("._-")
-        )  # Extract prefix
-        reads_prefixes.append(file_prefix)
-    return reads_prefixes
+    files = tuple(reads_dir.glob("*.f*q.gz"))
+    found_prefixes = get_common_prefixes_for_fasta_pairs(files)
+    return found_prefixes
 
 
 def prepare_config_generation_commands(
@@ -162,22 +173,24 @@ def prepare_config_generation_commands(
 ) -> list[PreparedConfigGenCmd]:
     config_gen_cmds: list[PreparedConfigGenCmd] = []
     for prefix in reads_prefixes:
-        cmd: str = (
-            f"{args.generate_config_cmd} "
-            f"--configFile config.{prefix}.json"
-            f"--extension {args.fastq_extension}"
-            f"--basedir {args.basedir}"
-            f"--reads-directory {args.reads_directory}"
-            f"--reference-genome {args.reference_genome}"
-            f"--krakendb {args.krakendb}"
-            f"--sample-barcode {prefix}"
-            f"--fastqs {prefix}"
-            f"--metaphlan_db {args.metaphlan_db}"
-            f"--metaphlan_Index {args.metaphlan_index}"
-            f"--n_db {args.n_db}"
-            f"--protein_db {args.protein_db}"
-        )
         config_output_file = config_file_output_dir / f"config.{prefix}.json"
+        cmd: str = " ".join(
+            (
+                f"{args.generate_config_cmd}",
+                f"--configFile {config_output_file}",
+                f"--extension {args.fastq_extension}",
+                f"--basedir {args.basedir}",
+                f"--reads-directory {args.reads_directory}",
+                f"--reference-genome {args.reference_genome}",
+                f"--krakendb {args.krakendb}",
+                f"--sample-barcode {prefix}",
+                f"--fastqs {prefix}",
+                f"--metaphlan_db {args.metaphlan_db}",
+                f"--metaphlan_Index {args.metaphlan_index}",
+                f"--n_db {args.n_db}",
+                f"--protein_db {args.protein_db}",
+            )
+        )
         config_gen_cmds.append(
             {
                 "config_output_file": config_output_file,
@@ -201,9 +214,9 @@ def _run_shell_cmds_parallel(cmds: list[str], max_workers: int = 4) -> tuple[str
 
 
 def _write_joblist_file(args: WriteJoblistFileArgs) -> Path:
-    joblist_output_file = args["basedir"] / f"joblist{["idx"]}.txt"
+    joblist_output_file = args["basedir"] / f"joblist{args['idx']}.txt"
     with open(joblist_output_file, "w", encoding="UTF-8") as file:
-        file.writelines(args["cmds_split"])
+        file.writelines(tuple(map(lambda line: f"{line}\n", args["cmds_split"])))
     return joblist_output_file
 
 
@@ -228,7 +241,7 @@ def write_greasy_list(
     output_greasy_list_file = basedir / "list_greasy.txt"
     greasy_list_lines = [f"{greasy_cmd} {joblist}" for joblist in joblist_output_files]
     with open(output_greasy_list_file, "w", encoding="UTF-8") as file:
-        file.writelines(greasy_list_lines)
+        file.writelines(tuple(map(lambda line: f"{line}\n", greasy_list_lines)))
     return output_greasy_list_file
 
 
@@ -321,11 +334,11 @@ python3 prepare_greasy_array_job.py \
     --reference_genome /gpfs/projects/bsc40/project/pipelines/WGS/reference_genomes/index/T2T/T2T \
     --krakendb /gpfs/projects/bsc40/project/pipelines/WGS/KRAKEN2_DB/KRAKEN2_DB_COMPLETE \
     --reads_directory /gpfs/projects/bsc40/current/okhannous/MeTAline_paper/BMC_version/raw_data \
-    --fastqs fq.gz \
-    --metaphlan_db /gpfs/projects/bsc40/current/okhannous/Metaphlan4/db \
-    --metaphlan_Index mpa_vJun23_CHOCOPhlAnSGB_202307 \
+    --fastq_extension fq.gz \
+    --metaphlan-db /gpfs/projects/bsc40/current/okhannous/Metaphlan4/db \
+    --metaphlan-index mpa_vJun23_CHOCOPhlAnSGB_202307 \
     --n_db /gpfs/projects/bsc40/project/pipelines/WGS/metaPhlan/metaPhla-db/chocophlan \
-    --protein_db /gpfs/projects/bsc40/project/pipelines/WGS/metaPhlan/metaPhla-db/uniref \
+    --protein-db /gpfs/projects/bsc40/project/pipelines/WGS/metaPhlan/metaPhla-db/uniref \
     --max_workers 4 \
     --joblist_size 2
 """
