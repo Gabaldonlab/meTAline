@@ -9,6 +9,7 @@ Date:2024-07-23
 import os
 import json
 import argparse
+from pathlib import Path
 import sys
 import re
 
@@ -395,21 +396,12 @@ class CreateConfigurationFile:
         if args.basedir:
             args.basedir = os.path.abspath(args.basedir) + "/"
         else:
-            args.basedir = (
-                f"{working_dir}v{args.version}/{args.sample_barcode}/"
-            )
-
-        if args.logs_dir:
-            args.logs_dir = os.path.abspath(args.logs_dir) + "/"
-        else:
-            args.logs_dir = f"{args.basedir}{self.logs_dir}/"
+            args.basedir = f"{working_dir}v{args.version}/{args.sample_barcode}/"
 
         if args.reads_directory:
             args.reads_directory = os.path.abspath(args.reads_directory) + "/"
         else:
-            args.reads_directory = (
-                f"{working_dir}reads/Illumina/{args.sample_barcode}/"
-            )
+            args.reads_directory = f"{working_dir}reads/Illumina/{args.sample_barcode}/"
         if not os.path.exists(args.reads_directory):
             print(
                 f"{args.reads_directory} not found. "
@@ -427,53 +419,29 @@ class CreateConfigurationFile:
                 if not re.search("index", args.reference_genome):
                     print(
                         f"A reference genome index (including index as suffix, ie:'HUMAN_index') has been not provided or it has not been found in "
-                        f"{args.reference_genome}. Enabling the taxonomic assignment of a environmental sample."
-                    , file=sys.stderr)
+                        f"{args.reference_genome}. Enabling the taxonomic assignment of a environmental sample.",
+                        file=sys.stderr,
+                    )
                     args.reference_genome = None
 
         if args.krakendb:
             args.krakendb = os.path.abspath(args.krakendb)
         if not os.path.exists(args.krakendb):
             print(
-                f"The Kraken2 DB has not been provided. Check the your provided path {args.krakendb}. Note that this step is mandatory"
-            , file=sys.stderr)
+                f"The Kraken2 DB has not been provided. Check the your provided path {args.krakendb}. Note that this step is mandatory",
+                file=sys.stderr,
+            )
             parser.print_help()
             sys.exit(1)
 
-        if args.alignment_out:
-            args.alignment_out = os.path.abspath(args.alignment_out) + "/"
-        else:
-            args.alignment_out = f"{args.basedir}{self.alignment_out}/"
-
-        if args.trimmomatic_out:
-            args.trimmomatic_out = os.path.abspath(args.trimmomatic_out) + "/"
-        else:
-            args.trimmomatic_out = f"{args.basedir}{self.trimmomatic_out}/"
-
-        if args.kraken_out:
-            args.kraken_out = os.path.abspath(args.kraken_out) + "/"
-        else:
-            args.kraken_out = f"{args.basedir}{self.kraken_out}/"
-
-        if args.krona_out:
-            args.krona_out = os.path.abspath(args.krona_out) + "/"
-        else:
-            args.krona_out = f"{args.basedir}{self.krona_out}/"
-
-        if args.extracted_fa_out:
-            args.extracted_fa_out = os.path.abspath(args.extracted_fa_out) + "/"
-        else:
-            args.extracted_fa_out = f"{args.basedir}{self.extracted_fa_out}/"
-
-        if args.ranalysis_out:
-            args.ranalysis_out = os.path.abspath(args.ranalysis_out) + "/"
-        else:
-            args.ranalysis_out = f"{args.basedir}{self.ranalysis_out}/"
-
-        if args.metaphlan4_out:
-            args.metaphlan4_out = os.path.abspath(args.metaphlan4_out) + "/"
-        else:
-            args.metaphlan4_out = f"{args.basedir}{self.metaphlan4_out}/"
+        args.logs_dir = f"{os.path.join(args.basedir, self.logs_dir)}/"
+        args.alignment_out = f"{os.path.join(args.basedir, self.alignment_out)}/"
+        args.trimmomatic_out = f"{os.path.join(args.basedir, self.trimmomatic_out)}/"
+        args.kraken_out = f"{os.path.join(args.basedir, self.kraken_out)}/"
+        args.krona_out = f"{os.path.join(args.basedir, self.krona_out)}/"
+        args.extracted_fa_out = f"{os.path.join(args.basedir, self.extracted_fa_out)}/"
+        args.ranalysis_out = f"{os.path.join(args.basedir, self.ranalysis_out)}/"
+        args.metaphlan4_out = f"{os.path.join(args.basedir, self.metaphlan4_out)}/"
 
     def store_general_parameters(self, args):
         """Updates general parameters to the map of parameters to be store in a JSON file
@@ -585,6 +553,7 @@ def main() -> int:
     configManager.store_kraken2_parameters(args)
 
     # 4. Store JSON fileMGI_adapters.fa
+    Path(args.configFile).parent.mkdir(exist_ok=True, parents=True)
     with open(args.configFile, "w") as output_file:
         json.dump(configManager.allParameters, output_file, indent=2)
 
