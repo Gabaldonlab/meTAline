@@ -1,20 +1,18 @@
 #!/usr/bin/env python3
+
+"""
+Author: Diego Fuentes and Olfat Khannous
+Contact email: olfat.khannous@bsc.es
+Date:2024-07-23
+"""
+
 import os
 import json
 import argparse
 import sys
 import re
 
-# Author: Diego Fuentes and Olfat Khannous
-# Contact email: olfat.khannous@bsc.es
-# Date:2024-07-23
 
-barcodes = []  # List to store the barcodes
-
-
-#######################
-###CONFIG FILE CLASS###
-#######################
 class CreateConfigurationFile:
     """Class which manages Configuration file Manager"""
 
@@ -83,7 +81,7 @@ class CreateConfigurationFile:
         self.hisat2Parameters = {}
         self.Kraken2Parameters = {}
 
-    def register_parameter(self, parser):
+    def register_parameter(self, parser: argparse.ArgumentParser):
         """Register all parameters with the given
         argparse parser"""
         self.register_general(parser)
@@ -95,7 +93,7 @@ class CreateConfigurationFile:
         self.register_hisat2(parser)
         self.register_kraken2(parser)
 
-    def register_general(self, parser):
+    def register_general(self, parser: argparse.ArgumentParser):
         """Register all general parameters with the given
         argparse parser
         parser -- the argparse parser
@@ -145,7 +143,7 @@ class CreateConfigurationFile:
             help="Base directory for the pipeline run.",
         )
 
-    def register_input(self, parser):
+    def register_input(self, parser: argparse.ArgumentParser):
         """Register all input parameters with the given
         argparse parser
         parser -- the argparse parser
@@ -178,38 +176,38 @@ class CreateConfigurationFile:
             dest="taxid",
             metavar="taxid",
             default=self.taxid,
-            help='Selects the taxid used for exctracting fasta reads. You can add more than one using space as the separator.',
+            help="Selects the taxid used for exctracting fasta reads. You can add more than one using space as the separator.",
         )
         input_group.add_argument(
             "--metaphlan_db",
             dest="metaphlan_db",
             metavar="metaphlan_db",
             default=self.metaphlan_db,
-            help='Path of the Metaphlan4 database.',
+            help="Path of the Metaphlan4 database.",
         )
         input_group.add_argument(
             "--metaphlan_Index",
             dest="metaphlan_Index",
             metavar="metaphlan_Index",
             default=self.metaphlan_Index,
-            help='Index of the metaphlan4 database.',
+            help="Index of the metaphlan4 database.",
         )
         input_group.add_argument(
             "--protein_db",
             dest="protein_db",
             metavar="protein_db",
             default=self.protein_db,
-            help='Humann database to do the translation search (by default this is by-passed).',
+            help="Humann database to do the translation search (by default this is by-passed).",
         )
         input_group.add_argument(
             "--n_db",
             dest="n_db",
             metavar="n_db",
             default=self.n_db,
-            help='Humann database to do the nucleotide search (based on already built annotations).',
+            help="Humann database to do the nucleotide search (based on already built annotations).",
         )
 
-    def register_output(self, parser):
+    def register_output(self, parser: argparse.ArgumentParser):
         """Register all output parameters with the given
         argparse parser
         parser -- the argparse parser
@@ -220,46 +218,46 @@ class CreateConfigurationFile:
             "--alignment-out",
             dest="alignment_out",
             default=self.alignment_out,
-            help='Out directory of the alignment step.',
+            help="Out directory of the alignment step.",
         )
         output_group.add_argument(
             "--trimmomatic-out",
             dest="trimmomatic_out",
             default=self.trimmomatic_out,
-            help='Out directory of the trimmomatic output.',
+            help="Out directory of the trimmomatic output.",
         )
         output_group.add_argument(
             "--kraken-out",
             dest="kraken_out",
             default=self.kraken_out,
-            help='Out directory of the Kraken2 taxonomic assignation step.',
+            help="Out directory of the Kraken2 taxonomic assignation step.",
         )
         output_group.add_argument(
             "--krona-out",
             dest="krona_out",
             default=self.krona_out,
-            help='Out directory of the Krona visualization tool.',
+            help="Out directory of the Krona visualization tool.",
         )
         output_group.add_argument(
             "--extracted-fa-out",
             dest="extracted_fa_out",
             default=self.extracted_fa_out,
-            help='Out directory of the extracted fasta reads.',
+            help="Out directory of the extracted fasta reads.",
         )
         output_group.add_argument(
             "--ranalysis-out",
             dest="ranalysis_out",
             default=self.ranalysis_out,
-            help='Out directory of the R analysis.',
+            help="Out directory of the R analysis.",
         )
         output_group.add_argument(
             "--metaphlan4-out",
             dest="metaphlan4_out",
             default=self.metaphlan4_out,
-            help='Out directory of the Metaphlan4 and Humann analysis.',
+            help="Out directory of the Metaphlan4 and Humann analysis.",
         )
 
-    def register_wildcards(self, parser):
+    def register_wildcards(self, parser: argparse.ArgumentParser):
         """Register all wildcards parameters with the given
         argparse parser
         parser -- the argparse parser
@@ -273,7 +271,7 @@ class CreateConfigurationFile:
             help="List with basename of the fastq-prefix.",
         )
 
-    def register_trimmomatic(self, parser):
+    def register_trimmomatic(self, parser: argparse.ArgumentParser):
         """Register all trimmomatic parameters with the given
         argparse parser
         parser -- the argparse parser
@@ -326,7 +324,7 @@ class CreateConfigurationFile:
             help="Illumina clip information.",
         )
 
-    def register_fastqc(self, parser):
+    def register_fastqc(self, parser: argparse.ArgumentParser):
         """Register all fastqc parameters with the given
         argparse parser
         parser -- the argparse parser
@@ -340,7 +338,7 @@ class CreateConfigurationFile:
             help="Adapter sequences to be checked in the quality assessment.",
         )
 
-    def register_hisat2(self, parser):
+    def register_hisat2(self, parser: argparse.ArgumentParser):
         """Register all hisat2 aligner parameters with the given
         argparse parser
         parser -- the argparse parser
@@ -355,7 +353,7 @@ class CreateConfigurationFile:
             help="Number of threads to run the hisat2 aligner.",
         )
 
-    def register_kraken2(self, parser):
+    def register_kraken2(self, parser: argparse.ArgumentParser):
         """Register all kraken2 parameters with the given
         argparse parser
         parser -- the argparse parser
@@ -370,7 +368,7 @@ class CreateConfigurationFile:
             help="Number of threads to run the Kraken2 taxonomic assignment step.",
         )
 
-    def check_parameters(self, args, parser):
+    def check_parameters(self, args, parser: argparse.ArgumentParser):
         """Check parameters consistency
 
         args -- set of parsed arguments
@@ -379,15 +377,17 @@ class CreateConfigurationFile:
         if permission is not granted to execute os.stat() on the requested file, even if the path exists.
         """
 
-        if args.configFile == None:
+        if args.configFile is None:
             parser.print_help()
             sys.exit(-1)
 
         working_dir = os.getcwd() + "/"
 
-        if args.sample_barcode == None:
+        if args.sample_barcode is None:
             print(
-                "No sample_barcode specified. A barcode or identification is required"
+                "No sample_barcode specified. "
+                "A barcode or identification is required",
+                file=sys.stderr,
             )
             parser.print_help()
             sys.exit(1)
@@ -396,27 +396,29 @@ class CreateConfigurationFile:
             args.basedir = os.path.abspath(args.basedir) + "/"
         else:
             args.basedir = (
-                working_dir + "v" + str(args.version) + "/" + args.sample_barcode + "/"
+                f"{working_dir}v{args.version}/{args.sample_barcode}/"
             )
 
         if args.logs_dir:
             args.logs_dir = os.path.abspath(args.logs_dir) + "/"
         else:
-            args.logs_dir = args.basedir + self.logs_dir + "/"
+            args.logs_dir = f"{args.basedir}{self.logs_dir}/"
 
         if args.reads_directory:
             args.reads_directory = os.path.abspath(args.reads_directory) + "/"
         else:
             args.reads_directory = (
-                working_dir + "reads/Illumina/" + args.sample_barcode + "/"
+                f"{working_dir}reads/Illumina/{args.sample_barcode}/"
             )
         if not os.path.exists(args.reads_directory):
             print(
-                args.reads_directory
-                + " not found. The directory where the reads are located is required. Exiting now."
+                f"{args.reads_directory} not found. "
+                "The directory where the reads are located is required. "
+                "Exiting now.",
+                file=sys.stderr,
             )
             parser.print_help()
-            sys.exit(-1)
+            sys.exit(1)
 
         if args.reference_genome != None:
             args.reference_genome = os.path.abspath(args.reference_genome)
@@ -424,57 +426,54 @@ class CreateConfigurationFile:
             if not os.path.exists(args.reference_genome):
                 if not re.search("index", args.reference_genome):
                     print(
-                        "A reference genome index (including index as suffix, ie:'HUMAN_index') has been not provided or it has not been found in "
-                        + args.reference_genome
-                        + ". Enabling the taxonomic assignment of a environmental sample."
-                    )
+                        f"A reference genome index (including index as suffix, ie:'HUMAN_index') has been not provided or it has not been found in "
+                        f"{args.reference_genome}. Enabling the taxonomic assignment of a environmental sample."
+                    , file=sys.stderr)
                     args.reference_genome = None
 
         if args.krakendb:
             args.krakendb = os.path.abspath(args.krakendb)
         if not os.path.exists(args.krakendb):
             print(
-                "The Kraken2 DB has not been provided. Check the your provided path "
-                + args.krakendb
-                + " . Note that this step is mandatory"
-            )
+                f"The Kraken2 DB has not been provided. Check the your provided path {args.krakendb}. Note that this step is mandatory"
+            , file=sys.stderr)
             parser.print_help()
-            sys.exit(-1)
+            sys.exit(1)
 
         if args.alignment_out:
             args.alignment_out = os.path.abspath(args.alignment_out) + "/"
         else:
-            args.alignment_out = args.basedir + self.alignment_out + "/"
+            args.alignment_out = f"{args.basedir}{self.alignment_out}/"
 
         if args.trimmomatic_out:
             args.trimmomatic_out = os.path.abspath(args.trimmomatic_out) + "/"
         else:
-            args.trimmomatic_out = args.basedir + self.trimmomatic_out + "/"
+            args.trimmomatic_out = f"{args.basedir}{self.trimmomatic_out}/"
 
         if args.kraken_out:
             args.kraken_out = os.path.abspath(args.kraken_out) + "/"
         else:
-            args.kraken_out = args.basedir + self.kraken_out + "/"
+            args.kraken_out = f"{args.basedir}{self.kraken_out}/"
 
         if args.krona_out:
             args.krona_out = os.path.abspath(args.krona_out) + "/"
         else:
-            args.krona_out = args.basedir + self.krona_out + "/"
+            args.krona_out = f"{args.basedir}{self.krona_out}/"
 
         if args.extracted_fa_out:
             args.extracted_fa_out = os.path.abspath(args.extracted_fa_out) + "/"
         else:
-            args.extracted_fa_out = args.basedir + self.extracted_fa_out + "/"
+            args.extracted_fa_out = f"{args.basedir}{self.extracted_fa_out}/"
 
         if args.ranalysis_out:
             args.ranalysis_out = os.path.abspath(args.ranalysis_out) + "/"
         else:
-            args.ranalysis_out = args.basedir + self.ranalysis_out + "/"
+            args.ranalysis_out = f"{args.basedir}{self.ranalysis_out}/"
 
         if args.metaphlan4_out:
             args.metaphlan4_out = os.path.abspath(args.metaphlan4_out) + "/"
         else:
-            args.metaphlan4_out = args.basedir + self.metaphlan4_out + "/"
+            args.metaphlan4_out = f"{args.basedir}{self.metaphlan4_out}/"
 
     def store_general_parameters(self, args):
         """Updates general parameters to the map of parameters to be store in a JSON file
@@ -563,8 +562,8 @@ def main() -> int:
 
     # 2.Create object for argument parsinng
     parser = argparse.ArgumentParser(
-        prog="create_configuration_file",
-        description="Create a configuration json file for the MASV pipeline.",
+        prog="metaline-generate-config",
+        description="Create a configuration json file for the meTAline pipeline.",
     )
 
     # 2.1 Updates arguments and parsing
@@ -594,35 +593,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-
-# adapters
-# alignment_out
-# basedir
-# configFile
-# extension
-# extracted_fa_out
-# fastq_prefix
-# hisat2_cores
-# illuminaclip
-# kraken2_cores
-# krakendb
-# kraken_out
-# krona_out
-# leading
-# logs_dir
-# metaphlan4_out
-# metaphlan_db
-# metaphlan_Index
-# minlen
-# n_db
-# protein_db
-# ranalysis_out
-# reads_directory
-# reference_genome
-# sample_barcode
-# slidingwindow
-# taxid
-# trailing
-# trimmo_cores
-# trimmomatic_out
-# version
