@@ -476,46 +476,6 @@ class CreateConfigurationFile:
         else:
             args.metaphlan4_out = args.basedir + self.metaphlan4_out + "/"
 
-        # Assign wildcards
-        # TODO: Can be that we don't need it anymore!
-        # if args.fastq_prefix == None:
-        #     for r, d, f in os.walk(args.reads_directory):
-        #         for file in f:
-        #             if re.search(".fastq.gz", file) or re.search(".fq.gz", file):
-        #                 if file.endswith("_1.fastq.gz") or file.endswith("_1.fq.gz"):
-        #                     if file.endswith("_1.fastq.gz"):
-        #                         a = file.replace("_1.fastq.gz", "")
-        #                     elif file.endswith("_1.fq.gz"):
-        #                         a = file.replace("_1.fq.gz", "")
-        #                 elif file.endswith("_2.fastq.gz") or file.endswith(
-        #                     "_2.fastq.gz"
-        #                 ):
-        #                     if file.endswith("_2.fastq.gz"):
-        #                         a = file.replace("_2.fastq.gz", "")
-        #                     elif file.endswith("_2.fq.gz"):
-        #                         a = file.replace("_2.fq.gz", "")
-        #                 barcodes.append(a)
-        #                 if args.fastq_prefix == None:
-        #                     args.fastq_prefix = a
-        #                 else:
-        #                     args.fastq_prefix += "," + a
-        #             elif re.search(".fastq", file) or re.search(".fq", file):
-        #                 if file.endswith("_1.fastq") or file.endswith("_1.fq"):
-        #                     if file.endswith("_1.fastq"):
-        #                         a = file.replace("_1.fastq", "")
-        #                     elif file.endswith("_1.fq"):
-        #                         a = file.replace("_1.fq.", "")
-        #                 elif file.endswith("_2.fastq") or file.endswith("_2.fq"):
-        #                     if file.endswith("_2.fastq"):
-        #                         a = file.replace("_2.fastq", "")
-        #                     elif file.endswith("_2.fq"):
-        #                         a = file.replace("_2.fq", "")
-        #                 barcodes.append(a)
-        #                 if args.fastq_prefix == None:
-        #                     args.fastq_prefix = a
-        #                 else:
-        #                     args.fastq_prefix += "," + a
-
     def store_general_parameters(self, args):
         """Updates general parameters to the map of parameters to be store in a JSON file
         args -- set of parsed arguments
@@ -634,3 +594,35 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
+# adapters
+# alignment_out
+# basedir
+# configFile
+# extension
+# extracted_fa_out
+# fastq_prefix
+# hisat2_cores
+# illuminaclip
+# kraken2_cores
+# krakendb
+# kraken_out
+# krona_out
+# leading
+# logs_dir
+# metaphlan4_out
+# metaphlan_db
+# metaphlan_Index
+# minlen
+# n_db
+# protein_db
+# ranalysis_out
+# reads_directory
+# reference_genome
+# sample_barcode
+# slidingwindow
+# taxid
+# trailing
+# trimmo_cores
+# trimmomatic_out
+# version
