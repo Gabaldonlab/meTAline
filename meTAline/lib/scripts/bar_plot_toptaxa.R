@@ -10,7 +10,7 @@ input <- readRDS(args[1])
 #Second argument corresponds to the output
 out <- args[2]
 
-##indicate jpeg to save the resulting plot in the working dir
+## Indicate jpeg to save the resulting plot in the working dir
 jpeg(file=out)
 #First calculate the relative abundances
 data_rel <- transform_sample_counts(input, function(OTU) (OTU/sum(OTU)*100))
