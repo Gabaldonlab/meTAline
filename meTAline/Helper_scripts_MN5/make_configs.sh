@@ -45,7 +45,7 @@ do
     --reference-genome $T2T \
     --krakendb $bgut \
     --sample-barcode "$fo" \
-    --fastqs "$foo" \
+    --fastq-prefix "$foo" \
     --metaphlan_db /gpfs/projects/bsc40/current/okhannous/Metaphlan4/db \
     --metaphlan_Index mpa_vJun23_CHOCOPhlAnSGB_202307 \
     --n_db /gpfs/projects/bsc40/project/pipelines/WGS/metaPhlan/metaPhla-db/chocophlan \

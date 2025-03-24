@@ -53,7 +53,7 @@ class CreateConfigurationFile:
         self.metaphlan4_out = "METAPHLAN4"  # Metaphlan4 and Humann directory
 
         # WILDCARD PARAMETER
-        self.fastqs = None  # List with basename of the fastqs if any
+        self.fastq_prefix = None  # List with basename of the fastq-prefix if any
 
         # TRIMMOMATIC PARAMETERS
         self.trimmo_cores = 4  # Number of threads to run the trimmomatic
@@ -266,11 +266,11 @@ class CreateConfigurationFile:
         """
         wildcards_group = parser.add_argument_group("Wildcards")
         wildcards_group.add_argument(
-            "--fastqs",
-            dest="fastqs",
-            metavar="fastqs",
-            required=True,
-            help="List with basename of the fastqs. Default %s" % self.fastqs,
+            "--fastq-prefix",
+            dest="fastq_prefix",
+            metavar="fastq_prefix",
+            # required=True,
+            help="List with basename of the fastq-prefix. Default %s" % self.fastq_prefix,
         )
 
     def register_trimmomatic(self, parser):
@@ -481,7 +481,7 @@ class CreateConfigurationFile:
             args.metaphlan4_out = args.basedir + self.metaphlan4_out + "/"
 
         # Assign wildcards
-        if args.fastqs == None:
+        if args.fastq_prefix == None:
             for r, d, f in os.walk(args.reads_directory):
                 for file in f:
                     if re.search(".fastq.gz", file) or re.search(".fq.gz", file):
@@ -498,10 +498,10 @@ class CreateConfigurationFile:
                             elif file.endswith("_2.fq.gz"):
                                 a = file.replace("_2.fq.gz", "")
                         barcodes.append(a)
-                        if args.fastqs == None:
-                            args.fastqs = a
+                        if args.fastq_prefix == None:
+                            args.fastq_prefix = a
                         else:
-                            args.fastqs += "," + a
+                            args.fastq_prefix += "," + a
                     elif re.search(".fastq", file) or re.search(".fq", file):
                         if file.endswith("_1.fastq") or file.endswith("_1.fq"):
                             if file.endswith("_1.fastq"):
@@ -514,10 +514,10 @@ class CreateConfigurationFile:
                             elif file.endswith("_2.fq"):
                                 a = file.replace("_2.fq", "")
                         barcodes.append(a)
-                        if args.fastqs == None:
-                            args.fastqs = a
+                        if args.fastq_prefix == None:
+                            args.fastq_prefix = a
                         else:
-                            args.fastqs += "," + a
+                            args.fastq_prefix += "," + a
 
     def store_general_parameters(self, args):
         """Updates general parameters to the map of parameters to be store in a JSON file
@@ -563,7 +563,7 @@ class CreateConfigurationFile:
         """Updates wildcard parameters to the map of parameters to be store in a JSON file
         args -- set of parsed arguments
         """
-        self.wildcardParameters["fastqs"] = args.fastqs
+        self.wildcardParameters["fastq_prefix"] = args.fastq_prefix
         self.allParameters["Wildcards"] = self.wildcardParameters
 
     def store_trimmomatic_parameters(self, args):

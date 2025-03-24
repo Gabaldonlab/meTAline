@@ -25,7 +25,7 @@ singularity run --cleanenv /gpfs/projects/bsc40/project/pipelines/meTAline/meTAl
     --reference-genome /gpfs/projects/bsc40/current/asukhorukova/index/T2T/T2T \
     --krakendb /gpfs/projects/bsc40/project/pipelines/WGS/KRAKEN2_DB/Broad_gut_microbiome_db \
     --sample-barcode mock \
-    --fastqs V300091236_L01_100 \
+    --fastq-prefix V300091236_L01_100 \
     --metaphlan_db /gpfs/projects/bsc40/current/okhannous/Metaphlan4/db \
     --metaphlan_Index mpa_vJun23_CHOCOPhlAnSGB_202307 \
     --n_db /gpfs/projects/bsc40/project/pipelines/WGS/metaPhlan/metaPhla-db/chocophlan \

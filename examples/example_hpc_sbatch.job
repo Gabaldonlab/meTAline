@@ -23,7 +23,7 @@ singularity run --cleanenv metaline.sif metaline-generate-config \
     --reference-genome /data/projects/my_project/metaline_testing/reference_genome \
     --krakendb /data/projects/my_project/metaline_testing/WGS/KRAKEN2_DB/microbiome_db \
     --sample-barcode metaline_test_barcode \
-    --fastqs PONSJIG_165.E5-NEB-UDI \
+    --fastq-prefix PONSJIG_165.E5-NEB-UDI \
     --metaphlan_db /data/projects/my_project/metaline_testing/Metaphlan4/db \
     --metaphlan_Index mpa_testing_index \
     --n_db /data/projects/my_project/metaline_testing/WGS/humann_db \

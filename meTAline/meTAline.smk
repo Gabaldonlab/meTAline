@@ -73,7 +73,7 @@ if not os.path.exists(metaphlan4_out):
 
 
 # file wildcard
-files = config["Wildcards"]["fastqs"] 
+files = config["Wildcards"]["fastq_prefix"]
 
 
 ################

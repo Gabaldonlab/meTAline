@@ -183,7 +183,7 @@ def prepare_config_generation_commands(
                 f"--reference-genome {args.reference_genome}",
                 f"--krakendb {args.krakendb}",
                 f"--sample-barcode {prefix}",
-                f"--fastqs {prefix}",
+                f"--fastq_prefix {prefix}",
                 f"--metaphlan_db {args.metaphlan_db}",
                 f"--metaphlan_Index {args.metaphlan_index}",
                 f"--n_db {args.n_db}",
