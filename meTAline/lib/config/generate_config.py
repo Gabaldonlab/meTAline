@@ -267,10 +267,11 @@ class CreateConfigurationFile:
         wildcards_group = parser.add_argument_group("Wildcards")
         wildcards_group.add_argument(
             "--fastq-prefix",
+            required=True,
             dest="fastq_prefix",
             metavar="fastq_prefix",
-            # required=True,
-            help="List with basename of the fastq-prefix. Default %s" % self.fastq_prefix,
+            required=True,
+            help="List with basename of the fastq-prefix.",
         )
 
     def register_trimmomatic(self, parser):
@@ -481,43 +482,44 @@ class CreateConfigurationFile:
             args.metaphlan4_out = args.basedir + self.metaphlan4_out + "/"
 
         # Assign wildcards
-        if args.fastq_prefix == None:
-            for r, d, f in os.walk(args.reads_directory):
-                for file in f:
-                    if re.search(".fastq.gz", file) or re.search(".fq.gz", file):
-                        if file.endswith("_1.fastq.gz") or file.endswith("_1.fq.gz"):
-                            if file.endswith("_1.fastq.gz"):
-                                a = file.replace("_1.fastq.gz", "")
-                            elif file.endswith("_1.fq.gz"):
-                                a = file.replace("_1.fq.gz", "")
-                        elif file.endswith("_2.fastq.gz") or file.endswith(
-                            "_2.fastq.gz"
-                        ):
-                            if file.endswith("_2.fastq.gz"):
-                                a = file.replace("_2.fastq.gz", "")
-                            elif file.endswith("_2.fq.gz"):
-                                a = file.replace("_2.fq.gz", "")
-                        barcodes.append(a)
-                        if args.fastq_prefix == None:
-                            args.fastq_prefix = a
-                        else:
-                            args.fastq_prefix += "," + a
-                    elif re.search(".fastq", file) or re.search(".fq", file):
-                        if file.endswith("_1.fastq") or file.endswith("_1.fq"):
-                            if file.endswith("_1.fastq"):
-                                a = file.replace("_1.fastq", "")
-                            elif file.endswith("_1.fq"):
-                                a = file.replace("_1.fq.", "")
-                        elif file.endswith("_2.fastq") or file.endswith("_2.fq"):
-                            if file.endswith("_2.fastq"):
-                                a = file.replace("_2.fastq", "")
-                            elif file.endswith("_2.fq"):
-                                a = file.replace("_2.fq", "")
-                        barcodes.append(a)
-                        if args.fastq_prefix == None:
-                            args.fastq_prefix = a
-                        else:
-                            args.fastq_prefix += "," + a
+        # TODO: Can be that we don't need it anymore!
+        # if args.fastq_prefix == None:
+        #     for r, d, f in os.walk(args.reads_directory):
+        #         for file in f:
+        #             if re.search(".fastq.gz", file) or re.search(".fq.gz", file):
+        #                 if file.endswith("_1.fastq.gz") or file.endswith("_1.fq.gz"):
+        #                     if file.endswith("_1.fastq.gz"):
+        #                         a = file.replace("_1.fastq.gz", "")
+        #                     elif file.endswith("_1.fq.gz"):
+        #                         a = file.replace("_1.fq.gz", "")
+        #                 elif file.endswith("_2.fastq.gz") or file.endswith(
+        #                     "_2.fastq.gz"
+        #                 ):
+        #                     if file.endswith("_2.fastq.gz"):
+        #                         a = file.replace("_2.fastq.gz", "")
+        #                     elif file.endswith("_2.fq.gz"):
+        #                         a = file.replace("_2.fq.gz", "")
+        #                 barcodes.append(a)
+        #                 if args.fastq_prefix == None:
+        #                     args.fastq_prefix = a
+        #                 else:
+        #                     args.fastq_prefix += "," + a
+        #             elif re.search(".fastq", file) or re.search(".fq", file):
+        #                 if file.endswith("_1.fastq") or file.endswith("_1.fq"):
+        #                     if file.endswith("_1.fastq"):
+        #                         a = file.replace("_1.fastq", "")
+        #                     elif file.endswith("_1.fq"):
+        #                         a = file.replace("_1.fq.", "")
+        #                 elif file.endswith("_2.fastq") or file.endswith("_2.fq"):
+        #                     if file.endswith("_2.fastq"):
+        #                         a = file.replace("_2.fastq", "")
+        #                     elif file.endswith("_2.fq"):
+        #                         a = file.replace("_2.fq", "")
+        #                 barcodes.append(a)
+        #                 if args.fastq_prefix == None:
+        #                     args.fastq_prefix = a
+        #                 else:
+        #                     args.fastq_prefix += "," + a
 
     def store_general_parameters(self, args):
         """Updates general parameters to the map of parameters to be store in a JSON file
