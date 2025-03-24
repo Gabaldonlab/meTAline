@@ -519,7 +519,7 @@ class CreateConfigurationFile:
                         else:
                             args.fastqs += "," + a
 
-    def storeGeneralParameters(self, args):
+    def store_general_parameters(self, args):
         """Updates general parameters to the map of parameters to be store in a JSON file
         args -- set of parsed arguments
         """
@@ -531,7 +531,7 @@ class CreateConfigurationFile:
         self.generalParameters["sample_barcode"] = args.sample_barcode
         self.allParameters["Parameters"] = self.generalParameters
 
-    def storeInputParameters(self, args):
+    def store_input_parameters(self, args):
         """Updates input parameters to the map of parameters to be store in a JSON file
         args -- set of parsed arguments
         """
@@ -546,7 +546,7 @@ class CreateConfigurationFile:
         self.inputParameters["protein_db"] = args.protein_db
         self.allParameters["Inputs"] = self.inputParameters
 
-    def storeOutputParameters(self, args):
+    def store_output_parameters(self, args):
         """Updates output parameters to the map of parameters to be store in a JSON file
         args -- set of parsed arguments
         """
@@ -559,14 +559,14 @@ class CreateConfigurationFile:
         self.outputParameters["metaphlan4_out"] = args.metaphlan4_out
         self.allParameters["Outputs"] = self.outputParameters
 
-    def storeWildcardParameters(self, args):
+    def store_wildcard_parameters(self, args):
         """Updates wildcard parameters to the map of parameters to be store in a JSON file
         args -- set of parsed arguments
         """
         self.wildcardParameters["fastqs"] = args.fastqs
         self.allParameters["Wildcards"] = self.wildcardParameters
 
-    def storeTrimmomaticParameters(self, args):
+    def store_trimmomatic_parameters(self, args):
         """Updates the trimmomatic parameters to the map of parameters to be store in a JSON file
         args -- set of parsed arguments
         """
@@ -578,21 +578,21 @@ class CreateConfigurationFile:
         self.TrimmomaticParameters["illuminaclip"] = args.illuminaclip
         self.allParameters["Trimmomatic"] = self.TrimmomaticParameters
 
-    def storefastqcParameters(self, args):
+    def store_fastqc_parameters(self, args):
         """Updates the Fastqc parameters to the map of parameters to be store in a JSON file
         args -- set of parsed arguments
         """
         self.fastqcParameters["adapters"] = args.adapters
         self.allParameters["fastqc"] = self.fastqcParameters
 
-    def storehisat2Parameters(self, args):
+    def store_hisat2_parameters(self, args):
         """Updates hisat2 aligner parameters to the map of parameters to be store in a JSON file
         args -- set of parsed arguments
         """
         self.hisat2Parameters["hisat2_cores"] = args.hisat2_cores
         self.allParameters["hisat2"] = self.hisat2Parameters
 
-    def storeKraken2Parameters(self, args):
+    def store_kraken2_parameters(self, args):
         """Updates kraken2 to the map of parameters to be store in a JSON file
         args -- set of parsed arguments
         """
@@ -619,14 +619,14 @@ def main() -> int:
     configManager.check_parameters(args, parser)
 
     # 3. store arguments to super map structure
-    configManager.storeGeneralParameters(args)
-    configManager.storeInputParameters(args)
-    configManager.storeOutputParameters(args)
-    configManager.storeWildcardParameters(args)
-    configManager.storeTrimmomaticParameters(args)
-    configManager.storefastqcParameters(args)
-    configManager.storehisat2Parameters(args)
-    configManager.storeKraken2Parameters(args)
+    configManager.store_general_parameters(args)
+    configManager.store_input_parameters(args)
+    configManager.store_output_parameters(args)
+    configManager.store_wildcard_parameters(args)
+    configManager.store_trimmomatic_parameters(args)
+    configManager.store_fastqc_parameters(args)
+    configManager.store_hisat2_parameters(args)
+    configManager.store_kraken2_parameters(args)
 
     # 4. Store JSON fileMGI_adapters.fa
     with open(args.configFile, "w") as output_file:
