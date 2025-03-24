@@ -105,7 +105,8 @@ class CreateConfigurationFile:
             "--configFile",
             dest="configFile",
             metavar="configFile",
-            help="Configuration JSON to be generated. Default %s." % self.configFile,
+            help="Configuration JSON to be generated.",
+            default=self.configFile,
         )
         general_group.add_argument(
             "--version",
@@ -113,33 +114,35 @@ class CreateConfigurationFile:
             dest="version",
             metavar="version",
             default=self.version,
-            help="Pipeline run version. Default %s." % self.version,
+            help="Pipeline run version.",
         )
         general_group.add_argument(
             "--logs-dir",
             dest="logs_dir",
             metavar="logs_dir",
-            help="Directory to keep all the log files. Default WGS_logs.",
+            default=self.logs_dir,
+            help="Directory to keep all the log files.",
         )
         general_group.add_argument(
             "--extension",
             dest="extension",
             metavar="extension",
             default=self.extension,
-            help="Extension of the illumina raw read files. Default %s."
-            % self.extension,
+            help="Extension of the illumina raw read files.",
         )
         general_group.add_argument(
             "--sample-barcode",
             dest="sample_barcode",
             metavar="sample_barcode",
-            help="Sample barcode. Default %s." % self.sample_barcode,
+            default=self.sample_barcode,
+            help="Sample barcode.",
         )
         general_group.add_argument(
             "--basedir",
             dest="basedir",
             metavar="basedir",
-            help="Base directory for the pipeline run. Default %s." % self.basedir,
+            default=self.basedir,
+            help="Base directory for the pipeline run.",
         )
 
     def register_input(self, parser):
@@ -152,62 +155,58 @@ class CreateConfigurationFile:
             "--reads-directory",
             dest="reads_directory",
             metavar="reads_directory",
-            help="Directory where the Illumina fastqs are stored. Default %s."
-            % self.reads_directory,
+            default=self.reads_directory,
+            help="Directory where the Illumina fastqs are stored.",
         )
         input_group.add_argument(
             "--reference-genome",
             dest="reference_genome",
             metavar="reference_genome",
-            help="Indexed reference genome path (ie: reference/Human_index). Your path is  %s."
-            % self.reference_genome,
+            default=self.reference_genome,
+            help="Indexed reference genome path (ie: reference/Human_index).",
         )
         input_group.add_argument(
             "--krakendb",
             dest="krakendb",
             required=True,
             metavar="krakendb",
-            help="Kraken2 database used for the taxonomic assignment. Your path is  %s."
-            % self.krakendb,
+            default=self.krakendb,
+            help="Kraken2 database used for the taxonomic assignment.",
         )
         input_group.add_argument(
             "--taxid",
             dest="taxid",
             metavar="taxid",
             default=self.taxid,
-            help='Selects the taxid used for exctracting fasta reads. You can add more than one using space as the separator. Default "%s".'
-            % self.taxid,
+            help='Selects the taxid used for exctracting fasta reads. You can add more than one using space as the separator.',
         )
         input_group.add_argument(
             "--metaphlan_db",
             dest="metaphlan_db",
             metavar="metaphlan_db",
             default=self.metaphlan_db,
-            help='Path of the Metaphlan4 database. Default "%s".' % self.metaphlan_db,
+            help='Path of the Metaphlan4 database.',
         )
         input_group.add_argument(
             "--metaphlan_Index",
             dest="metaphlan_Index",
             metavar="metaphlan_Index",
             default=self.metaphlan_Index,
-            help='Index of the metaphlan4 database.Default "%s".'
-            % self.metaphlan_Index,
+            help='Index of the metaphlan4 database.',
         )
         input_group.add_argument(
             "--protein_db",
             dest="protein_db",
             metavar="protein_db",
             default=self.protein_db,
-            help='Humann database to do the translation search (by deafult this is by-passed).Default "%s".'
-            % self.protein_db,
+            help='Humann database to do the translation search (by default this is by-passed).',
         )
         input_group.add_argument(
             "--n_db",
             dest="n_db",
             metavar="n_db",
             default=self.n_db,
-            help='Humann database to do the nucleotide search (based on already built annotations.Default "%s".'
-            % self.n_db,
+            help='Humann database to do the nucleotide search (based on already built annotations).',
         )
 
     def register_output(self, parser):
@@ -220,43 +219,44 @@ class CreateConfigurationFile:
         output_group.add_argument(
             "--alignment-out",
             dest="alignment_out",
-            help='Out directory of the alignment step. Default "/%s"'
-            % self.alignment_out,
+            default=self.alignment_out,
+            help='Out directory of the alignment step.',
         )
         output_group.add_argument(
             "--trimmomatic-out",
             dest="trimmomatic_out",
-            help='Out directory of the trimmomatic output. Default "/%s"'
-            % self.trimmomatic_out,
+            default=self.trimmomatic_out,
+            help='Out directory of the trimmomatic output.',
         )
         output_group.add_argument(
             "--kraken-out",
             dest="kraken_out",
-            help='Out directory of the Kraken2 taxonomic assignation step. Default "/%s"'
-            % self.kraken_out,
+            default=self.kraken_out,
+            help='Out directory of the Kraken2 taxonomic assignation step.',
         )
         output_group.add_argument(
             "--krona-out",
             dest="krona_out",
-            help='Out directory of the Krona visualization tool. Default "/%s"'
-            % self.krona_out,
+            default=self.krona_out,
+            help='Out directory of the Krona visualization tool.',
         )
         output_group.add_argument(
             "--extracted-fa-out",
             dest="extracted_fa_out",
-            help='Out directory of the extracted fasta reads. Default "/%s"'
-            % self.extracted_fa_out,
+            default=self.extracted_fa_out,
+            help='Out directory of the extracted fasta reads.',
         )
         output_group.add_argument(
             "--ranalysis-out",
             dest="ranalysis_out",
-            help='Out directory of the R analysis. Default "/%s"' % self.ranalysis_out,
+            default=self.ranalysis_out,
+            help='Out directory of the R analysis.',
         )
         output_group.add_argument(
             "--metaphlan4-out",
             dest="metaphlan4_out",
-            help='Out directory of the Metaphlan4 and Humann analysis.Default "/%s"'
-            % self.metaphlan4_out,
+            default=self.metaphlan4_out,
+            help='Out directory of the Metaphlan4 and Humann analysis.',
         )
 
     def register_wildcards(self, parser):
@@ -267,7 +267,6 @@ class CreateConfigurationFile:
         wildcards_group = parser.add_argument_group("Wildcards")
         wildcards_group.add_argument(
             "--fastq-prefix",
-            required=True,
             dest="fastq_prefix",
             metavar="fastq_prefix",
             required=True,
@@ -286,8 +285,7 @@ class CreateConfigurationFile:
             dest="trimmo_cores",
             metavar="trimmo_cores",
             default=self.trimmo_cores,
-            help="Number of threads to run trimmomatic. Default %s."
-            % self.trimmo_cores,
+            help="Number of threads to run trimmomatic.",
         )
         trimmomatic_group.add_argument(
             "--leading",
@@ -295,7 +293,7 @@ class CreateConfigurationFile:
             dest="leading",
             metavar="leading",
             default=self.leading,
-            help="Leading parameter. Default %s." % self.leading,
+            help="Leading parameter.",
         )
         trimmomatic_group.add_argument(
             "--trailing",
@@ -303,14 +301,14 @@ class CreateConfigurationFile:
             dest="trailing",
             metavar="trailing",
             default=self.trailing,
-            help="Trailing parameter. Default %s." % self.trailing,
+            help="Trailing parameter.",
         )
         trimmomatic_group.add_argument(
             "--slidingwindow",
             dest="slidingwindow",
             metavar="slidingwindow",
             default=self.slidingwindow,
-            help="Sliding window parmeter. Default %s." % self.slidingwindow,
+            help="Sliding window parameter.",
         )
         trimmomatic_group.add_argument(
             "--minlen",
@@ -318,14 +316,14 @@ class CreateConfigurationFile:
             dest="minlen",
             metavar="minlen",
             default=self.minlen,
-            help="Minimum readl length parameter. Default %s." % self.minlen,
+            help="Minimum read length parameter.",
         )
         trimmomatic_group.add_argument(
             "--illuminaclip",
             dest="illuminaclip",
             metavar="illuminaclip",
             default=self.illuminaclip,
-            help="Illumina clip information. Default %s." % self.illuminaclip,
+            help="Illumina clip information.",
         )
 
     def register_fastqc(self, parser):
@@ -339,8 +337,7 @@ class CreateConfigurationFile:
             dest="adapters",
             metavar="adapters",
             default=self.adapters,
-            help="Adapter sequences to be checked in the quality assessment. Default %s."
-            % self.adapters,
+            help="Adapter sequences to be checked in the quality assessment.",
         )
 
     def register_hisat2(self, parser):
@@ -355,8 +352,7 @@ class CreateConfigurationFile:
             dest="hisat2_cores",
             metavar="hisat2_cores",
             default=self.hisat2_cores,
-            help="Number of threads to run the hisat2 aligner. Default %s."
-            % self.hisat2_cores,
+            help="Number of threads to run the hisat2 aligner.",
         )
 
     def register_kraken2(self, parser):
@@ -371,8 +367,7 @@ class CreateConfigurationFile:
             dest="kraken2_cores",
             metavar="kraken2_cores",
             default=self.kraken2_cores,
-            help="Number of threads to run the Kraken2 taxonomic assignment step. Default %s."
-            % self.kraken2_cores,
+            help="Number of threads to run the Kraken2 taxonomic assignment step.",
         )
 
     def check_parameters(self, args, parser):
