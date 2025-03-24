@@ -165,6 +165,7 @@ class CreateConfigurationFile:
         input_group.add_argument(
             "--krakendb",
             dest="krakendb",
+            required=True,
             metavar="krakendb",
             help="Kraken2 database used for the taxonomic assignment. Your path is  %s."
             % self.krakendb,
@@ -268,6 +269,7 @@ class CreateConfigurationFile:
             "--fastqs",
             dest="fastqs",
             metavar="fastqs",
+            required=True,
             help="List with basename of the fastqs. Default %s" % self.fastqs,
         )
 
@@ -392,7 +394,7 @@ class CreateConfigurationFile:
                 "No sample_barcode specified. A barcode or identification is required"
             )
             parser.print_help()
-            sys.exit(-1)
+            sys.exit(1)
 
         if args.basedir:
             args.basedir = os.path.abspath(args.basedir) + "/"
