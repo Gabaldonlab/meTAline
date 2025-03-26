@@ -45,7 +45,7 @@ class PrepareGreasyArrayJobArgs:
         parser.add_argument(
             "--generate_config_cmd",
             type=str,
-            default="singularity run --cleanenv ./metaline.sif metaline-generate-config",
+            default="metaline-generate-config",  # Simply this way, because it will try to get it from inside the Singularity image!
             help="The external command to generate the config files.",
         )
         parser.add_argument(
@@ -64,21 +64,18 @@ class PrepareGreasyArrayJobArgs:
             "--reference_genome",
             type=str,
             required=True,
-            default="singularity run --cleanenv ./metaline.sif metaline-generate-config",
             help="Path to the indexed reference genome.",
         )
         parser.add_argument(
             "--krakendb",
             type=str,
             required=True,
-            default="singularity run --cleanenv ./metaline.sif metaline-generate-config",
             help="Path to the decompressed Kraken database.",
         )
         parser.add_argument(
             "--reads_directory",
             type=str,
             required=True,
-            default="singularity run --cleanenv ./metaline.sif metaline-generate-config",
             help="Path to the directory containing the reads.",
         )
         parser.add_argument(
@@ -183,7 +180,7 @@ def prepare_config_generation_commands(
                 f"--reference-genome {args.reference_genome}",
                 f"--krakendb {args.krakendb}",
                 f"--sample-barcode {prefix}",
-                f"--fastq_prefix {prefix}",
+                f"--fastq-prefix {prefix}",
                 f"--metaphlan_db {args.metaphlan_db}",
                 f"--metaphlan_Index {args.metaphlan_index}",
                 f"--n_db {args.n_db}",
