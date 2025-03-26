@@ -61,7 +61,7 @@ class PrepareGreasyArrayJobArgs:
             help="The external command to run greasy with the job files.",
         )
         parser.add_argument(
-            "--reference_genome",
+            "--reference-genome",
             type=str,
             required=True,
             help="Path to the indexed reference genome.",
@@ -73,7 +73,7 @@ class PrepareGreasyArrayJobArgs:
             help="Path to the decompressed Kraken database.",
         )
         parser.add_argument(
-            "--reads_directory",
+            "--reads-directory",
             type=str,
             required=True,
             help="Path to the directory containing the reads.",
@@ -150,14 +150,14 @@ def get_common_prefixes_for_fasta_pairs(paths: tuple[Path, ...]) -> list[str]:
     filtered_common_prefixes = [
         prefix.strip(string.punctuation)
         for prefix, count in common_prefixes_counts.items()
-        if count == 2
+        if count > 1 and count % 2 == 0
     ]
     return filtered_common_prefixes
 
 
 def extract_reads_prefixes(reads_directory: Path | str) -> list[str]:
     reads_dir = Path(reads_directory)  # Update with your actual path
-    files = tuple(reads_dir.glob("*.f*q.gz"))
+    files = tuple(reads_dir.rglob("*.f*q.gz"))
     found_prefixes = get_common_prefixes_for_fasta_pairs(files)
     return found_prefixes
 
@@ -170,6 +170,20 @@ def prepare_config_generation_commands(
     config_gen_cmds: list[PreparedConfigGenCmd] = []
     for prefix in reads_prefixes:
         config_output_file = config_file_output_dir / f"config.{prefix}.json"
+        intermediate_files_output_dir = Path(args.basedir) / prefix
+
+        metaphlan_db_abs_path = Path(args.metaphlan_db).absolute()
+        n_db_abs_path = Path(args.n_db).absolute()
+        protein_db_abs_path = Path(args.protein_db).absolute()
+        logs_dir_abs_path = (intermediate_files_output_dir / 'WGS_logs').absolute()
+        alignment_out_abs_path = (intermediate_files_output_dir / 'BAM').absolute()
+        trimmomatic_out_abs_path = (intermediate_files_output_dir / 'TRIMMOMATIC').absolute()
+        kraken_out_abs_path = (intermediate_files_output_dir / 'KRAKEN_ASSIGN').absolute()
+        krona_out_abs_path = (intermediate_files_output_dir / 'KRONA_HTML').absolute()
+        extracted_fa_out_abs_path = (intermediate_files_output_dir / 'EXTRACTED_FASTA').absolute()
+        ranalysis_out_abs_path = (intermediate_files_output_dir / 'R_ANALYSIS').absolute()
+        metaphlan4_out_abs_path = (intermediate_files_output_dir / 'METAPHLAN4').absolute()
+
         cmd: str = " ".join(
             (
                 f"{args.generate_config_cmd}",
@@ -181,10 +195,18 @@ def prepare_config_generation_commands(
                 f"--krakendb {args.krakendb}",
                 f"--sample-barcode {prefix}",
                 f"--fastq-prefix {prefix}",
-                f"--metaphlan_db {args.metaphlan_db}",
+                f"--metaphlan_db {metaphlan_db_abs_path}",
                 f"--metaphlan_Index {args.metaphlan_index}",
-                f"--n_db {args.n_db}",
-                f"--protein_db {args.protein_db}",
+                f"--n_db {n_db_abs_path}",
+                f"--protein_db {protein_db_abs_path}",
+                f"--logs-dir {logs_dir_abs_path}",
+                f"--alignment-out {alignment_out_abs_path}",
+                f"--trimmomatic-out {trimmomatic_out_abs_path}",
+                f"--kraken-out {kraken_out_abs_path}",
+                f"--krona-out {krona_out_abs_path}",
+                f"--extracted-fa-out {extracted_fa_out_abs_path}",
+                f"--ranalysis-out {ranalysis_out_abs_path}",
+                f"--metaphlan4-out {metaphlan4_out_abs_path}",
             )
         )
         config_gen_cmds.append(

@@ -434,14 +434,22 @@ class CreateConfigurationFile:
             parser.print_help()
             sys.exit(1)
 
-        args.logs_dir = f"{os.path.join(args.basedir, self.logs_dir)}/"
-        args.alignment_out = f"{os.path.join(args.basedir, self.alignment_out)}/"
-        args.trimmomatic_out = f"{os.path.join(args.basedir, self.trimmomatic_out)}/"
-        args.kraken_out = f"{os.path.join(args.basedir, self.kraken_out)}/"
-        args.krona_out = f"{os.path.join(args.basedir, self.krona_out)}/"
-        args.extracted_fa_out = f"{os.path.join(args.basedir, self.extracted_fa_out)}/"
-        args.ranalysis_out = f"{os.path.join(args.basedir, self.ranalysis_out)}/"
-        args.metaphlan4_out = f"{os.path.join(args.basedir, self.metaphlan4_out)}/"
+        if args.logs_dir == self.logs_dir:
+            args.logs_dir = f"{os.path.join(args.basedir, self.logs_dir)}/"
+        if args.alignment_out == self.alignment_out:
+            args.alignment_out = f"{os.path.join(args.basedir, self.alignment_out)}/"
+        if args.trimmomatic_out == self.trimmomatic_out:
+            args.trimmomatic_out = f"{os.path.join(args.basedir, self.trimmomatic_out)}/"
+        if args.kraken_out == self.kraken_out:
+            args.kraken_out = f"{os.path.join(args.basedir, self.kraken_out)}/"
+        if args.krona_out == self.krona_out:
+            args.krona_out = f"{os.path.join(args.basedir, self.krona_out)}/"
+        if args.extracted_fa_out == self.extracted_fa_out:
+            args.extracted_fa_out = f"{os.path.join(args.basedir, self.extracted_fa_out)}/"
+        if args.ranalysis_out == self.ranalysis_out:
+            args.ranalysis_out = f"{os.path.join(args.basedir, self.ranalysis_out)}/"
+        if args.metaphlan4_out == self.metaphlan4_out:
+            args.metaphlan4_out = f"{os.path.join(args.basedir, self.metaphlan4_out)}/"
 
     def store_general_parameters(self, args):
         """Updates general parameters to the map of parameters to be store in a JSON file
