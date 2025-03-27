@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 
-"""
-Author: Diego Fuentes and Olfat Khannous
-Contact email: olfat.khannous@bsc.es
-Date:2024-07-23
-"""
+#Author: Diego Fuentes, Dániel Majer and Olfat Khannous Lleiffe
+#Contact email: olfat.khannous@bsc.es
+#Barcelona
+#Date:2025-03-27
 
 import os
 import json
@@ -25,7 +24,6 @@ class CreateConfigurationFile:
             "config.json"  # Name of the json configuration file to be created.
         )
         self.version = 1  # Pipeline version
-        self.logs_dir = "WGS_logs"  # Directory to keep all the log files
         self.extension = "fastq.gz"  # Extension of the raw read files
         self.sample_barcode = None  # Sample barcode
         self.basedir = self.sample_barcode  # Base directory for the pipeline run
@@ -114,13 +112,6 @@ class CreateConfigurationFile:
             metavar="version",
             default=self.version,
             help="Pipeline run version.",
-        )
-        general_group.add_argument(
-            "--logs-dir",
-            dest="logs_dir",
-            metavar="logs_dir",
-            default=self.logs_dir,
-            help="Directory to keep all the log files.",
         )
         general_group.add_argument(
             "--extension",
@@ -434,8 +425,6 @@ class CreateConfigurationFile:
             parser.print_help()
             sys.exit(1)
 
-        if args.logs_dir == self.logs_dir:
-            args.logs_dir = f"{os.path.join(args.basedir, self.logs_dir)}/"
         if args.alignment_out == self.alignment_out:
             args.alignment_out = f"{os.path.join(args.basedir, self.alignment_out)}/"
         if args.trimmomatic_out == self.trimmomatic_out:
@@ -458,7 +447,6 @@ class CreateConfigurationFile:
         self.generalParameters["configFile"] = args.configFile
         self.generalParameters["version"] = args.version
         self.generalParameters["basedir"] = args.basedir
-        self.generalParameters["logs_dir"] = args.logs_dir
         self.generalParameters["extension"] = args.extension
         self.generalParameters["sample_barcode"] = args.sample_barcode
         self.allParameters["Parameters"] = self.generalParameters
