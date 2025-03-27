@@ -2,10 +2,10 @@
 #shell.prefix("source ~/.bashrc; ")
 
 
-#Author: Diego Fuentes and Olfat Khannous Lleiffe
+#Author: Diego Fuentes, Dániel Majer and Olfat Khannous Lleiffe
 #Contact email: olfat.khannous@bsc.es
 #Barcelona
-#Date:2024-12-16
+#Date:2025-03-27
 
 import os
 from datetime import datetime
@@ -42,15 +42,7 @@ metaphlan4_out = os.path.join(workingdir, config["Outputs"]["metaphlan4_out"])
 
 #Three optional arguments, that we are assessing here:
 reference_genome = config["Inputs"]["reference_genome"]
-#Benchmark directory
-benchmark_dir = os.path.join(workingdir, "Benchmark")
-if not os.path.exists(benchmark_dir):
-    os.makedirs(benchmark_dir)
 
-#logs directory
-logs_dir = os.path.join(workingdir, config["Parameters"]["logs_dir"])
-if not os.path.exists(logs_dir):
-    os.makedirs(logs_dir)
 
 #Create the necessary dir. Do not create alignment_out directory if there is no reference in the config
 if reference_genome != None or reference_genome != "null":
@@ -64,10 +56,8 @@ if not os.path.exists(krona_out):
     os.makedirs(krona_out)
 if not os.path.exists(extracted_fa_out):
     os.makedirs(extracted_fa_out)
-
 if not os.path.exists(ranalysis_out):
     os.makedirs(ranalysis_out)
-
 if not os.path.exists(metaphlan4_out):
     os.makedirs(metaphlan4_out)
 
@@ -119,16 +109,10 @@ rule all:
         outdir_h = config["Outputs"]["metaphlan4_out"] + sample
 
 
-    log:
-        logs_dir + str(date) + "_" + sample +".all.rule.log"
-
-
 #Rule in case you want to only perform trimming and qualiy assessment of the data
 rule Trimming:
     input:
         read_processing
-    log:
-        logs_dir + str(date) + "_" + sample + ".trimming.rule.log"
      
 
 #Rule to deplete host reads, if a reference genome is provied
@@ -136,8 +120,6 @@ if reference_genome != None or reference_genome != "null":
     rule host_depletion:
         input:
             fastq = alignment_out + sample +".unmapped.fastq.gz"
-        log:
-            logs_dir + str(date) + "_" + sample +".alignment.rule.log"
 
 
 #This rule is used to perform the taxonomy assignment based on the k-mer based approach
@@ -147,8 +129,6 @@ rule kmer_taxonomy:
         kraken_report= kraken_out + sample + ".kraken2.report",
         krona_file= krona_out + sample + ".krona",
         krona_html= krona_out + sample + ".html"
-    log:
-        logs_dir + str(date) + "_" + sample +".kmer.taxonomy_assignment.rule.log"
 
 
 #This rule is used to make a basic R analysis
@@ -159,8 +139,6 @@ rule R_Analysis:
         phyloseq_object =  ranalysis_out + sample + ".rds",
         rich_object =  ranalysis_out + sample + "_alpha_div.csv",
         out_plot =  ranalysis_out + sample + "_Barplot_phyla.jpeg"
-    log:
-        logs_dir + str(date) + "_" + sample +".R_analysis.rule.log"
 
 
 #Rule to run the BioBakery rules: Taxonomy assignment by MetaPhlAn4 and functional profiling by HUMAnN
@@ -169,5 +147,3 @@ rule BioBakery:
         out_profile = metaphlan4_out + sample + "_profiled.txt",
         out_vsc = metaphlan4_out + sample + ".vsc.txt",
         outdir_h = config["Outputs"]["metaphlan4_out"] + sample
-    log:
-        logs_dir + str(date) + "_" + sample +".Biobakery.rule.log"
