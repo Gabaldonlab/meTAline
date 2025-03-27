@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import os
-import re
 import shutil
 import string
 import sys
@@ -143,20 +142,20 @@ def get_common_prefixes_for_fasta_pairs(paths: tuple[Path, ...]) -> list[str]:
         (path1.name, path2.name)
         for path1 in paths
         for path2 in paths
-        if path1.name != path2.name
+        if path1.name != path2.name and path1.parent == path2.parent
     ]
     raw_common_prefixes = [os.path.commonprefix(pair) for pair in filenames]
     common_prefixes_counts = Counter(raw_common_prefixes)
     filtered_common_prefixes = [
         prefix.strip(string.punctuation)
         for prefix, count in common_prefixes_counts.items()
-        if count > 1 and count % 2 == 0
+        if count > 1 and count % 2 == 0 and prefix != ""
     ]
     return filtered_common_prefixes
 
 
 def extract_reads_prefixes(reads_directory: Path | str) -> list[str]:
-    reads_dir = Path(reads_directory)  # Update with your actual path
+    reads_dir = Path(reads_directory)
     files = tuple(reads_dir.rglob("*.f*q.gz"))
     found_prefixes = get_common_prefixes_for_fasta_pairs(files)
     return found_prefixes
@@ -175,14 +174,24 @@ def prepare_config_generation_commands(
         metaphlan_db_abs_path = Path(args.metaphlan_db).absolute()
         n_db_abs_path = Path(args.n_db).absolute()
         protein_db_abs_path = Path(args.protein_db).absolute()
-        logs_dir_abs_path = (intermediate_files_output_dir / 'WGS_logs').absolute()
-        alignment_out_abs_path = (intermediate_files_output_dir / 'BAM').absolute()
-        trimmomatic_out_abs_path = (intermediate_files_output_dir / 'TRIMMOMATIC').absolute()
-        kraken_out_abs_path = (intermediate_files_output_dir / 'KRAKEN_ASSIGN').absolute()
-        krona_out_abs_path = (intermediate_files_output_dir / 'KRONA_HTML').absolute()
-        extracted_fa_out_abs_path = (intermediate_files_output_dir / 'EXTRACTED_FASTA').absolute()
-        ranalysis_out_abs_path = (intermediate_files_output_dir / 'R_ANALYSIS').absolute()
-        metaphlan4_out_abs_path = (intermediate_files_output_dir / 'METAPHLAN4').absolute()
+        logs_dir_abs_path = (intermediate_files_output_dir / "WGS_logs").absolute()
+        alignment_out_abs_path = (intermediate_files_output_dir / "BAM").absolute()
+        trimmomatic_out_abs_path = (
+            intermediate_files_output_dir / "TRIMMOMATIC"
+        ).absolute()
+        kraken_out_abs_path = (
+            intermediate_files_output_dir / "KRAKEN_ASSIGN"
+        ).absolute()
+        krona_out_abs_path = (intermediate_files_output_dir / "KRONA_HTML").absolute()
+        extracted_fa_out_abs_path = (
+            intermediate_files_output_dir / "EXTRACTED_FASTA"
+        ).absolute()
+        ranalysis_out_abs_path = (
+            intermediate_files_output_dir / "R_ANALYSIS"
+        ).absolute()
+        metaphlan4_out_abs_path = (
+            intermediate_files_output_dir / "METAPHLAN4"
+        ).absolute()
 
         cmd: str = " ".join(
             (
@@ -241,7 +250,6 @@ def _write_joblist_file(args: WriteJoblistFileArgs) -> Path:
 def write_joblist_files(
     max_workers: int, metaline_cmds_splits: list[list[str]], basedir: Path
 ) -> tuple[Path, ...]:
-    joblist_output_files: list[Path] = []
     write_joblist_args: list[WriteJoblistFileArgs] = [
         {"idx": idx, "cmds_split": cmds_split, "basedir": basedir}
         for idx, cmds_split in enumerate(metaline_cmds_splits)
