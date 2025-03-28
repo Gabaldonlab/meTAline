@@ -61,7 +61,7 @@ rule extract_reads:
         ext2 = protected(extracted_fa_out + sample + ".2.fastq.gz")
     params:
         intermediate1 = extracted_fa_out + sample + "1.fastq",
-        intermediate2 = extracted_fa_out + sample + "2.fastq"
+        intermediate2 = extracted_fa_out + sample + "2.fastq",
         taxid = config["Inputs"]["taxid"]
     threads: 4
     shell:
