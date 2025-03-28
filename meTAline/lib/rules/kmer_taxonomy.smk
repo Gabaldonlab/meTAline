@@ -1,7 +1,7 @@
-#Author: Diego Fuentes and Olfat Khannous
+#Author: Diego Fuentes, Dániel Majer and Olfat Khannous Lleiffe
 #Contact email: olfat.khannous@bsc.es
 #Barcelona
-#Date:2024-12-02
+#Date:2025-03-27
 
 ######################
 # TAXONOMY ABUNDANCE #
@@ -26,10 +26,7 @@ rule Kraken2:
     params:
         database = config["Inputs"]["krakendb"],
         outdir = config["Outputs"]["kraken_out"]
-    benchmark:
-        benchmark_dir + "/" + sample +".kraken2.benchmark.txt"
-    log:
-        logs_dir + str(date) + ".illumina_kraken2.log"
+
     threads: config["Kraken2"]["kraken2_cores"]
     #Run interpretes the following block as python code, keep python synthax
     run:
@@ -48,10 +45,6 @@ rule Krona:
     output:
         krona_file = protected(krona_out + sample + ".krona"),
         krona_html = protected(krona_out + sample + ".html")
-    benchmark:
-        os.path.join(benchmark_dir, (str(date) + "_" + sample +".krona.benchmark.txt"))
-    log:
-        logs_dir + str(date) + ".krona.log"
     threads: config["Kraken2"]["kraken2_cores"]
     shell:
         "kreport2krona.py -r  {input.report} -o {output.krona_file}; ktImportText {output.krona_file} -o {output.krona_html}"
@@ -69,11 +62,8 @@ rule extract_reads:
     params:
         intermediate1 = extracted_fa_out + sample + "1.fastq",
         intermediate2 = extracted_fa_out + sample + "2.fastq"
-    benchmark:
-        os.path.join(benchmark_dir, (str(date) + "_" + sample +".extracted_reads.benchmark.txt"))
-    log:
-        logs_dir + str(date) + ".extracted_reads.log"
+        taxid = config["Inputs"]["taxid"]
     threads: 4
     shell:
-        "extract_kraken_output_reads -k {input.kraken} -r {input.report} -s1 {input.read1} -s2 {input.read2} -t 0 --include-children -o {params.intermediate1} -o2 {params.intermediate2};"
+        "extract_kraken_output_reads -k {input.kraken} -r {input.report} -s1 {input.read1} -s2 {input.read2} -t {params.taxid} --include-children -o {params.intermediate1} -o2 {params.intermediate2};"
         "cat {params.intermediate1} | pigz -p {threads} -c > {output.ext1}; cat {params.intermediate2} | pigz -p {threads} -c  > {output.ext2};"

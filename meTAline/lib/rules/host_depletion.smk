@@ -1,7 +1,7 @@
-#Author: Diego Fuentes and Olfat Khannous
+#Author: Diego Fuentes, Dániel Majer and Olfat Khannous Lleiffe
 #Contact email: olfat.khannous@bsc.es
 #Barcelona
-#Date:2024-10-27
+#Date:2025-03-27
 
 
 ###################
@@ -18,27 +18,22 @@ if reference_genome != None or reference_genome != "null":
             outdir = config["Outputs"]["alignment_out"],
             ref = reference_genome
 
-        log:
-            logs_dir + str(date) + "_" + sample +".alignment.log"
-        benchmark:
-            os.path.join(benchmark_dir, (str(date) + "_" + sample +".alignment.benchmark.txt"))
         threads: config["hisat2"]["hisat2_cores"]
         shell:
             #Important, check that the hisat2 index for your reference genome has been generated and provided to the config
-            "hisat2 --threads {threads} -x {params.ref} -1 {input.read1} -2 {input.read2} | samtools sort -@ {threads} -O BAM -o {output.out} 2> {log};"
+            "hisat2 --threads {threads} -x {params.ref} -1 {input.read1} -2 {input.read2} | samtools sort -@ {threads} -O BAM -o {output.out};"
 
     rule index_bam:
         input:
             BAM = rules.hisat2.output.out
         output:
             BAI = protected(alignment_out + sample +".hisat2.bam.bai")
-        log:
-            logs_dir + str(date) + "_"+sample+".index_bam.log"  
+        
         threads:
             config["hisat2"]["hisat2_cores"]
 
         shell:
-            "samtools index {input.BAM} {output.BAI} 2> {log}"
+            "samtools index {input.BAM} {output.BAI};"
 
     rule extracted_unmapped_reads:
         input:
@@ -47,7 +42,6 @@ if reference_genome != None or reference_genome != "null":
         output:
             fastq = protected(alignment_out + sample +".unmapped.fastq.gz"),
             intermediate=temp(alignment_out + "temp.bam")
-        log: logs_dir + str(date) + "_"+sample+".bam2fasta.log"  
         threads: config["hisat2"]["hisat2_cores"]
         shell:
             #Generate unmaped bam file, use it and then remove it

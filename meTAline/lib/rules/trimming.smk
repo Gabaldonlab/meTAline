@@ -1,7 +1,7 @@
-#Author: Diego Fuentes and Olfat Khannous
+#Author: Diego Fuentes, Dániel Majer and Olfat Khannous Lleiffe
 #Contact email: olfat.khannous@bsc.es
 #Barcelona
-#Date:2024-12-02
+#Date:2025-03-27
 
 ###################
 # TRIMMING AND QC #
@@ -23,11 +23,6 @@ rule Trimmomatic:
         trailing = config["Trimmomatic"]["trailing"],
         slidingwindow = config["Trimmomatic"]["slidingwindow"],
         minlen = config["Trimmomatic"]["minlen"]
-    benchmark:
-        os.path.join(benchmark_dir, (str(date) + "_" + sample +".{file}.trimming.benchmark.txt"))
-
-    log:
-        logs_dir + str(date) + ".{file}.trimmomatic.log"
     threads:
         config["Trimmomatic"]["trimmo_cores"]
 
@@ -43,11 +38,7 @@ rule Concat_reads:
     output:
         concat1 = protected(trimmomatic_out + sample + ".1.fastq.gz"),
         concat2 = protected(trimmomatic_out + sample+ ".2.fastq.gz")
-    benchmark:
-        os.path.join(benchmark_dir, (str(date) + "_" + sample +".concat.benchmark.txt"))
 
-    log:
-        logs_dir + str(date) + ".concatenation.log"
     threads:
         config["Trimmomatic"]["trimmo_cores"]
 
@@ -55,7 +46,7 @@ rule Concat_reads:
     shell:
         "zcat {input.trim1} | pigz -p {threads} -c  > {output.concat1}; zcat {input.trim2} | pigz -p {threads} -c  > {output.concat2}; "
 
-#Quality assessment of the trimmed reads, using fastqc
+#Quality assessment of the reads, using fastqc
 rule fastqc:
     input:
         reads1 = rules.Concat_reads.output.concat1,
@@ -65,10 +56,6 @@ rule fastqc:
     params:
         mode = "--outdir",
         adapters = os.path.join(workflow.basedir, config["fastqc"]["adapters"])
-    benchmark:
-        os.path.join(benchmark_dir, (str(date) + "_" + sample +".fastqc.benchmark.txt"))
-    log:
-        logs_dir+str(date)+".fastqc.log"
     threads: 4
     shell:
         #Fastqc called from snakemake requires to have the outdir already created. The (-a) is the list of adapters to be checked.

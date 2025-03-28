@@ -1,7 +1,7 @@
-#Author: Diego Fuentes and Olfat Khannous
+#Author: Diego Fuentes, Dániel Majer and Olfat Khannous Lleiffe
 #Contact email: olfat.khannous@bsc.es
 #Barcelona
-#Date:2024-12-16
+#Date:2025-03-27
 
 #Rule to convert the Kraken2 report to biom format. 
 rule convert_biom:
@@ -9,10 +9,7 @@ rule convert_biom:
         report= rules.Kraken2.output.report
     output:
         biom_file = protected(kraken_out + sample + ".Kraken2.biom")
-    benchmark:
-        os.path.join(benchmark_dir, (str(date) + "_" + sample +".biom.benchmark.txt"))
-    log:
-        logs_dir + str(date) + ".biom.log"
+    
     threads: config["Kraken2"]["kraken2_cores"]
     shell:
         "kraken-biom {input.report} -o {output.biom_file} --fmt json" 
@@ -23,12 +20,10 @@ rule Biom_to_Phyloseq:
         biom= rules.convert_biom.output.biom_file
     output:
         phyloseq_object =  ranalysis_out + sample + ".rds"
-    benchmark:
-        os.path.join(benchmark_dir, (str(date) + sample +".R_conversion.benchmark.txt"))
+   
     params:
         script = os.path.join(workflow.basedir, "lib/scripts/Biom_to_Phyloseq.R")
-    log:
-        logs_dir + str(date) + ".R_phyloseq.log"
+    
     shell:
         r"""
         Rscript {params.script} {input.biom} {output.phyloseq_object}
@@ -40,12 +35,10 @@ rule alpha_diversity:
         phylo_object = rules.Biom_to_Phyloseq.output.phyloseq_object
     output:
         rich_object =  ranalysis_out + sample + "_alpha_div.csv"
-    benchmark:
-        os.path.join(benchmark_dir, (str(date) + sample +".R_alpha_div.benchmark.txt"))
+   
     params:
         script = os.path.join(workflow.basedir, "lib/scripts/alpha_diversity.R")
-    log:
-        logs_dir + str(date) + ".R_alpha_div.log"
+
     shell:
         r"""
         Rscript {params.script} {input.phylo_object} {output.rich_object}
@@ -59,12 +52,9 @@ rule bar_plot_toptaxa:
     output:
         out_plot =  ranalysis_out + sample + "_Barplot_phyla.jpeg"
 
-    benchmark:
-        os.path.join(benchmark_dir, (str(date) + sample +".R_barplot.benchmark.txt"))
     params:
         script = os.path.join(workflow.basedir, "lib/scripts/bar_plot_toptaxa.R")
-    log:
-        logs_dir + str(date) + ".R_barplot.log"
+    
     shell:
         r"""
         Rscript {params.script} {input.phylo_object} {output.out_plot}

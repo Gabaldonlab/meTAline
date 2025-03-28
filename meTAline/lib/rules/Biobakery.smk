@@ -1,7 +1,7 @@
-#Author: Diego Fuentes and Olfat Khannous
+#Author: Diego Fuentes, Dániel Majer and Olfat Khannous Lleiffe
 #Contact email: olfat.khannous@bsc.es
 #Barcelona
-#Date:2024-12-16
+#Date:2025-03-27
 
 ###################
 # BIOBAKERY_TOOLS (Metaphlan4 and Humann) #Taxonomy and functional profiling based on marker genes. 
@@ -31,8 +31,6 @@ rule metaphlan4:
         outdir = config["Outputs"]["metaphlan4_out"],
         metaphlan_db = config["Inputs"]["metaphlan_db"], 
         metaphlan_index = config["Inputs"]["metaphlan_Index"] 
-    benchmark:
-        benchmark_dir + "/" + sample +".metaphlan4.benchmark.txt"
 
     #Run interpretes the following block as python code, keep python synthax
     run:
@@ -67,8 +65,7 @@ rule humann:
         metaphlan_index = config["Inputs"]["metaphlan_Index"],
         metaphlan_db = config["Inputs"]["metaphlan_db"],
         n_db = config["Inputs"]["n_db"]
-    # benchmark: # Uncomment if benchmark is needed
-    #     benchmark_dir + "/" + sample + ".humann.benchmark.txt"
+
     run:
         if reference_genome == None or reference_genome == "null":
             # Concatenate paired-end reads using zcat if gzipped
