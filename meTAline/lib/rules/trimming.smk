@@ -46,7 +46,7 @@ rule Concat_reads:
     shell:
         "zcat {input.trim1} | pigz -p {threads} -c  > {output.concat1}; zcat {input.trim2} | pigz -p {threads} -c  > {output.concat2}; "
 
-#Quality assessment of the trimmed reads, using fastqc
+#Quality assessment of the reads, using fastqc
 rule fastqc:
     input:
         reads1 = rules.Concat_reads.output.concat1,
