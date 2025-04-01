@@ -200,9 +200,16 @@ def get_common_prefixes_for_fasta_pairs(paths: tuple[Path, ...]) -> list[str]:
     filtered_common_prefixes = [
         prefix.strip(string.punctuation)
         for prefix, count in common_prefixes_counts.items()
-        if count > 1 and count % 2 == 0 and prefix != ""
+        if count > 1 and count % 2 == 0 and prefix != "" and prefix.endswith(tuple(string.punctuation))
     ]
-    return filtered_common_prefixes
+
+    # Filter out any key that is a substring of another key
+    longest_unique_prefixes = {
+        prefix for prefix in filtered_common_prefixes
+        if not any(prefix in other_prefix and prefix != other_prefix for other_prefix in filtered_common_prefixes)
+    }
+
+    return list(longest_unique_prefixes)
 
 
 def extract_reads_prefixes(reads_directory: Path | str) -> list[str]:
