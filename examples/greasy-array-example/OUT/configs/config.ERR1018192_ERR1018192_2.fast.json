@@ -1,9 +1,8 @@
 {
   "Parameters": {
-    "configFile": "/gpfs/projects/bsc40/current/dmajer/metaline-prepare-greasy-array-job/OUT/configs/config.ERR1018192_ERR1018192_2.fast.json",
+    "configFile": "/gpfs/projects/bsc40/current/dmajer/metaline-prepare-greasy-array-job/test_output/configs/config.ERR1018192_ERR1018192_2.fast.json",
     "version": 1,
-    "basedir": "/gpfs/projects/bsc40/current/dmajer/metaline-prepare-greasy-array-job/OUT/",
-    "logs_dir": "/gpfs/projects/bsc40/current/dmajer/metaline-prepare-greasy-array-job/OUT/ERR1018192_ERR1018192_2.fast/WGS_logs",
+    "basedir": "/gpfs/projects/bsc40/current/dmajer/metaline-prepare-greasy-array-job/test_output/",
     "extension": "fq.gz",
     "sample_barcode": "ERR1018192_ERR1018192_2.fast"
   },
@@ -18,19 +17,19 @@
     "protein_db": "/gpfs/projects/bsc40/project/pipelines/WGS/metaPhlan/metaPhla-db/uniref"
   },
   "Outputs": {
-    "alignment_out": "/gpfs/projects/bsc40/current/dmajer/metaline-prepare-greasy-array-job/OUT/ERR1018192_ERR1018192_2.fast/BAM",
-    "trimmomatic_out": "/gpfs/projects/bsc40/current/dmajer/metaline-prepare-greasy-array-job/OUT/ERR1018192_ERR1018192_2.fast/TRIMMOMATIC",
-    "kraken_out": "/gpfs/projects/bsc40/current/dmajer/metaline-prepare-greasy-array-job/OUT/ERR1018192_ERR1018192_2.fast/KRAKEN_ASSIGN",
-    "krona_out": "/gpfs/projects/bsc40/current/dmajer/metaline-prepare-greasy-array-job/OUT/ERR1018192_ERR1018192_2.fast/KRONA_HTML",
-    "extracted_fa_out": "/gpfs/projects/bsc40/current/dmajer/metaline-prepare-greasy-array-job/OUT/ERR1018192_ERR1018192_2.fast/EXTRACTED_FASTA",
-    "ranalysis_out": "/gpfs/projects/bsc40/current/dmajer/metaline-prepare-greasy-array-job/OUT/ERR1018192_ERR1018192_2.fast/R_ANALYSIS",
-    "metaphlan4_out": "/gpfs/projects/bsc40/current/dmajer/metaline-prepare-greasy-array-job/OUT/ERR1018192_ERR1018192_2.fast/METAPHLAN4"
+    "alignment_out": "/gpfs/projects/bsc40/current/dmajer/metaline-prepare-greasy-array-job/test_output/ERR1018192_ERR1018192_2.fast/BAM",
+    "trimmomatic_out": "/gpfs/projects/bsc40/current/dmajer/metaline-prepare-greasy-array-job/test_output/ERR1018192_ERR1018192_2.fast/TRIMMOMATIC",
+    "kraken_out": "/gpfs/projects/bsc40/current/dmajer/metaline-prepare-greasy-array-job/test_output/ERR1018192_ERR1018192_2.fast/KRAKEN_ASSIGN",
+    "krona_out": "/gpfs/projects/bsc40/current/dmajer/metaline-prepare-greasy-array-job/test_output/ERR1018192_ERR1018192_2.fast/KRONA_HTML",
+    "extracted_fa_out": "/gpfs/projects/bsc40/current/dmajer/metaline-prepare-greasy-array-job/test_output/ERR1018192_ERR1018192_2.fast/EXTRACTED_FASTA",
+    "ranalysis_out": "/gpfs/projects/bsc40/current/dmajer/metaline-prepare-greasy-array-job/test_output/ERR1018192_ERR1018192_2.fast/R_ANALYSIS",
+    "metaphlan4_out": "/gpfs/projects/bsc40/current/dmajer/metaline-prepare-greasy-array-job/test_output/ERR1018192_ERR1018192_2.fast/METAPHLAN4"
   },
   "Wildcards": {
     "fastq_prefix": "ERR1018192_ERR1018192_2.fast"
   },
   "Trimmomatic": {
-    "trimmo_cores": 4,
+    "trimmo_cores": 90,
     "leading": 3,
     "trailing": 3,
     "slidingwindow": "4:15",
@@ -41,9 +40,9 @@
     "adapters": "adapter_list_new.txt"
   },
   "hisat2": {
-    "hisat2_cores": 8
+    "hisat2_cores": 90
   },
   "Kraken2": {
-    "kraken2_cores": 16
+    "kraken2_cores": 90
   }
 }
