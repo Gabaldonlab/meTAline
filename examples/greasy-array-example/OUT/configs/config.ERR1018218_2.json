@@ -1,0 +1,49 @@
+{
+  "Parameters": {
+    "configFile": "/gpfs/projects/bsc40/current/dmajer/metaline-prepare-greasy-array-job/OUT/configs/config.ERR1018218_2.json",
+    "version": 1,
+    "basedir": "/gpfs/projects/bsc40/current/dmajer/metaline-prepare-greasy-array-job/OUT/",
+    "logs_dir": "/gpfs/projects/bsc40/current/dmajer/metaline-prepare-greasy-array-job/OUT/ERR1018218_2/WGS_logs",
+    "extension": "fq.gz",
+    "sample_barcode": "ERR1018218_2"
+  },
+  "Inputs": {
+    "reads_directory": "/gpfs/projects/bsc40/current/okhannous/MeTAline_paper/BMC_version/raw_data/",
+    "reference_genome": "/gpfs/projects/bsc40/project/pipelines/WGS/reference_genomes/index/T2T/T2T",
+    "krakendb": "/gpfs/projects/bsc40/project/pipelines/WGS/KRAKEN2_DB/KRAKEN2_DB_COMPLETE",
+    "taxid": 0,
+    "metaphlan_db": "/gpfs/projects/bsc40/current/okhannous/Metaphlan4/db",
+    "metaphlan_Index": "mpa_vJun23_CHOCOPhlAnSGB_202307",
+    "n_db": "/gpfs/projects/bsc40/project/pipelines/WGS/metaPhlan/metaPhla-db/chocophlan",
+    "protein_db": "/gpfs/projects/bsc40/project/pipelines/WGS/metaPhlan/metaPhla-db/uniref"
+  },
+  "Outputs": {
+    "alignment_out": "/gpfs/projects/bsc40/current/dmajer/metaline-prepare-greasy-array-job/OUT/ERR1018218_2/BAM",
+    "trimmomatic_out": "/gpfs/projects/bsc40/current/dmajer/metaline-prepare-greasy-array-job/OUT/ERR1018218_2/TRIMMOMATIC",
+    "kraken_out": "/gpfs/projects/bsc40/current/dmajer/metaline-prepare-greasy-array-job/OUT/ERR1018218_2/KRAKEN_ASSIGN",
+    "krona_out": "/gpfs/projects/bsc40/current/dmajer/metaline-prepare-greasy-array-job/OUT/ERR1018218_2/KRONA_HTML",
+    "extracted_fa_out": "/gpfs/projects/bsc40/current/dmajer/metaline-prepare-greasy-array-job/OUT/ERR1018218_2/EXTRACTED_FASTA",
+    "ranalysis_out": "/gpfs/projects/bsc40/current/dmajer/metaline-prepare-greasy-array-job/OUT/ERR1018218_2/R_ANALYSIS",
+    "metaphlan4_out": "/gpfs/projects/bsc40/current/dmajer/metaline-prepare-greasy-array-job/OUT/ERR1018218_2/METAPHLAN4"
+  },
+  "Wildcards": {
+    "fastq_prefix": "ERR1018218_2"
+  },
+  "Trimmomatic": {
+    "trimmo_cores": 4,
+    "leading": 3,
+    "trailing": 3,
+    "slidingwindow": "4:15",
+    "minlen": 35,
+    "illuminaclip": "Illumina_MGI_adapters.fa:2:30:10"
+  },
+  "fastqc": {
+    "adapters": "adapter_list_new.txt"
+  },
+  "hisat2": {
+    "hisat2_cores": 8
+  },
+  "Kraken2": {
+    "kraken2_cores": 16
+  }
+}
