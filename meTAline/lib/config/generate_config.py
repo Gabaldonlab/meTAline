@@ -260,7 +260,7 @@ class CreateConfigurationFile:
             dest="fastq_prefix",
             metavar="fastq_prefix",
             required=True,
-            help="List with basename of the fastq-prefix.",
+            help="Wildcard parameter corresponding to the basename of the fastq files located in the --reads-directory.",
         )
 
     def register_trimmomatic(self, parser: argparse.ArgumentParser):

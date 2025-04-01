@@ -15,6 +15,7 @@ from typing import Counter, TypedDict
 
 @dataclass
 class PrepareGreasyArrayJobArgs:
+    metaline_rule: str
     basedir: str
     generate_config_cmd: str
     metaline_cmd: str
@@ -29,12 +30,32 @@ class PrepareGreasyArrayJobArgs:
     protein_db: str
     max_workers: int
     joblist_size: int
+    cluster_node_cores: int
+    trimmo_cores: int
+    hisat2_cores: int
+    kraken2_cores: int
+    snakemake_cores: int
 
     @classmethod
     def get_arguments(cls, args=sys.argv[1:]) -> PrepareGreasyArrayJobArgs:
         parser = ArgumentParser(
             description="Prepares the greasy array job to submit multiple meTAline jobs in the cluster."
         )
+        parser.add_argument(
+            "--metaline-rule",
+            type=str,
+            choices=[
+                "all",
+                "trimming",
+                "host_depletion",
+                "kmer_taxonomy",
+                "RAnalysis",
+                "BioBakery",
+            ],
+            default="all",
+            help="The meTAline rule to use for the subcommands of the greasy array.",
+        )
+
         parser.add_argument(
             "--basedir",
             type=str,
@@ -111,7 +132,7 @@ class PrepareGreasyArrayJobArgs:
             "--max_workers",
             type=int,
             default=4,
-            help="Number of max. workers to use.",
+            help="Number of max. workers to use to generate the configuration files for meTAline.",
         )
         parser.add_argument(
             "--joblist_size",
@@ -122,6 +143,36 @@ class PrepareGreasyArrayJobArgs:
                 " a single joblist file. (Greasy array will "
                 "contain multiple of these files to be launched parallel.)"
             ),
+        )
+        parser.add_argument(
+            "--cluster-node-cores",
+            type=int,
+            default=40,
+            help=("Total cores to assign for the cluster node."),
+        )
+        parser.add_argument(
+            "--trimmo-cores",
+            type=int,
+            default=10,
+            help=("Total cores to assign for trimmomatic."),
+        )
+        parser.add_argument(
+            "--hisat2-cores",
+            type=int,
+            default=10,
+            help=("Total cores to assign for hisat2."),
+        )
+        parser.add_argument(
+            "--kraken2-cores",
+            type=int,
+            default=10,
+            help=("Total cores to assign for kraken2."),
+        )
+        parser.add_argument(
+            "--snakemake-cores",
+            type=int,
+            default=5,
+            help=("Total cores to assign for snakemake."),
         )
         return PrepareGreasyArrayJobArgs(**vars(parser.parse_args(args)))
 
@@ -174,7 +225,6 @@ def prepare_config_generation_commands(
         metaphlan_db_abs_path = Path(args.metaphlan_db).absolute()
         n_db_abs_path = Path(args.n_db).absolute()
         protein_db_abs_path = Path(args.protein_db).absolute()
-        logs_dir_abs_path = (intermediate_files_output_dir / "WGS_logs").absolute()
         alignment_out_abs_path = (intermediate_files_output_dir / "BAM").absolute()
         trimmomatic_out_abs_path = (
             intermediate_files_output_dir / "TRIMMOMATIC"
@@ -208,7 +258,6 @@ def prepare_config_generation_commands(
                 f"--metaphlan_Index {args.metaphlan_index}",
                 f"--n_db {n_db_abs_path}",
                 f"--protein_db {protein_db_abs_path}",
-                f"--logs-dir {logs_dir_abs_path}",
                 f"--alignment-out {alignment_out_abs_path}",
                 f"--trimmomatic-out {trimmomatic_out_abs_path}",
                 f"--kraken-out {kraken_out_abs_path}",
@@ -216,6 +265,9 @@ def prepare_config_generation_commands(
                 f"--extracted-fa-out {extracted_fa_out_abs_path}",
                 f"--ranalysis-out {ranalysis_out_abs_path}",
                 f"--metaphlan4-out {metaphlan4_out_abs_path}",
+                f"--trimmo-cores {args.trimmo_cores}",
+                f"--hisat2-cores {args.hisat2_cores}",
+                f"--kraken2-cores {args.kraken2_cores}",
             )
         )
         config_gen_cmds.append(
@@ -276,6 +328,7 @@ def write_slurm_job_file_template(
     greasy_list_path,
     joblist_num: int,
     jobslist_max_size: int,
+    cpus_per_task: int,
 ) -> Path:
     output_job_file = basedir / "launch_metaline.job"
     log_output_directory = str(basedir).rstrip("/")
@@ -294,9 +347,9 @@ def write_slurm_job_file_template(
 #SBATCH --array={array_range} # The number of jobs in the array
 #SBATCH --ntasks={joblist_num} # The number of parallel tasks
 #SBATCH --tasks-per-node={jobslist_max_size}
-#SBATCH --cpus-per-task=24 # Number of CPUs per run task
-#SBATCH --constraint=highmem
-#SBATCH --time=24:00:00
+#SBATCH --cpus-per-task={cpus_per_task} # Number of CPUs per run task
+#SBATCH --constraint=highmem  # Use this only if your the database is too big and this constrainst is available in your cluster.
+#SBATCH --time=24:00:00  # 1 day.
 
 module load greasy
 # Print the task id
@@ -321,7 +374,10 @@ def main() -> int:
     cmd_entries = [entry["config_gen_cmd"] for entry in gen_config_cmds]
     _ = _run_shell_cmds_parallel(cmd_entries, args.max_workers)
     generated_config_files = [entry["config_output_file"] for entry in gen_config_cmds]
-    metaline_cmds = [f"{args.metaline_cmd} {file}" for file in generated_config_files]
+    metaline_cmds = [
+        f"{args.metaline_cmd} -r {args.metaline_rule} -j {args.snakemake_cores} --configfile {file}"
+        for file in generated_config_files
+    ]
     metaline_cmds_splits = [
         metaline_cmds[i : i + args.joblist_size]
         for i in range(0, len(metaline_cmds), args.joblist_size)
@@ -341,6 +397,7 @@ def main() -> int:
         greasy_list_path=greasy_list,
         joblist_num=len(joblist_output_files),
         jobslist_max_size=args.joblist_size,
+        cpus_per_task=args.cluster_node_cores,
     )
     return 0
 
