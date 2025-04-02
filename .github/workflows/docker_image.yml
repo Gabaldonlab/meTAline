@@ -2,7 +2,8 @@ name: Docker Image CI
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -10,4 +11,6 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Build the Docker image for the test
-      run: docker build . --file Dockerfile --tag meTAline:$(date +%s)
+      run: IMAGE_TAG="meTAline:$(date +'%Y-%m-%d')" && docker build . --file Dockerfile --tag $IMAGE_TAG  
+    - name: Verify the Docker image
+      run: docker images $IMAGE_TAG
