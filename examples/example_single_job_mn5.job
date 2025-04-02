@@ -34,4 +34,4 @@ singularity run --cleanenv /gpfs/projects/bsc40/project/pipelines/meTAline/meTAl
 singularity run --cleanenv /gpfs/projects/bsc40/project/pipelines/meTAline/meTAline-1.1.0/metaline.sif metaline \
     -r all \
     -j 16 \
-    --config-file mock.json
+    --configfile mock.json

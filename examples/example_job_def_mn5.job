@@ -32,4 +32,4 @@ singularity run --cleanenv metaline.sif metaline-generate-config \
 singularity run --cleanenv metaline.sif metaline \
     -r all \
     -j 16 \
-    --config-file corachan_kraken2_standard.json
+    --configfile corachan_kraken2_standard.json

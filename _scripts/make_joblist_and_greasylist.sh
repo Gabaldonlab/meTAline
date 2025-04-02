@@ -24,7 +24,7 @@ do
     
 
     mkdir $foo
-    echo "module load singularity && singularity run --cleanenv /gpfs/projects/bsc40/project/pipelines/meTAline/meTAline-1.1.0/metaline.sif metaline -r all -j 16 --config-file $configdir/$file" >> $basedir/joblist.txt
+    echo "module load singularity && singularity run --cleanenv /gpfs/projects/bsc40/project/pipelines/meTAline/meTAline-1.1.0/metaline.sif metaline -r all -j 16 --configfile $configdir/$file" >> $basedir/joblist.txt
 
 done
 

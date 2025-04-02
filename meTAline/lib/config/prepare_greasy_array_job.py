@@ -382,7 +382,7 @@ def main() -> int:
     _ = _run_shell_cmds_parallel(cmd_entries, args.max_workers)
     generated_config_files = [entry["config_output_file"] for entry in gen_config_cmds]
     metaline_cmds = [
-        f"{args.metaline_cmd} -r {args.metaline_rule} -j {args.snakemake_cores} --config-file {file}"
+        f"{args.metaline_cmd} -r {args.metaline_rule} -j {args.snakemake_cores} --configfile {file}"
         for file in generated_config_files
     ]
     metaline_cmds_splits = [

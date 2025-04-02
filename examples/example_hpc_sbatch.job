@@ -33,4 +33,4 @@ singularity run --cleanenv metaline.sif \
     metaline \
     -r all \
     -j 16 \
-    --config-file test_kraken2_standard.json
+    --configfile test_kraken2_standard.json
