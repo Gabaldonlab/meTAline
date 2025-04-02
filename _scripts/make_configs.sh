@@ -4,7 +4,7 @@
 Reads_dir="/gpfs/projects/bsc40/current/okhannous/MeTAline_paper/BMC_version/raw_data" # DONE
 
 #Script to generate the config file, that is find in the shared pipeline:
-config="/gpfs/projects/bsc40/project/pipelines/meTAline/meTAline-0.8.0-alpha/meTAline/lib/config/generate_config.py"  # DONE
+config="/gpfs/projects/bsc40/project/pipelines/meTAline/meTAline-1.1.0/meTAline/lib/config/generate_config.py"  # DONE
 
 #Available human reference genomes:
 T2T="/gpfs/projects/bsc40/project/pipelines/WGS/reference_genomes/index/T2T/T2T"  # DONE
@@ -35,8 +35,8 @@ do
 
     #Running the config creation python script. Leaving default taxid, output directories, log directory, trimmomatic parameters and using the same number of cores for all tools
 
-    singularity run --cleanenv /gpfs/projects/bsc40/project/pipelines/meTAline/meTAline-0.8.0-alpha/metaline.sif python3 /meTAline/lib/config/generate_config.py \
-    --configFile $basedir/configs/config.$foo.json \
+    singularity run --cleanenv /gpfs/projects/bsc40/project/pipelines/meTAline/meTAline-1.1.0/metaline.sif python3 /meTAline/lib/config/generate_config.py \
+    --config-file $basedir/configs/config.$foo.json \
     --extension fq.gz \
     --basedir /$basedir/$foo \
     --reads-directory $Reads_dir \
@@ -44,10 +44,10 @@ do
     --krakendb $kraken \
     --sample-barcode "$foo" \
     --fastq-prefix "$foo" \
-    --metaphlan_db /gpfs/projects/bsc40/current/okhannous/Metaphlan4/db \
-    --metaphlan_Index mpa_vJun23_CHOCOPhlAnSGB_202307 \
-    --n_db /gpfs/projects/bsc40/project/pipelines/WGS/metaPhlan/metaPhla-db/chocophlan \
-    --protein_db /gpfs/projects/bsc40/project/pipelines/WGS/metaPhlan/metaPhla-db/uniref
+    --metaphlan-db /gpfs/projects/bsc40/current/okhannous/Metaphlan4/db \
+    --metaphlan-index mpa_vJun23_CHOCOPhlAnSGB_202307 \
+    --n-db /gpfs/projects/bsc40/project/pipelines/WGS/metaPhlan/metaPhla-db/chocophlan \
+    --protein-db /gpfs/projects/bsc40/project/pipelines/WGS/metaPhlan/metaPhla-db/uniref
 
 done
 

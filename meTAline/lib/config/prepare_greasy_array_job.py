@@ -69,13 +69,13 @@ class PrepareGreasyArrayJobArgs:
             help="The external command to generate the config files.",
         )
         parser.add_argument(
-            "--metaline_cmd",
+            "--metaline-cmd",
             type=str,
             default="singularity run --cleanenv ./metaline.sif metaline",
             help="The external command to run metaline with the config files.",
         )
         parser.add_argument(
-            "--greasy_cmd",
+            "--greasy-cmd",
             type=str,
             default="module load greasy && greasy/2.2.4.1",
             help="The external command to run greasy with the job files.",
@@ -99,7 +99,7 @@ class PrepareGreasyArrayJobArgs:
             help="Path to the directory containing the reads.",
         )
         parser.add_argument(
-            "--fastq_extension",
+            "--fastq-extension",
             type=str,
             default="fq.gz",
             help="Extension of the fastq files.",
@@ -135,7 +135,7 @@ class PrepareGreasyArrayJobArgs:
             help="Number of max. workers to use to generate the configuration files for meTAline.",
         )
         parser.add_argument(
-            "--joblist_size",
+            "--joblist-size",
             type=int,
             default=2,
             help=(
@@ -253,7 +253,7 @@ def prepare_config_generation_commands(
         cmd: str = " ".join(
             (
                 f"{args.generate_config_cmd}",
-                f"--configFile {config_output_file}",
+                f"--config-file {config_output_file}",
                 f"--extension {args.fastq_extension}",
                 f"--basedir {args.basedir}",
                 f"--reads-directory {args.reads_directory}",
@@ -261,10 +261,10 @@ def prepare_config_generation_commands(
                 f"--krakendb {args.krakendb}",
                 f"--sample-barcode {prefix}",
                 f"--fastq-prefix {prefix}",
-                f"--metaphlan_db {metaphlan_db_abs_path}",
-                f"--metaphlan_Index {args.metaphlan_index}",
-                f"--n_db {n_db_abs_path}",
-                f"--protein_db {protein_db_abs_path}",
+                f"--metaphlan-db {metaphlan_db_abs_path}",
+                f"--metaphlan-index {args.metaphlan_index}",
+                f"--n-db {n_db_abs_path}",
+                f"--protein-db {protein_db_abs_path}",
                 f"--alignment-out {alignment_out_abs_path}",
                 f"--trimmomatic-out {trimmomatic_out_abs_path}",
                 f"--kraken-out {kraken_out_abs_path}",
@@ -382,7 +382,7 @@ def main() -> int:
     _ = _run_shell_cmds_parallel(cmd_entries, args.max_workers)
     generated_config_files = [entry["config_output_file"] for entry in gen_config_cmds]
     metaline_cmds = [
-        f"{args.metaline_cmd} -r {args.metaline_rule} -j {args.snakemake_cores} --configfile {file}"
+        f"{args.metaline_cmd} -r {args.metaline_rule} -j {args.snakemake_cores} --config-file {file}"
         for file in generated_config_files
     ]
     metaline_cmds_splits = [

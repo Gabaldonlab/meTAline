@@ -99,7 +99,7 @@ class CreateConfigurationFile:
         """
         general_group = parser.add_argument_group("General Parameters")
         general_group.add_argument(
-            "--configFile",
+            "--config-file",
             dest="configFile",
             metavar="configFile",
             help="Configuration JSON to be generated.",
@@ -171,28 +171,28 @@ class CreateConfigurationFile:
             help="Selects the taxid used for exctracting fasta reads. You can add more than one using space as the separator.",
         )
         input_group.add_argument(
-            "--metaphlan_db",
+            "--metaphlan-db",
             dest="metaphlan_db",
             metavar="metaphlan_db",
             default=self.metaphlan_db,
             help="Path of the Metaphlan4 database.",
         )
         input_group.add_argument(
-            "--metaphlan_Index",
+            "--metaphlan-index",
             dest="metaphlan_Index",
             metavar="metaphlan_Index",
             default=self.metaphlan_Index,
             help="Index of the metaphlan4 database.",
         )
         input_group.add_argument(
-            "--protein_db",
+            "--protein-db",
             dest="protein_db",
             metavar="protein_db",
             default=self.protein_db,
             help="Humann database to do the translation search (by default this is by-passed).",
         )
         input_group.add_argument(
-            "--n_db",
+            "--n-db",
             dest="n_db",
             metavar="n_db",
             default=self.n_db,

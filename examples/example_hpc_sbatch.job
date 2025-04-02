@@ -16,7 +16,7 @@
 module load singularity
 
 singularity run --cleanenv metaline.sif metaline-generate-config \
-    --configFile test_kraken2_standard.json \
+    --config-file test_kraken2_standard.json \
     --extension fq.gz \
     --basedir /data/projects/my_project/metaline_testing/metaline-test-output \
     --reads-directory /data/projects/my_project/metaline_testing/raw_reads_data \
@@ -24,13 +24,13 @@ singularity run --cleanenv metaline.sif metaline-generate-config \
     --krakendb /data/projects/my_project/metaline_testing/WGS/KRAKEN2_DB/microbiome_db \
     --sample-barcode metaline_test_barcode \
     --fastq-prefix PONSJIG_165.E5-NEB-UDI \
-    --metaphlan_db /data/projects/my_project/metaline_testing/Metaphlan4/db \
-    --metaphlan_Index mpa_testing_index \
-    --n_db /data/projects/my_project/metaline_testing/WGS/humann_db \
-    --protein_db /data/projects/my_project/metaline_testing/WGS/uniref
+    --metaphlan-db /data/projects/my_project/metaline_testing/Metaphlan4/db \
+    --metaphlan-index mpa_testing_index \
+    --n-db /data/projects/my_project/metaline_testing/WGS/humann_db \
+    --protein-db /data/projects/my_project/metaline_testing/WGS/uniref
 
 singularity run --cleanenv metaline.sif \
     metaline \
     -r all \
     -j 16 \
-    --configfile test_kraken2_standard.json
+    --config-file test_kraken2_standard.json

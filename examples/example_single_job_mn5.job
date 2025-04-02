@@ -17,8 +17,8 @@ module load singularity
 
 
 ###Creation of the config file
-singularity run --cleanenv /gpfs/projects/bsc40/project/pipelines/meTAline/meTAline-0.8.0-alpha/metaline.sif metaline-generate-config \
-    --configFile mock.json \
+singularity run --cleanenv /gpfs/projects/bsc40/project/pipelines/meTAline/meTAline-1.1.0/metaline.sif metaline-generate-config \
+    --config-file mock.json \
     --extension fq.gz \
     --basedir /gpfs/projects/bsc40/current/okhannous/MeTAline_paper/MOCK_sample_reduced/OUT \
     --reads-directory /gpfs/projects/bsc40/current/okhannous/MeTAline_paper/MOCK_sample_reduced/Raw_data \
@@ -26,12 +26,12 @@ singularity run --cleanenv /gpfs/projects/bsc40/project/pipelines/meTAline/meTAl
     --krakendb /gpfs/projects/bsc40/project/pipelines/WGS/KRAKEN2_DB/Broad_gut_microbiome_db \
     --sample-barcode mock \
     --fastq-prefix V300091236_L01_100 \
-    --metaphlan_db /gpfs/projects/bsc40/current/okhannous/Metaphlan4/db \
-    --metaphlan_Index mpa_vJun23_CHOCOPhlAnSGB_202307 \
-    --n_db /gpfs/projects/bsc40/project/pipelines/WGS/metaPhlan/metaPhla-db/chocophlan \
-    --protein_db /gpfs/projects/bsc40/project/pipelines/WGS/metaPhlan/metaPhla-db/uniref
+    --metaphlan-db /gpfs/projects/bsc40/current/okhannous/Metaphlan4/db \
+    --metaphlan-index mpa_vJun23_CHOCOPhlAnSGB_202307 \
+    --n-db /gpfs/projects/bsc40/project/pipelines/WGS/metaPhlan/metaPhla-db/chocophlan \
+    --protein-db /gpfs/projects/bsc40/project/pipelines/WGS/metaPhlan/metaPhla-db/uniref
 
-singularity run --cleanenv /gpfs/projects/bsc40/project/pipelines/meTAline/meTAline-0.8.0-alpha/metaline.sif metaline \
+singularity run --cleanenv /gpfs/projects/bsc40/project/pipelines/meTAline/meTAline-1.1.0/metaline.sif metaline \
     -r all \
     -j 16 \
-    --configfile mock.json
+    --config-file mock.json
