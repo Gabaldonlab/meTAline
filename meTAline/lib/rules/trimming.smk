@@ -13,10 +13,10 @@ rule Trimmomatic:
         read1 = config["Inputs"]["reads_directory"] + "{file}_1."+config["Parameters"]["extension"],
         read2 = config["Inputs"]["reads_directory"] + "{file}_2."+config["Parameters"]["extension"]
     output:
-        trim1 = protected(trimmomatic_out + "{file}_1_paired.fq.gz"),
-        trim2 = protected(trimmomatic_out + "{file}_2_paired.fq.gz"),
-        unpaired1 = protected(trimmomatic_out + "{file}_1_unpaired.fq.gz"),
-        unpaired2 = protected(trimmomatic_out + "{file}_2_unpaired.fq.gz")
+        trim1 = protected(os.path.join(trimmomatic_out, "{file}_1_paired.fq.gz")),
+        trim2 = protected(os.path.join(trimmomatic_out, "{file}_2_paired.fq.gz")),
+        unpaired1 = protected(os.path.join(trimmomatic_out, "{file}_1_unpaired.fq.gz")),
+        unpaired2 = protected(os.path.join(trimmomatic_out, "{file}_2_unpaired.fq.gz"))
     params:
         illuminaclip = os.path.join(workflow.basedir, config["Trimmomatic"]["illuminaclip"]),
         leading = config["Trimmomatic"]["leading"],
@@ -36,8 +36,8 @@ rule Concat_reads:
         trim1 = lambda wildcards: expand(rules.Trimmomatic.output.trim1, file=files.split(',')),
         trim2 = lambda wildcards: expand(rules.Trimmomatic.output.trim2,  file=files.split(','))
     output:
-        concat1 = protected(trimmomatic_out + sample + ".1.fastq.gz"),
-        concat2 = protected(trimmomatic_out + sample+ ".2.fastq.gz")
+        concat1 = protected(os.path.join(trimmomatic_out, f"{sample}.1.fastq.gz")),
+        concat2 = protected(os.path.join(trimmomatic_out, f"{sample}.2.fastq.gz"))
 
     threads:
         config["Trimmomatic"]["trimmo_cores"]
@@ -52,7 +52,7 @@ rule fastqc:
         reads1 = rules.Concat_reads.output.concat1,
         reads2 = rules.Concat_reads.output.concat2
     output:
-        DIR = directory(trimmomatic_out +sample+"_qc")
+        DIR = directory(os.path.join(trimmomatic_out, f"{sample}_qc"))
     params:
         mode = "--outdir",
         adapters = os.path.join(workflow.basedir, config["fastqc"]["adapters"])
