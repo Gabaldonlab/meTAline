@@ -38,7 +38,7 @@ rule Kraken2:
             #Running kraken2 for read extracted from BAM file
             shell("kraken2 --threads {threads} --db {params.database} {input.read1} --use-names --report {output.report} --output {output.out}")
 
-#Krona representation of the kraken2 assignment 
+#Krona representation of the kraken2 assignment
 rule Krona:
     input:
         report = rules.Kraken2.output.report

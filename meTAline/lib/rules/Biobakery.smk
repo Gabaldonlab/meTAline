@@ -4,10 +4,10 @@
 #Date:2025-03-27
 
 ###################
-# BIOBAKERY_TOOLS (Metaphlan4 and Humann) #Taxonomy and functional profiling based on marker genes. 
+# BIOBAKERY_TOOLS (Metaphlan4 and Humann) #Taxonomy and functional profiling based on marker genes.
 ###################
 
-#This is a rule for both taxonomy and functional profiling, based on gene markers. 
+#This is a rule for both taxonomy and functional profiling, based on gene markers.
 
 
 #Check whether we use the filtered reads or the unmapped reads, which happens when the host genome is provided. In case for instance of an environmental sample the trimmed reads are the ones that will be used. s
@@ -29,8 +29,8 @@ rule metaphlan4:
         out_vsc = os.path.join(metaphlan4_out, f"{sample}.vsc.txt")
     params:
         outdir = config["Outputs"]["metaphlan4_out"],
-        metaphlan_db = config["Inputs"]["metaphlan_db"], 
-        metaphlan_index = config["Inputs"]["metaphlan_Index"] 
+        metaphlan_db = config["Inputs"]["metaphlan_db"],
+        metaphlan_index = config["Inputs"]["metaphlan_Index"]
 
     #Run interpretes the following block as python code, keep python synthax
     run:
