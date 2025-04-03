@@ -13,7 +13,7 @@ if reference_genome != None or reference_genome != "null":
             read1 = rules.Concat_reads.output.concat1,
             read2 = rules.Concat_reads.output.concat2
         output:
-            out = protected(alignment_out + sample +".hisat2.bam")
+            out = protected(os.path.join(alignment_out, f"{sample}.hisat2.bam"))
         params:
             outdir = config["Outputs"]["alignment_out"],
             ref = reference_genome
@@ -27,8 +27,8 @@ if reference_genome != None or reference_genome != "null":
         input:
             BAM = rules.hisat2.output.out
         output:
-            BAI = protected(alignment_out + sample +".hisat2.bam.bai")
-        
+            BAI = protected(os.path.join(alignment_out, f"{sample}.hisat2.bam.bai"))
+
         threads:
             config["hisat2"]["hisat2_cores"]
 
@@ -40,8 +40,8 @@ if reference_genome != None or reference_genome != "null":
             BAM = rules.hisat2.output.out,
             BAI = rules.index_bam.output.BAI
         output:
-            fastq = protected(alignment_out + sample +".unmapped.fastq.gz"),
-            intermediate=temp(alignment_out + "temp.bam")
+            fastq = protected(os.path.join(alignment_out, f"{sample}.unmapped.fastq.gz")),
+            intermediate=temp(os.path.join(alignment_out, "temp.bam"))
         threads: config["hisat2"]["hisat2_cores"]
         shell:
             #Generate unmaped bam file, use it and then remove it

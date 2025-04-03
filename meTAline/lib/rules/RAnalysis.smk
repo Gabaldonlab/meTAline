@@ -8,7 +8,7 @@ rule convert_biom:
     input:
         report= rules.Kraken2.output.report
     output:
-        biom_file = protected(kraken_out + sample + ".Kraken2.biom")
+        biom_file = protected(os.path.join(kraken_out, f"{sample}.Kraken2.biom"))
     
     threads: config["Kraken2"]["kraken2_cores"]
     shell:
@@ -19,7 +19,7 @@ rule Biom_to_Phyloseq:
     input:
         biom= rules.convert_biom.output.biom_file
     output:
-        phyloseq_object =  ranalysis_out + sample + ".rds"
+        phyloseq_object =  os.path.join(ranalysis_out, f"{sample}.rds")
    
     params:
         script = os.path.join(workflow.basedir, "lib/scripts/Biom_to_Phyloseq.R")
@@ -34,7 +34,7 @@ rule alpha_diversity:
     input:
         phylo_object = rules.Biom_to_Phyloseq.output.phyloseq_object
     output:
-        rich_object =  ranalysis_out + sample + "_alpha_div.csv"
+        rich_object =  os.path.join(ranalysis_out, f"{sample}_alpha_div.csv")
    
     params:
         script = os.path.join(workflow.basedir, "lib/scripts/alpha_diversity.R")
@@ -50,7 +50,7 @@ rule bar_plot_toptaxa:
         phylo_object = rules.Biom_to_Phyloseq.output.phyloseq_object
 
     output:
-        out_plot =  ranalysis_out + sample + "_Barplot_phyla.jpeg"
+        out_plot =  os.path.join(ranalysis_out, f"{sample}_Barplot_phyla.jpeg")
 
     params:
         script = os.path.join(workflow.basedir, "lib/scripts/bar_plot_toptaxa.R")

@@ -12,7 +12,7 @@ from datetime import datetime
 import sys
 
 date1 = str(datetime.now())
-tmp = str.replace(date1," ",".") 
+tmp = str.replace(date1," ",".")
 tmp2 = str.replace(tmp,":","")
 date = str.replace(tmp2,"-","")
 
@@ -85,65 +85,63 @@ include: "lib/rules/Biobakery.smk"
 read_processing = list()
 
 if reference_genome == None or reference_genome == "null":
-    read_processing.append(trimmomatic_out +sample+"_qc")
+    read_processing.append(os.path.join(trimmomatic_out, f"{sample}_qc"))
 else:
-    read_processing.append(trimmomatic_out +sample+"_qc")
-    read_processing.append(alignment_out + sample +".hisat2.bam")
-    read_processing.append(alignment_out + sample +".hisat2.bam.bai")
-    read_processing.append(alignment_out + sample +".unmapped.fastq.gz")
+    read_processing.append(os.path.join(trimmomatic_out, f"{sample}_qc"))
+    read_processing.append(os.path.join(alignment_out, f"{sample}.hisat2.bam"))
+    read_processing.append(os.path.join(alignment_out, f"{sample}.hisat2.bam.bai"))
+    read_processing.append(os.path.join(alignment_out, f"{sample}.unmapped.fastq.gz"))
 
 #Rule by default, runs the complete pipeline
 rule all:
     input:
         read_processing,
-        kraken_out= kraken_out + sample + ".kraken2.txt",
-        kraken_report= kraken_out + sample + ".kraken2.report",
-        krona_file= krona_out + sample + ".krona",
-        krona_html= krona_out + sample + ".html",
-        ext1= extracted_fa_out + sample + ".1.fastq.gz",
-        ext2= extracted_fa_out + sample + ".2.fastq.gz",
-        phyloseq_object =  ranalysis_out + sample + ".rds",
-        rich_object =  ranalysis_out + sample + "_alpha_div.csv",
-        out_plot =  ranalysis_out + sample + "_Barplot_phyla.jpeg",
-        out_profile = metaphlan4_out + sample + "_profiled.txt", 
-        outdir_h = config["Outputs"]["metaphlan4_out"] + sample
+        kraken_out = os.path.join(kraken_out, f"{sample}.kraken2.txt"),
+        kraken_report= os.path.join(kraken_out, f"{sample}.kraken2.report"),
+        krona_file= os.path.join(krona_out, f"{sample}.krona"),
+        krona_html= os.path.join(krona_out, f"{sample}.html"),
+        ext1= os.path.join(extracted_fa_out, f"{sample}.1.fastq.gz"),
+        ext2= os.path.join(extracted_fa_out, f"{sample}.2.fastq.gz"),
+        phyloseq_object = os.path.join( ranalysis_out, f"{sample}.rds"),
+        rich_object = os.path.join( ranalysis_out, f"{sample}_alpha_div.csv"),
+        out_plot = os.path.join( ranalysis_out, f"{sample}_Barplot_phyla.jpeg"),
+        out_profile = os.path.join(metaphlan4_out, f"{sample}_profiled.txt"),
+        outdir_h = os.path.join(config["Outputs"]["metaphlan4_out"], sample)
 
 
 #Rule in case you want to only perform trimming and qualiy assessment of the data
 rule Trimming:
     input:
         read_processing
-     
 
 #Rule to deplete host reads, if a reference genome is provied
 if reference_genome != None or reference_genome != "null":
     rule host_depletion:
         input:
-            fastq = alignment_out + sample +".unmapped.fastq.gz"
+            fastq = os.path.join(alignment_out, f"{sample}.unmapped.fastq.gz")
 
 
 #This rule is used to perform the taxonomy assignment based on the k-mer based approach
 rule kmer_taxonomy:
     input:
-        kraken_out= kraken_out + sample + ".kraken2.txt",
-        kraken_report= kraken_out + sample + ".kraken2.report",
-        krona_file= krona_out + sample + ".krona",
-        krona_html= krona_out + sample + ".html"
-
+        kraken_out = os.path.join(kraken_out, f"{sample}.kraken2.txt"),
+        kraken_report = os.path.join(kraken_out, f"{sample}.kraken2.report"),
+        krona_file = os.path.join(krona_out, f"{sample}.krona"),
+        krona_html = os.path.join(krona_out, f"{sample}.html")
 
 #This rule is used to make a basic R analysis
 rule R_Analysis:
     input:
-        biom_file= kraken_out + sample + ".Kraken2.biom",
-        biom= rules.convert_biom.output.biom_file,
-        phyloseq_object =  ranalysis_out + sample + ".rds",
-        rich_object =  ranalysis_out + sample + "_alpha_div.csv",
-        out_plot =  ranalysis_out + sample + "_Barplot_phyla.jpeg"
+        biom_file = os.path.join(kraken_out, f"{sample}.Kraken2.biom"),
+        biom = rules.convert_biom.output.biom_file,
+        phyloseq_object = os.path.join( ranalysis_out, f"{sample}.rds"),
+        rich_object = os.path.join( ranalysis_out, f"{sample}_alpha_div.csv"),
+        out_plot = os.path.join( ranalysis_out, f"{sample}_Barplot_phyla.jpeg")
 
 
 #Rule to run the BioBakery rules: Taxonomy assignment by MetaPhlAn4 and functional profiling by HUMAnN
 rule BioBakery:
-    input: 
-        out_profile = metaphlan4_out + sample + "_profiled.txt",
-        out_vsc = metaphlan4_out + sample + ".vsc.txt",
-        outdir_h = config["Outputs"]["metaphlan4_out"] + sample
+    input:
+        out_profile = os.path.join(metaphlan4_out, f"{sample}_profiled.txt"),
+        out_vsc = os.path.join(metaphlan4_out, f"{sample}.vsc.txt"),
+        outdir_h = os.path.join(config["Outputs"]["metaphlan4_out"], sample)

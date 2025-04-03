@@ -21,8 +21,8 @@ rule Kraken2:
         read1 = read1_selected,
         read2 = read2_selected
     output:
-        report = protected(kraken_out + sample + ".kraken2.report"),
-        out  =  protected(kraken_out + sample + ".kraken2.txt")
+        report = protected(os.path.join(kraken_out, f"{sample}.kraken2.report")),
+        out  =  protected(os.path.join(kraken_out, f"{sample}.kraken2.txt"))
     params:
         database = config["Inputs"]["krakendb"],
         outdir = config["Outputs"]["kraken_out"]
@@ -43,8 +43,8 @@ rule Krona:
     input:
         report = rules.Kraken2.output.report
     output:
-        krona_file = protected(krona_out + sample + ".krona"),
-        krona_html = protected(krona_out + sample + ".html")
+        krona_file = protected(os.path.join(krona_out, f"{sample}.krona")),
+        krona_html = protected(os.path.join(krona_out, f"{sample}.html"))
     threads: config["Kraken2"]["kraken2_cores"]
     shell:
         "kreport2krona.py -r  {input.report} -o {output.krona_file}; ktImportText {output.krona_file} -o {output.krona_html}"
@@ -57,11 +57,11 @@ rule extract_reads:
         report = rules.Kraken2.output.report,
         kraken = rules.Kraken2.output.out
     output:
-        ext1 = protected(extracted_fa_out + sample + ".1.fastq.gz"),
-        ext2 = protected(extracted_fa_out + sample + ".2.fastq.gz")
+        ext1 = protected(os.path.join(extracted_fa_out, f"{sample}.1.fastq.gz")),
+        ext2 = protected(os.path.join(extracted_fa_out, f"{sample}.2.fastq.gz"))
     params:
-        intermediate1 = extracted_fa_out + sample + "1.fastq",
-        intermediate2 = extracted_fa_out + sample + "2.fastq",
+        intermediate1 = os.path.join(extracted_fa_out, f"{sample}1.fastq"),
+        intermediate2 = os.path.join(extracted_fa_out, f"{sample}2.fastq"),
         taxid = config["Inputs"]["taxid"]
     threads: 4
     shell:
