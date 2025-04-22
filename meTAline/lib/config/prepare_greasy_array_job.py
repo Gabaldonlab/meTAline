@@ -1,21 +1,20 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
-import os
 import shutil
-import string
 import sys
 from argparse import ArgumentParser
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from pathlib import Path
 from subprocess import getstatusoutput
-from typing import Counter, TypedDict
+from typing import Iterable, TypedDict
 
 
 @dataclass
 class PrepareGreasyArrayJobArgs:
     metaline_rule: str
+    prefixes_fr: list[str]
     basedir: str
     generate_config_cmd: str
     metaline_cmd: str
@@ -55,7 +54,16 @@ class PrepareGreasyArrayJobArgs:
             default="all",
             help="The meTAline rule to use for the subcommands of the greasy array.",
         )
-
+        parser.add_argument(
+            "--prefixes-fr",
+            nargs="+",
+            default=("_",),
+            help=(
+                "List of prefixes of the forward-reverse annotations in the "
+                'filenames. (E.G.: \'--prefixes-fr ".R" "_"\' for '
+                "'PONSJIB_191.H100_1' and 'PONSJIB_191.H200.R1')"
+            ),
+        )
         parser.add_argument(
             "--basedir",
             type=str,
@@ -188,40 +196,41 @@ class WriteJoblistFileArgs(TypedDict):
     cmds_split: list[str]
 
 
-def get_common_prefixes_for_fasta_pairs(paths: tuple[Path, ...]) -> list[str]:
-    filenames = [
-        (path1.name, path2.name)
-        for path1 in paths
-        for path2 in paths
-        if path1.name != path2.name and path1.parent == path2.parent
-    ]
-    raw_common_prefixes = [os.path.commonprefix(pair) for pair in filenames]
-    common_prefixes_counts = Counter(raw_common_prefixes)
-    filtered_common_prefixes = [
-        prefix.strip(string.punctuation)
-        for prefix, count in common_prefixes_counts.items()
-        if count > 1 and count % 2 == 0 and prefix != "" and prefix.endswith(tuple(string.punctuation))
-    ]
+def get_common_prefixes_for_fasta_pairs(
+    paths: tuple[Path, ...], fr_annotation_prefixes: Iterable
+) -> set[str]:
+    longest_unique_prefixes: set[str] = set()
+    path_names: list[str] = [path.name for path in paths]
+    combined_path_names: str = "\t".join(path_names)
+    for path_name in path_names:
+        previous_substring: str = ""
+        longest_substring: str = ""
+        for char in path_name:
+            previous_substring = longest_substring
+            longest_substring += char
+            subcount = combined_path_names.count(longest_substring)
+            if (
+                subcount < 2
+                and previous_substring != ""
+                and previous_substring.endswith(tuple(fr_annotation_prefixes))
+            ):
+                longest_unique_prefixes.add(
+                    previous_substring.rstrip("".join(fr_annotation_prefixes))
+                )
+                break
+    return longest_unique_prefixes
 
-    # Filter out any key that is a substring of another key
-    longest_unique_prefixes = {
-        prefix for prefix in filtered_common_prefixes
-        if not any(prefix in other_prefix and prefix != other_prefix for other_prefix in filtered_common_prefixes)
-    }
 
-    return list(longest_unique_prefixes)
-
-
-def extract_reads_prefixes(reads_directory: Path | str) -> list[str]:
+def extract_reads_prefixes(reads_directory: Path | str, fr_annotation_prefixes: Iterable) -> set[str]:
     reads_dir = Path(reads_directory)
     files = tuple(reads_dir.rglob("*.f*q.gz"))
-    found_prefixes = get_common_prefixes_for_fasta_pairs(files)
+    found_prefixes = get_common_prefixes_for_fasta_pairs(files, fr_annotation_prefixes)
     return found_prefixes
 
 
 def prepare_config_generation_commands(
     args: PrepareGreasyArrayJobArgs,
-    reads_prefixes: list[str],
+    reads_prefixes: Iterable[str],
     config_file_output_dir: Path,
 ) -> list[PreparedConfigGenCmd]:
     config_gen_cmds: list[PreparedConfigGenCmd] = []
@@ -372,7 +381,7 @@ def main() -> int:
     config_file_output_dir = basedir / "configs"
     shutil.rmtree(str(config_file_output_dir), ignore_errors=True)
     config_file_output_dir.mkdir(parents=True, exist_ok=True)
-    reads_prefixes = extract_reads_prefixes(args.reads_directory)
+    reads_prefixes = extract_reads_prefixes(args.reads_directory, args.prefixes_fr)
     gen_config_cmds = prepare_config_generation_commands(
         args,
         reads_prefixes,
