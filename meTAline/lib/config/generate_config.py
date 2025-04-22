@@ -27,6 +27,7 @@ class CreateConfigurationFile:
         self.extension = "fastq.gz"  # Extension of the raw read files
         self.sample_barcode = None  # Sample barcode
         self.basedir = self.sample_barcode  # Base directory for the pipeline run
+        self.prefix_fr = "_"  # Prefix of the forward-reverse annotation in the filenames.
 
         # INPUT PARAMETERS
         self.reads_directory = None  # Directory where the illumina fastqs are stored
@@ -133,6 +134,16 @@ class CreateConfigurationFile:
             metavar="basedir",
             default=self.basedir,
             help="Base directory for the pipeline run.",
+        )
+        general_group.add_argument(
+            "--prefix-fr",
+            type=str,
+            default=self.prefix_fr,
+            help=(
+                "Prefix of the forward-reverse annotation in the "
+                'filenames. (E.G.: \'--prefix-fr ".R" \' for '
+                "'PONSJIB_191.H200.R1')"
+            ),
         )
 
     def register_input(self, parser: argparse.ArgumentParser):
@@ -449,6 +460,7 @@ class CreateConfigurationFile:
         self.generalParameters["basedir"] = args.basedir
         self.generalParameters["extension"] = args.extension
         self.generalParameters["sample_barcode"] = args.sample_barcode
+        self.generalParameters["prefix_fr"] = args.prefix_fr
         self.allParameters["Parameters"] = self.generalParameters
 
     def store_input_parameters(self, args):
