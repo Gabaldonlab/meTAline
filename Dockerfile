@@ -179,6 +179,9 @@ RUN apt-get clean
 
 # Ignore ~/.local/lib/python<version>/site-packages directory, when Python looks for installed packages on startup.
 ENV PYTHONNOUSERSITE=1
+# The humann rule uses glpsol for something in the quantify/MinPath12hmp.py script when running with Singularity or Docker image.
+# glpsol needs libglpk.so.36, which is not recognized, if LD_LIBRARY_PATH env. variable doesn't contain it.
+ENV LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/lib"
 
 # Test that every dependency works
 RUN R --version
