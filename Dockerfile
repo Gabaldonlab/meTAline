@@ -177,6 +177,9 @@ RUN chmod 777 /bin/metaline
 RUN rm -rf /var/lib/apt/lists/* /var/tmp/*
 RUN apt-get clean
 
+# Ignore ~/.local/lib/python<version>/site-packages directory, when Python looks for installed packages on startup.
+ENV PYTHONNOUSERSITE=1
+
 # Test that every dependency works
 RUN R --version
 RUN Rscript --version
