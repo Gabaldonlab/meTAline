@@ -51,3 +51,58 @@ mv $OTHER_DATASETS_DIR/grch38 $OTHER_DATASETS_DIR/grch38_index
 
 echo "==> Extracting $OTHER_DATASETS_DIR/minikraken2_v2_8GB_201904.tgz into $OTHER_DATASETS_DIR"
 tar -xvzf $OTHER_DATASETS_DIR/minikraken2_v2_8GB_201904.tgz -C $OTHER_DATASETS_DIR
+
+bunzip2 mpa_vJun23_CHOCOPhlAnSGB_202307_species.txt.bz2
+bunzip2 mpa_vJun23_CHOCOPhlAnSGB_202307_marker_info.txt.bz2
+tar -xvf mpa_vJun23_CHOCOPhlAnSGB_202307.tar
+
+BEFORE:
+13239886 -rw-rw-r-- 1 danielmajer danielmajer   73 Mar 25 20:18 mpa_vJun23_CHOCOPhlAnSGB_202307_bt2.md5
+13239899 -rw-rw-r-- 1 danielmajer danielmajer 103M Mar 25 20:10 mpa_vJun23_CHOCOPhlAnSGB_202307_bt2.tar
+13239938 -rw-rw-r-- 1 danielmajer danielmajer 1.7G Nov 27  2023 mpa_vJun23_CHOCOPhlAnSGB_202307_marker_info.txt
+13240255 -rw-rw-r-- 1 danielmajer danielmajer   70 Nov 27  2023 mpa_vJun23_CHOCOPhlAnSGB_202307.md5
+13271144 -rw-rw-r-- 1 danielmajer danielmajer 6.4M Nov 27  2023 mpa_vJun23_CHOCOPhlAnSGB_202307_species.txt
+13240258 -rw-rw-r-- 1 danielmajer danielmajer 3.1G Nov 27  2023 mpa_vJun23_CHOCOPhlAnSGB_202307.tar
+
+AFTER:
+13239886 -rw-rw-r-- 1 danielmajer danielmajer   73 Mar 25 20:18 mpa_vJun23_CHOCOPhlAnSGB_202307_bt2.md5
+13239899 -rw-rw-r-- 1 danielmajer danielmajer 103M Mar 25 20:10 mpa_vJun23_CHOCOPhlAnSGB_202307_bt2.tar
+13239938 -rw-rw-r-- 1 danielmajer danielmajer 1.7G Nov 27  2023 mpa_vJun23_CHOCOPhlAnSGB_202307_marker_info.txt
+13240255 -rw-rw-r-- 1 danielmajer danielmajer   70 Nov 27  2023 mpa_vJun23_CHOCOPhlAnSGB_202307.md5
+13240257 -rw-rw-r-- 1 danielmajer danielmajer  94M Nov 27  2023 mpa_vJun23_CHOCOPhlAnSGB_202307.pkl
+13271203 -rw-rw-r-- 1 danielmajer danielmajer 2.9G Nov 27  2023 mpa_vJun23_CHOCOPhlAnSGB_202307_SGB.fna.bz2
+13271144 -rw-rw-r-- 1 danielmajer danielmajer 6.4M Nov 27  2023 mpa_vJun23_CHOCOPhlAnSGB_202307_species.txt
+13240258 -rw-rw-r-- 1 danielmajer danielmajer 3.1G Nov 27  2023 mpa_vJun23_CHOCOPhlAnSGB_202307.tar
+13271206 -rw-rw-r-- 1 danielmajer danielmajer  44K Nov 27  2023 mpa_vJun23_CHOCOPhlAnSGB_202307_VINFO.csv
+13271221 -rw-rw-r-- 1 danielmajer danielmajer 174M Nov 27  2023 mpa_vJun23_CHOCOPhlAnSGB_202307_VSG.fna.bz2
+
+bunzip2 mpa_vJun23_CHOCOPhlAnSGB_202307_VSG.fna.bz2
+
+AFTER:
+13239886 -rw-rw-r-- 1 danielmajer danielmajer   73 Mar 25 20:18 mpa_vJun23_CHOCOPhlAnSGB_202307_bt2.md5
+13239899 -rw-rw-r-- 1 danielmajer danielmajer 103M Mar 25 20:10 mpa_vJun23_CHOCOPhlAnSGB_202307_bt2.tar
+13239938 -rw-rw-r-- 1 danielmajer danielmajer 1.7G Nov 27  2023 mpa_vJun23_CHOCOPhlAnSGB_202307_marker_info.txt
+13240255 -rw-rw-r-- 1 danielmajer danielmajer   70 Nov 27  2023 mpa_vJun23_CHOCOPhlAnSGB_202307.md5
+13240257 -rw-rw-r-- 1 danielmajer danielmajer  94M Nov 27  2023 mpa_vJun23_CHOCOPhlAnSGB_202307.pkl
+13271203 -rw-rw-r-- 1 danielmajer danielmajer 2.9G Nov 27  2023 mpa_vJun23_CHOCOPhlAnSGB_202307_SGB.fna.bz2
+13271144 -rw-rw-r-- 1 danielmajer danielmajer 6.4M Nov 27  2023 mpa_vJun23_CHOCOPhlAnSGB_202307_species.txt
+13240258 -rw-rw-r-- 1 danielmajer danielmajer 3.1G Nov 27  2023 mpa_vJun23_CHOCOPhlAnSGB_202307.tar
+13271206 -rw-rw-r-- 1 danielmajer danielmajer  44K Nov 27  2023 mpa_vJun23_CHOCOPhlAnSGB_202307_VINFO.csv
+13240398 -rw-rw-r-- 1 danielmajer danielmajer 841M Nov 27  2023 mpa_vJun23_CHOCOPhlAnSGB_202307_VSG.fna
+
+bunzip2 mpa_vJun23_CHOCOPhlAnSGB_202307_SGB.fna.bz2
+
+AFTER:
+13240253 drwxrwxr-x 6 danielmajer danielmajer 4.0K Apr 23 12:08 ../
+13239886 -rw-rw-r-- 1 danielmajer danielmajer   73 Mar 25 20:18 mpa_vJun23_CHOCOPhlAnSGB_202307_bt2.md5
+13239899 -rw-rw-r-- 1 danielmajer danielmajer 103M Mar 25 20:10 mpa_vJun23_CHOCOPhlAnSGB_202307_bt2.tar
+13239938 -rw-rw-r-- 1 danielmajer danielmajer 1.7G Nov 27  2023 mpa_vJun23_CHOCOPhlAnSGB_202307_marker_info.txt
+13240255 -rw-rw-r-- 1 danielmajer danielmajer   70 Nov 27  2023 mpa_vJun23_CHOCOPhlAnSGB_202307.md5
+13240257 -rw-rw-r-- 1 danielmajer danielmajer  94M Nov 27  2023 mpa_vJun23_CHOCOPhlAnSGB_202307.pkl
+13271223 -rw-rw-r-- 1 danielmajer danielmajer  11G Nov 27  2023 mpa_vJun23_CHOCOPhlAnSGB_202307_SGB.fna
+13271144 -rw-rw-r-- 1 danielmajer danielmajer 6.4M Nov 27  2023 mpa_vJun23_CHOCOPhlAnSGB_202307_species.txt
+13240258 -rw-rw-r-- 1 danielmajer danielmajer 3.1G Nov 27  2023 mpa_vJun23_CHOCOPhlAnSGB_202307.tar
+13271206 -rw-rw-r-- 1 danielmajer danielmajer  44K Nov 27  2023 mpa_vJun23_CHOCOPhlAnSGB_202307_VINFO.csv
+13240398 -rw-rw-r-- 1 danielmajer danielmajer 841M Nov 27  2023 mpa_vJun23_CHOCOPhlAnSGB_202307_VSG.fna
+
+tar -xvf mpa_vJun23_CHOCOPhlAnSGB_202307_bt2.tar
