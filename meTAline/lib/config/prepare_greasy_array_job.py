@@ -258,6 +258,7 @@ def prepare_config_generation_commands(
         metaphlan4_out_abs_path = (
             intermediate_files_output_dir / "METAPHLAN4"
         ).absolute()
+        fr_annotation_prefixes_formatted = " ".join([f'"{prefix}"' for prefix in args.prefixes_fr])
 
         cmd: str = " ".join(
             (
@@ -265,6 +266,7 @@ def prepare_config_generation_commands(
                 f"--config-file {config_output_file}",
                 f"--extension {args.fastq_extension}",
                 f"--basedir {args.basedir}",
+                f"--prefix-fr {fr_annotation_prefixes_formatted}",
                 f"--reads-directory {args.reads_directory}",
                 f"--reference-genome {args.reference_genome}",
                 f"--krakendb {args.krakendb}",
