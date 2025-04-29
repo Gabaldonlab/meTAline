@@ -1,6 +1,7 @@
 #!/bin/sh
 
 set -e
+
 METAPHLAN_DB_PATH=./test_input/test_datasets/metaphlan_dbs
 OTHER_DATASETS_DIR=./test_input/test_datasets
 
@@ -51,3 +52,19 @@ mv $OTHER_DATASETS_DIR/grch38 $OTHER_DATASETS_DIR/grch38_index
 
 echo "==> Extracting $OTHER_DATASETS_DIR/minikraken2_v2_8GB_201904.tgz into $OTHER_DATASETS_DIR"
 tar -xvzf $OTHER_DATASETS_DIR/minikraken2_v2_8GB_201904.tgz -C $OTHER_DATASETS_DIR
+
+echo "==> Extracting $OTHER_DATASETS_DIR/metaphlan_dbs/mpa_vJun23_CHOCOPhlAnSGB_202307_species.txt.bz2 into $OTHER_DATASETS_DIR/metaphlan_dbs/mpa_vJun23_CHOCOPhlAnSGB_202307_species.txt"
+bunzip2 $OTHER_DATASETS_DIR/metaphlan_dbs/mpa_vJun23_CHOCOPhlAnSGB_202307_species.txt.bz2
+
+echo "==> Extracting $OTHER_DATASETS_DIR/metaphlan_dbs/mpa_vJun23_CHOCOPhlAnSGB_202307_marker_info.txt.bz2 into $OTHER_DATASETS_DIR/metaphlan_dbs/mpa_vJun23_CHOCOPhlAnSGB_202307_marker_info.txt"
+bunzip2 $OTHER_DATASETS_DIR/metaphlan_dbs/mpa_vJun23_CHOCOPhlAnSGB_202307_marker_info.txt.bz2
+
+echo "==> Extracting $OTHER_DATASETS_DIR/metaphlan_dbs/mpa_vJun23_CHOCOPhlAnSGB_202307.tar"
+tar -xvf $OTHER_DATASETS_DIR/metaphlan_dbs/mpa_vJun23_CHOCOPhlAnSGB_202307.tar -C $OTHER_DATASETS_DIR/metaphlan_dbs/
+
+echo "==> Extracting $OTHER_DATASETS_DIR/metaphlan_dbs/mpa_vJun23_CHOCOPhlAnSGB_202307_SGB.fna.bz2 into $OTHER_DATASETS_DIR/metaphlan_dbs/mpa_vJun23_CHOCOPhlAnSGB_202307_SGB.fna"
+bunzip2 $OTHER_DATASETS_DIR/metaphlan_dbs/mpa_vJun23_CHOCOPhlAnSGB_202307_SGB.fna.bz2
+
+echo "==> Extracting $OTHER_DATASETS_DIR/metaphlan_dbs/mpa_vJun23_CHOCOPhlAnSGB_202307_VSG.fna.bz2 into $OTHER_DATASETS_DIR/metaphlan_dbs/mpa_vJun23_CHOCOPhlAnSGB_202307_VSG.fna"
+bunzip2 $OTHER_DATASETS_DIR/metaphlan_dbs/mpa_vJun23_CHOCOPhlAnSGB_202307_VSG.fna.bz2
+
