@@ -12,7 +12,13 @@ MeTAline, is a snakemake pipeline for metagenomics analysis. MeTAline, facilitat
 
 # Table of [Wiki](https://github.com/Gabaldonlab/meTAline/wiki/) content
 ### [About](https://github.com/Gabaldonlab/meTAline/wiki/MeTAline)
-### [Quick Start & Try Out](https://github.com/Gabaldonlab/meTAline/wiki/Quick-Start-&-Try‐Out)
+### [Quick Start & Try Out](https://github.com/Gabaldonlab/meTAline/wiki/Quick-Start-&-Try‐Out) 
+
+You can watch a small tutorial here: 
+
+https://github.com/user-attachments/assets/5efe0c7b-beb6-4180-8061-dd845b51453f
+
+
 
 ---
 
