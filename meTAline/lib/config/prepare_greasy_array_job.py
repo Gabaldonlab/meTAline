@@ -14,7 +14,7 @@ from typing import Iterable, TypedDict
 @dataclass
 class PrepareGreasyArrayJobArgs:
     metaline_rule: str
-    prefixes_fr: list[str]
+    prefix_fr: list[str]
     basedir: str
     generate_config_cmd: str
     metaline_cmd: str
@@ -55,12 +55,12 @@ class PrepareGreasyArrayJobArgs:
             help="The meTAline rule to use for the subcommands of the greasy array.",
         )
         parser.add_argument(
-            "--prefixes-fr",
+            "--prefix-fr",
             nargs="+",
             default=("_",),
             help=(
                 "List of prefixes of the forward-reverse annotations in the "
-                'filenames. (E.G.: \'--prefixes-fr ".R" "_"\' for '
+                'filenames. (E.G.: \'--prefix-fr ".R" "_"\' for '
                 "'PONSJIB_191.H100_1' and 'PONSJIB_191.H200.R1')"
             ),
         )
@@ -258,7 +258,7 @@ def prepare_config_generation_commands(
         metaphlan4_out_abs_path = (
             intermediate_files_output_dir / "METAPHLAN4"
         ).absolute()
-        fr_annotation_prefixes_formatted = " ".join([f'"{prefix}"' for prefix in args.prefixes_fr])
+        fr_annotation_prefixes_formatted = " ".join([f'"{prefix}"' for prefix in args.prefix_fr])
 
         cmd: str = " ".join(
             (
@@ -383,7 +383,7 @@ def main() -> int:
     config_file_output_dir = basedir / "configs"
     shutil.rmtree(str(config_file_output_dir), ignore_errors=True)
     config_file_output_dir.mkdir(parents=True, exist_ok=True)
-    reads_prefixes = extract_reads_prefixes(args.reads_directory, args.prefixes_fr)
+    reads_prefixes = extract_reads_prefixes(args.reads_directory, args.prefix_fr)
     gen_config_cmds = prepare_config_generation_commands(
         args,
         reads_prefixes,
