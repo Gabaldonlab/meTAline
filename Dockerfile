@@ -1,13 +1,13 @@
-FROM python:3.10.16-slim-bullseye
+FROM python:3.11.13-slim-bullseye
 
-LABEL base.image="python:3.10.14-bullseye"
-LABEL version="0.8.0-alpha"
+LABEL base.image="python:3.11.13-slim-bullseye"
+LABEL version="1.2.0"
 LABEL software="meTAline"
-LABEL software.version="0.8.0-alpha"
+LABEL software.version="1.2.0"
 LABEL description="Taxonomic assignation pipeline implementation in Snakemake for shotgun genome sequencing."
 LABEL website="https://github.com/gabaldonlab/meTAline"
 LABEL license="GNU General Public License 3.0"
-LABEL maintainer="Daniel Majer (BSC), Diego Fuentes (BSC)"
+LABEL maintainer="Daniel Majer (BSC), Olfat Khannous (BSC), Diego Fuentes (BSC)"
 
 RUN apt-get update
 RUN apt-get install -y \
@@ -129,7 +129,7 @@ RUN rm -rf fastqc_v0.12.1.zip
 RUN python3 -m pip install --upgrade pip
 RUN pip3 install --upgrade \
         kraken-biom \
-        snakemake==7.32.4 \
+        snakemake==9.6.0 \
         pulp==2.6 \
         numpy \
         pysam \
@@ -138,7 +138,8 @@ RUN pip3 install --upgrade \
         pandarallel \
         pybedtools \
         MetaPhlAn==4.1.1 \
-        humann==3.9
+        humann==3.9 \
+        pygments
 
 # Install the extract_kraken_output_reads tool derived from the "extract_reads_of_interest.py" script.
 RUN cd /bin/extract_kraken_output_reads && make install
