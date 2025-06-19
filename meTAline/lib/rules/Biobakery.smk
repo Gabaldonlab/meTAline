@@ -32,7 +32,9 @@ rule metaphlan4:
         metaphlan_db = config["Inputs"]["metaphlan_db"],
         metaphlan_index = config["Inputs"]["metaphlan_Index"]
 
-    #Run interpretes the following block as python code, keep python synthax
+    # Run interpretes the following block as python code, keep python synthax
+    benchmark:
+        os.path.join(benchmark_dir, (str(date) + "_" + sample +".metaphlan4.benchmark.txt"))
     run:
         if reference_genome == None or reference_genome == "null":
             #Running kraken2 for paired data
@@ -65,7 +67,8 @@ rule humann:
         metaphlan_index = config["Inputs"]["metaphlan_Index"],
         metaphlan_db = config["Inputs"]["metaphlan_db"],
         n_db = config["Inputs"]["n_db"]
-
+    benchmark:
+        os.path.join(benchmark_dir, (str(date) + "_" + sample +".humann.benchmark.txt"))
     run:
         if reference_genome == None or reference_genome == "null":
             # Concatenate paired-end reads using zcat if gzipped

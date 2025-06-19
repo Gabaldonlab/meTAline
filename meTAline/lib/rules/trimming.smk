@@ -27,6 +27,8 @@ rule Trimmomatic:
         trailing = config["Trimmomatic"]["trailing"],
         slidingwindow = config["Trimmomatic"]["slidingwindow"],
         minlen = config["Trimmomatic"]["minlen"]
+    benchmark:
+        os.path.join(benchmark_dir, (str(date) + "_" + sample +".{file}.trimming.benchmark.txt"))
     threads:
         config["Trimmomatic"]["trimmo_cores"]
     shell:
@@ -40,6 +42,8 @@ rule Concat_reads:
     output:
         concat1 = protected(os.path.join(trimmomatic_out, f"{sample}.1.fastq.gz")),
         concat2 = protected(os.path.join(trimmomatic_out, f"{sample}.2.fastq.gz"))
+    benchmark:
+        os.path.join(benchmark_dir, (str(date) + "_" + sample +".concat.benchmark.txt"))
     threads:
         config["Trimmomatic"]["trimmo_cores"]
     shell:
@@ -56,6 +60,8 @@ rule fastqc:
         mode = "--outdir",
         adapters = os.path.join(workflow.basedir, config["fastqc"]["adapters"])
     threads: 4
+    benchmark:
+        os.path.join(benchmark_dir, (str(date) + "_" + sample +".fastqc.benchmark.txt"))
     shell:
         #Fastqc called from snakemake requires to have the outdir already created. The (-a) is the list of adapters to be checked.
         "mkdir {output.DIR}; fastqc {input.reads1} {input.reads2} {params.mode}={output.DIR} -t 4 -a {params.adapters}; "

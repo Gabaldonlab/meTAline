@@ -26,7 +26,8 @@ rule Kraken2:
     params:
         database = config["Inputs"]["krakendb"],
         outdir = config["Outputs"]["kraken_out"]
-
+    benchmark:
+        os.path.join(benchmark_dir, (str(date) + "_" + sample +".kraken2.benchmark.txt"))
     threads: config["Kraken2"]["kraken2_cores"]
     #Run interpretes the following block as python code, keep python synthax
     run:
@@ -46,6 +47,8 @@ rule Krona:
         krona_file = protected(os.path.join(krona_out, f"{sample}.krona")),
         krona_html = protected(os.path.join(krona_out, f"{sample}.html"))
     threads: config["Kraken2"]["kraken2_cores"]
+    benchmark:
+        os.path.join(benchmark_dir, (str(date) + "_" + sample +".krona.benchmark.txt"))
     shell:
         "kreport2krona.py -r  {input.report} -o {output.krona_file}; ktImportText {output.krona_file} -o {output.krona_html}"
 
@@ -63,6 +66,8 @@ rule extract_reads:
         intermediate1 = os.path.join(extracted_fa_out, f"{sample}1.fastq"),
         intermediate2 = os.path.join(extracted_fa_out, f"{sample}2.fastq"),
         taxid = config["Inputs"]["taxid"]
+    benchmark:
+        os.path.join(benchmark_dir, (str(date) + "_" + sample +".extract_reads.benchmark.txt"))
     threads: 4
     shell:
         "extract_kraken_output_reads -k {input.kraken} -r {input.report} -s1 {input.read1} -s2 {input.read2} -t {params.taxid} --include-children -o {params.intermediate1} -o2 {params.intermediate2};"

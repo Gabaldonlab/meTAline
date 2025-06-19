@@ -5,7 +5,7 @@
 #Author: Diego Fuentes, Dániel Majer and Olfat Khannous Lleiffe
 #Contact email: olfat.khannous@bsc.es
 #Barcelona
-#Date:2025-03-27
+#Date:2025-06-13
 
 import os
 from datetime import datetime
@@ -42,6 +42,11 @@ metaphlan4_out = os.path.join(workingdir, config["Outputs"]["metaphlan4_out"])
 
 #Three optional arguments, that we are assessing here:
 reference_genome = config["Inputs"]["reference_genome"]
+
+#Benchmark directory
+benchmark_dir = os.path.join(workingdir, "Benchmark")
+if not os.path.exists(benchmark_dir) :
+    os.makedirs(benchmark_dir)
 
 
 #Create the necessary dir. Do not create alignment_out directory if there is no reference in the config
