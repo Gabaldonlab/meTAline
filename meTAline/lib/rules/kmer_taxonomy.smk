@@ -26,8 +26,6 @@ rule Kraken2:
     params:
         database = config["Inputs"]["krakendb"],
         outdir = config["Outputs"]["kraken_out"]
-    benchmark:
-        os.path.join(benchmark_dir, (str(date) + "_" + sample +".kraken2.benchmark.txt"))
     threads: config["Kraken2"]["kraken2_cores"]
     #Run interpretes the following block as python code, keep python synthax
     run:
