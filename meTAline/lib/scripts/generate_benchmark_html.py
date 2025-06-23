@@ -2,45 +2,72 @@
 
 from __future__ import annotations
 
-import sys
 import json
 import argparse
-from pathlib import Path
-from io import StringIO
+import sys
 from dataclasses import dataclass
+from io import StringIO
+from pathlib import Path
 from typing import Any
-import pandas as pd
+
 import matplotlib.pyplot as plt
+import pandas as pd
 import seaborn as sns
+from subprocess import getstatusoutput
 
 @dataclass
 class GenerateHtmlReport:
-    job_config: Path
+    output_html_path: Path
+    config_file: Path
 
     @classmethod
     def get_arguments(cls, args=sys.argv[1:]) -> GenerateHtmlReport:
         parser = argparse.ArgumentParser(
-            description="Generates benchmark report in html format based on the 'benchmark' outputs of an already finished job."
+            description="Generates benchmark report in html format based on the latest 'benchmark' outputs of an already finished job."
         )
         parser.add_argument(
-            "--job-config",
+            "--output-html-path",
+            type=Path,
+            default=Path("./report.html"),
+            help="Output path of the html report file.",
+        )
+        parser.add_argument(
+            "--config-file",
             type=Path,
             required=True,
-            help="Path to the configuration file of the job.",
+            help="Path to the config file of the job to create the report",
         )
         return GenerateHtmlReport(**vars(parser.parse_args(args)))
+
+def _exec_shell_cmd(cmd: str) -> str:
+    exit_code, output = getstatusoutput(cmd)
+    if exit_code != 0:
+        raise ChildProcessError(f"->cmd: {cmd}\n->stderr: {output}")
+    return output
 
 
 def main(argv: list[str] = sys.argv[1:]) -> int:
     args = GenerateHtmlReport.get_arguments(argv)
-    config_content = args.job_config.read_text()
-    config_payload: dict[Any, Any] = json.loads(config_content)
-    job_basedir = Path(config_payload["Parameters"]["basedir"])
-    benchmark_dir = job_basedir / "Benchmark"
+    config_blob: dict[Any, Any] = json.loads(args.config_file.read_text())
+
+    base_dir: Path = Path(config_blob["Parameters"]["basedir"])
+    if not base_dir.exists():
+        raise FileNotFoundError(f"{base_dir} does not exists!")
+
+    benchmark_dir = base_dir / "Benchmark"
+    if not benchmark_dir.exists():
+        raise FileNotFoundError(f"{benchmark_dir} does not exists!")
+
+
+    output_dir = benchmark_dir / "plots"
+    output_dir.mkdir(parents=True, exist_ok=True)
+
     benchmark_files = tuple(benchmark_dir.glob("*_test_run.*.benchmark.txt"))
     run_date_ids = [file.name.split("_", maxsplit=1)[0] for file in benchmark_files]
     latest_date_id = max(set(run_date_ids))
-    latest_benchmark_files = [file for file in benchmark_files if file.name.startswith(latest_date_id)]
+    latest_benchmark_files = [
+        file for file in benchmark_files if file.name.startswith(latest_date_id)
+    ]
     benchmark_lines: list[str] = []
     for idx, file in enumerate(latest_benchmark_files):
         file_content = file.read_text().strip().splitlines()
@@ -60,7 +87,7 @@ def main(argv: list[str] = sys.argv[1:]) -> int:
         "io_in": "I/O Read (MB)",
         "io_out": "I/O Write (MB)",
         "mean_load": "Mean CPU Load",
-        "cpu_time": "CPU Time (s)"
+        "cpu_time": "CPU Time (s)",
     }
 
     df = pd.read_csv(StringIO(benchmark_data), sep="\t")
@@ -78,7 +105,7 @@ def main(argv: list[str] = sys.argv[1:]) -> int:
             y=column,
             hue="rule_name",
             palette="viridis",
-            legend=False
+            legend=False,
         )
 
         # Add value labels
@@ -91,12 +118,24 @@ def main(argv: list[str] = sys.argv[1:]) -> int:
         plt.xticks(rotation=45, ha="right")
         plt.grid(axis="y", linestyle="--", alpha=0.5)
         plt.tight_layout()
-        output_plot_name = column.lower().replace(" ", "_").replace("(", "").replace(")", "").replace("/", "") + ".png"
-        plot_output_path = benchmark_dir.absolute() / output_plot_name
-        plt.savefig(plot_output_path)
+        output_plot_name = (
+            column.lower()
+            .replace(" ", "_")
+            .replace("(", "")
+            .replace(")", "")
+            .replace("/", "")
+            .replace(",", "")
+            + ".svg"
+        )
+
+        plot_output_path: Path = output_dir / output_plot_name
+        plt.savefig(plot_output_path, format="svg")
         plt.close()
         print(f"-> Created '{column}' plot on path {plot_output_path}")
+
+    _exec_shell_cmd(f"metaline --configfile {args.config_file} --report {args.output_html_path}")
     return 0
 
+
 if __name__ == "__main__":
-    raise SystemExit(main(["--job-config", "./updated_test_output/test_run.json"]))
+    raise SystemExit(main())

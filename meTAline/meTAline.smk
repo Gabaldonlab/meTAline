@@ -48,6 +48,10 @@ benchmark_dir = os.path.join(workingdir, "Benchmark")
 if not os.path.exists(benchmark_dir) :
     os.makedirs(benchmark_dir)
 
+benchmark_plots_dir = os.path.join(benchmark_dir, "plots")
+if not os.path.exists(benchmark_plots_dir) :
+    os.makedirs(benchmark_plots_dir)
+
 
 #Create the necessary dir. Do not create alignment_out directory if there is no reference in the config
 if reference_genome != None or reference_genome != "null":
@@ -82,7 +86,6 @@ include: "lib/rules/RAnalysis.smk"
 include: "lib/rules/Biobakery.smk"
 
 
-
 ##############
 # MAIN RULES #
 ##############
@@ -111,7 +114,9 @@ rule all:
         rich_object = os.path.join( ranalysis_out, f"{sample}_alpha_div.csv"),
         out_plot = os.path.join( ranalysis_out, f"{sample}_Barplot_phyla.jpeg"),
         out_profile = os.path.join(metaphlan4_out, f"{sample}_profiled.txt"),
-        outdir_h = os.path.join(config["Outputs"]["metaphlan4_out"], sample)
+        outdir_h = os.path.join(config["Outputs"]["metaphlan4_out"], sample),
+        benchmark_plots = benchmark_plots_dir
+
 
 
 #Rule in case you want to only perform trimming and qualiy assessment of the data
@@ -150,3 +155,16 @@ rule BioBakery:
         out_profile = os.path.join(metaphlan4_out, f"{sample}_profiled.txt"),
         out_vsc = os.path.join(metaphlan4_out, f"{sample}.vsc.txt"),
         outdir_h = os.path.join(config["Outputs"]["metaphlan4_out"], sample)
+
+# Private rule. It exists only to include the custom plots of the jobs in the html report.
+rule __benchmark_report:
+    input:
+        benchmark_dir
+    output:
+       report(
+            directory(benchmark_plots_dir),
+            patterns=["{name}.svg"],
+            category="Resource benchmark"
+       )
+    shell:
+       "sleep 0.1"
