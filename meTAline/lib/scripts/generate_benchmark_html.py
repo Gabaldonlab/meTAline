@@ -62,14 +62,9 @@ def main(argv: list[str] = sys.argv[1:]) -> int:
     output_dir = benchmark_dir / "plots"
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    benchmark_files = tuple(benchmark_dir.glob("*_test_run.*.benchmark.txt"))
-    run_date_ids = [file.name.split("_", maxsplit=1)[0] for file in benchmark_files]
-    latest_date_id = max(set(run_date_ids))
-    latest_benchmark_files = [
-        file for file in benchmark_files if file.name.startswith(latest_date_id)
-    ]
+    benchmark_files = tuple(benchmark_dir.glob("*.benchmark.txt"))
     benchmark_lines: list[str] = []
-    for idx, file in enumerate(latest_benchmark_files):
+    for idx, file in enumerate(benchmark_files):
         file_content = file.read_text().strip().splitlines()
         rule_name = file.name.replace(".benchmark.txt", "").split(".")[-1]
         if idx == 0:

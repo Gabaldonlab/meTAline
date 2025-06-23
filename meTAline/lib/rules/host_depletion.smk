@@ -18,7 +18,7 @@ if reference_genome != None or reference_genome != "null":
             outdir = config["Outputs"]["alignment_out"],
             ref = reference_genome
         benchmark:
-            os.path.join(benchmark_dir, (str(date) + "_" + sample +".alignment.benchmark.txt"))
+            os.path.join(benchmark_dir, (sample +".alignment.benchmark.txt"))
         threads: config["hisat2"]["hisat2_cores"]
         shell:
             #Important, check that the hisat2 index for your reference genome has been generated and provided to the config
@@ -44,7 +44,7 @@ if reference_genome != None or reference_genome != "null":
             fastq = protected(os.path.join(alignment_out, f"{sample}.unmapped.fastq.gz")),
             intermediate=temp(os.path.join(alignment_out, "temp.bam"))
         benchmark:
-            os.path.join(benchmark_dir, (str(date) + "_" + sample +".extraction_unmapped_reads.benchmark.txt"))
+            os.path.join(benchmark_dir, (sample +".extraction_unmapped_reads.benchmark.txt"))
         threads: config["hisat2"]["hisat2_cores"]
         shell:
             #Generate unmaped bam file, use it and then remove it

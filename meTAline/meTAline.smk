@@ -1,20 +1,13 @@
 #If you want to set up your environment PATH in the bashrc you can use the line below to source it
 #shell.prefix("source ~/.bashrc; ")
 
-
 #Author: Diego Fuentes, Dániel Majer and Olfat Khannous Lleiffe
 #Contact email: olfat.khannous@bsc.es
 #Barcelona
 #Date:2025-06-13
 
 import os
-from datetime import datetime
 import sys
-
-date1 = str(datetime.now())
-tmp = str.replace(date1," ",".")
-tmp2 = str.replace(tmp,":","")
-date = str.replace(tmp2,"-","")
 
 #First determine the config file, if changed by the user, need to either specified here or through snakemake commands (if using commands, comment the line below)
 #configfile: os.path.join(workflow.basedir, "config.json")
@@ -24,6 +17,7 @@ date = str.replace(tmp2,"-","")
 ##############
 
 #Global parameters
+
 
 #Sample barcode or identifier data. Can be used as name of the project if not required
 sample = config["Parameters"]["sample_barcode"]

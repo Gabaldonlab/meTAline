@@ -34,7 +34,7 @@ rule metaphlan4:
 
     # Run interpretes the following block as python code, keep python synthax
     benchmark:
-        os.path.join(benchmark_dir, (str(date) + "_" + sample +".metaphlan4.benchmark.txt"))
+        os.path.join(benchmark_dir, (sample + ".metaphlan4.benchmark.txt"))
     run:
         if reference_genome == None or reference_genome == "null":
             #Running kraken2 for paired data
@@ -68,7 +68,7 @@ rule humann:
         metaphlan_db = config["Inputs"]["metaphlan_db"],
         n_db = config["Inputs"]["n_db"]
     benchmark:
-        os.path.join(benchmark_dir, (str(date) + "_" + sample +".humann.benchmark.txt"))
+        os.path.join(benchmark_dir, (sample + ".humann.benchmark.txt"))
     run:
         if reference_genome == None or reference_genome == "null":
             # Concatenate paired-end reads using zcat if gzipped
