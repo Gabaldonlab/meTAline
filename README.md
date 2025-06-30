@@ -42,6 +42,7 @@ You can watch a small tutorial here:
 
 ### [Available target rules](https://github.com/Gabaldonlab/meTAline/wiki/Available-target-rules)
 ### [Benchmark outputs](https://github.com/Gabaldonlab/meTAline/wiki/Benchmark-outputs)
+### [Reporting meTAline](https://github.com/Gabaldonlab/meTAline/wiki/Reporting-meTAline).
 ### [Debugging meTAline](https://github.com/Gabaldonlab/meTAline/wiki/Debugging-meTAline)
 ### [Citations / Acknowledgments](https://github.com/Gabaldonlab/meTAline/wiki/Citations---Acknowledgments)
 
