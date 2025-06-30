@@ -1,7 +1,7 @@
 #Author: Diego Fuentes, Dániel Majer and Olfat Khannous Lleiffe
 #Contact email: olfat.khannous@bsc.es
 #Barcelona
-#Date:2025-03-27
+#Date:2025-06-13
 
 #Rule to convert the Kraken2 report to biom format.
 rule convert_biom:
@@ -9,7 +9,8 @@ rule convert_biom:
         report= rules.Kraken2.output.report
     output:
         biom_file = protected(os.path.join(kraken_out, f"{sample}.Kraken2.biom"))
-
+    benchmark:
+        os.path.join(benchmark_dir, (sample +".conversion_bio.benchmark.txt"))
     threads: config["Kraken2"]["kraken2_cores"]
     shell:
         "kraken-biom {input.report} -o {output.biom_file} --fmt json"
@@ -21,6 +22,8 @@ rule Biom_to_Phyloseq:
     output:
         phyloseq_object =  os.path.join(ranalysis_out, f"{sample}.rds")
 
+    benchmark:
+        os.path.join(benchmark_dir, (sample +".conversion_bio_to_phyloseq.benchmark.txt"))
     params:
         script = os.path.join(workflow.basedir, "lib/scripts/Biom_to_Phyloseq.R")
 
@@ -38,7 +41,8 @@ rule alpha_diversity:
 
     params:
         script = os.path.join(workflow.basedir, "lib/scripts/alpha_diversity.R")
-
+    benchmark:
+        os.path.join(benchmark_dir, (sample +".alpha_div.benchmark.txt"))
     shell:
         r"""
         Rscript {params.script} {input.phylo_object} {output.rich_object}
@@ -54,7 +58,8 @@ rule bar_plot_toptaxa:
 
     params:
         script = os.path.join(workflow.basedir, "lib/scripts/bar_plot_toptaxa.R")
-
+    benchmark:
+        os.path.join(benchmark_dir, (sample +".barplot.benchmark.txt"))
     shell:
         r"""
         Rscript {params.script} {input.phylo_object} {output.out_plot}

@@ -163,13 +163,16 @@ RUN echo '/bin/FastQC/fastqc "$@"' >> /bin/fastqc
 RUN chmod 777 /bin/fastqc
 
 RUN echo '#!/bin/bash' >> /bin/metaline-generate-config
-RUN echo 'python3 /meTAline/lib/config/generate_config.py "$@"' >> /bin/metaline-generate-config
+RUN echo 'python3 -u /meTAline/lib/config/generate_config.py "$@"' >> /bin/metaline-generate-config
 RUN chmod 777 /bin/metaline-generate-config
 
 RUN echo '#!/bin/bash' >> /bin/metaline-prepare-greasy-array-job
-RUN echo 'python3 /meTAline/lib/config/prepare_greasy_array_job.py "$@"' >> /bin/metaline-prepare-greasy-array-job
+RUN echo 'python3 -u /meTAline/lib/config/prepare_greasy_array_job.py "$@"' >> /bin/metaline-prepare-greasy-array-job
 RUN chmod 777 /bin/metaline-prepare-greasy-array-job
 
+RUN echo '#!/bin/bash' >> /bin/generate-benchmark-html
+RUN echo 'python3 -u /meTAline/lib/scripts/generate_benchmark_html.py "$@"' >> /bin/generate-benchmark-html
+RUN chmod 777 /bin/generate-benchmark-html
 
 RUN echo '#!/bin/bash' >> /bin/metaline
 RUN echo 'snakemake -s /meTAline/meTAline.smk "$@"' >> /bin/metaline

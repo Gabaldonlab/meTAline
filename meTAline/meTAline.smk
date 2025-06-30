@@ -1,20 +1,13 @@
 #If you want to set up your environment PATH in the bashrc you can use the line below to source it
 #shell.prefix("source ~/.bashrc; ")
 
-
 #Author: Diego Fuentes, Dániel Majer and Olfat Khannous Lleiffe
 #Contact email: olfat.khannous@bsc.es
 #Barcelona
-#Date:2025-03-27
+#Date:2025-06-13
 
 import os
-from datetime import datetime
 import sys
-
-date1 = str(datetime.now())
-tmp = str.replace(date1," ",".")
-tmp2 = str.replace(tmp,":","")
-date = str.replace(tmp2,"-","")
 
 #First determine the config file, if changed by the user, need to either specified here or through snakemake commands (if using commands, comment the line below)
 #configfile: os.path.join(workflow.basedir, "config.json")
@@ -24,6 +17,7 @@ date = str.replace(tmp2,"-","")
 ##############
 
 #Global parameters
+
 
 #Sample barcode or identifier data. Can be used as name of the project if not required
 sample = config["Parameters"]["sample_barcode"]
@@ -42,6 +36,15 @@ metaphlan4_out = os.path.join(workingdir, config["Outputs"]["metaphlan4_out"])
 
 #Three optional arguments, that we are assessing here:
 reference_genome = config["Inputs"]["reference_genome"]
+
+#Benchmark directory
+benchmark_dir = os.path.join(workingdir, "Benchmark")
+if not os.path.exists(benchmark_dir) :
+    os.makedirs(benchmark_dir)
+
+benchmark_plots_dir = os.path.join(benchmark_dir, "plots")
+if not os.path.exists(benchmark_plots_dir) :
+    os.makedirs(benchmark_plots_dir)
 
 
 #Create the necessary dir. Do not create alignment_out directory if there is no reference in the config
@@ -77,7 +80,6 @@ include: "lib/rules/RAnalysis.smk"
 include: "lib/rules/Biobakery.smk"
 
 
-
 ##############
 # MAIN RULES #
 ##############
@@ -106,7 +108,9 @@ rule all:
         rich_object = os.path.join( ranalysis_out, f"{sample}_alpha_div.csv"),
         out_plot = os.path.join( ranalysis_out, f"{sample}_Barplot_phyla.jpeg"),
         out_profile = os.path.join(metaphlan4_out, f"{sample}_profiled.txt"),
-        outdir_h = os.path.join(config["Outputs"]["metaphlan4_out"], sample)
+        outdir_h = os.path.join(config["Outputs"]["metaphlan4_out"], sample),
+        benchmark_plots = benchmark_plots_dir
+
 
 
 #Rule in case you want to only perform trimming and qualiy assessment of the data
@@ -145,3 +149,16 @@ rule BioBakery:
         out_profile = os.path.join(metaphlan4_out, f"{sample}_profiled.txt"),
         out_vsc = os.path.join(metaphlan4_out, f"{sample}.vsc.txt"),
         outdir_h = os.path.join(config["Outputs"]["metaphlan4_out"], sample)
+
+# Private rule. It exists only to include the custom plots of the jobs in the html report.
+rule __benchmark_report:
+    input:
+        benchmark_dir
+    output:
+       report(
+            directory(benchmark_plots_dir),
+            patterns=["{name}.svg"],
+            category="Resource benchmark"
+       )
+    shell:
+       "sleep 0.1"
