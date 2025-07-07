@@ -19,7 +19,7 @@ docker image build -t cgenomics/metaline:${CURRENT_VERSION_TAG} . && docker push
 # 2. Create an account or sign in.
 # 3. Generate an authentication token:
 #    - Go to https://cloud.sylabs.io/auth/tokens.
-#    - Click "Generate New Token" and copy it.
+#    - Click "Create access token" and copy it.
 
 # 4. Step 2: Login via Singularity CLI
 singularity remote login && \
