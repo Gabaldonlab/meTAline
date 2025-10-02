@@ -1,4 +1,4 @@
-[![DOI](https://zenodo.org/badge/431438117.svg)](https://zenodo.org/badge/latestdoi/431438117)
+[![DOI](https://zenodo.org/badge/15683600.svg)](https://zenodo.org/records/15683600)
 
 # MeTAline: a snakemake pipeline for the study of metagenomes <a id="metaline" />
 
