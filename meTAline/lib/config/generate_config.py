@@ -38,6 +38,8 @@ class CreateConfigurationFile:
         self.metaphlan_Index = None  # Metaphlan4 index (last release of the database)
         self.n_db = None  # Humann database for nucleotide search
         self.protein_db = None  # Humann database for translation search
+        self.sylph_db = None
+        self.sylph_taxonomy = None
 
         # OUTPUT PARAMETERS
         self.alignment_out = "BAM"  # Out directory of the alignment step
@@ -49,6 +51,10 @@ class CreateConfigurationFile:
         )
         self.ranalysis_out = "R_ANALYSIS"  # Out directory of R analysis
         self.metaphlan4_out = "METAPHLAN4"  # Metaphlan4 and Humann directory
+        self.sylph_out = "SYLPH"
+        self.filtered_euk = "FILTERED_EUK"
+        self.filtered_bact = "FILTERED_BACT"
+        self.merged_out = "MERGED"
 
         # WILDCARD PARAMETER
         self.fastq_prefix = None  # List with basename of the fastq-prefix if any
@@ -209,6 +215,22 @@ class CreateConfigurationFile:
             default=self.n_db,
             help="Humann database to do the nucleotide search (based on already built annotations).",
         )
+        input_group.add_argument(
+            "--sylph-db",
+            dest="sylph_db",
+            metavar="sylph_db",
+            default=self.sylph_db,
+            help="Sylph db.",
+        )
+        input_group.add_argument(
+            "--sylph-taxonomy",
+            dest="sylph_taxonomy",
+            metavar="sylph_taxonomy",
+            default=self.sylph_taxonomy,
+            help="Sylph taxonomy.",
+        )
+
+
 
     def register_output(self, parser: argparse.ArgumentParser):
         """Register all output parameters with the given
@@ -259,6 +281,30 @@ class CreateConfigurationFile:
             default=self.metaphlan4_out,
             help="Out directory of the Metaphlan4 and Humann analysis.",
         )
+        output_group.add_argument(
+            "--sylph-out",
+            dest="sylph_out",
+            default=self.sylph_out,
+            help="Out directory of the Sylph results.",
+        )
+         output_group.add_argument(
+            "--filtered-euk",
+            dest="filtered_euk",
+            default=self.filtered_euk,
+            help="Out directory of the Filtering of sylph - only Fungal hits.",
+         )
+          output_group.add_argument(
+            "--filtered-bact",
+            dest="filtered_bact",
+            default=self.filtered_bact,
+            help="Out directory of the Filtering of sylph - only Bacterial hits.",
+         )
+          output_group.add_argument(
+            "--merged-out",
+            dest="merged_out",
+            default=self.merged_out,
+            help="Out directory where to store the merged of different samples, for each taxonomy.",
+         )
 
     def register_wildcards(self, parser: argparse.ArgumentParser):
         """Register all wildcards parameters with the given
@@ -450,6 +496,14 @@ class CreateConfigurationFile:
             args.ranalysis_out = f"{os.path.join(args.basedir, self.ranalysis_out)}/"
         if args.metaphlan4_out == self.metaphlan4_out:
             args.metaphlan4_out = f"{os.path.join(args.basedir, self.metaphlan4_out)}/"
+        if args.sylph_out == self.sylph_out:
+            args.sylph_out = f"{os.path.join(args.basedir, self.sylph_out)}/"
+        if args.filtered_euk == self.filtered_euk:
+            args.filtered_euk = f"{os.path.join(args.basedir, self.filtered_euk)}/"
+        if args.filtered_bact == self.filtered_bact:
+            args.filtered_bact = f"{os.path.join(args.basedir, self.filtered_bact)}/"
+        if args.merged_out == self.merged_out:
+            args.merged_out = f"{os.path.join(args.basedir, self.merged_out)}/"
 
     def store_general_parameters(self, args):
         """Updates general parameters to the map of parameters to be store in a JSON file
@@ -476,6 +530,8 @@ class CreateConfigurationFile:
         self.inputParameters["metaphlan_Index"] = args.metaphlan_Index
         self.inputParameters["n_db"] = args.n_db
         self.inputParameters["protein_db"] = args.protein_db
+        self.inputParameters["sylph_db"] = args.sylph_db
+        self.inputParameters["sylph_taxonomy"] = args.sylph_taxonomy
         self.allParameters["Inputs"] = self.inputParameters
 
     def store_output_parameters(self, args):
@@ -489,6 +545,10 @@ class CreateConfigurationFile:
         self.outputParameters["extracted_fa_out"] = args.extracted_fa_out
         self.outputParameters["ranalysis_out"] = args.ranalysis_out
         self.outputParameters["metaphlan4_out"] = args.metaphlan4_out
+        self.outputParameters["sylph_out"] = args.sylph_out
+        self.outputParameters["filtered_euk"] = args.filtered_euk
+        self.outputParameters["filtered_bact"] = args.filtered_bact
+        self.outputParameters["merged_out"]
         self.allParameters["Outputs"] = self.outputParameters
 
     def store_wildcard_parameters(self, args):

@@ -4,7 +4,7 @@
 #Author: Diego Fuentes, Dániel Majer and Olfat Khannous Lleiffe
 #Contact email: olfat.khannous@bsc.es
 #Barcelona
-#Date:2025-06-13
+#Date:2026-03-04
 
 import os
 import sys
@@ -33,6 +33,12 @@ krona_out = os.path.join(workingdir, config["Outputs"]["krona_out"])
 extracted_fa_out = os.path.join(workingdir, config["Outputs"]["extracted_fa_out"])
 ranalysis_out = os.path.join(workingdir, config["Outputs"]["ranalysis_out"])
 metaphlan4_out = os.path.join(workingdir, config["Outputs"]["metaphlan4_out"])
+sylph_out = os.path.join(workingdir, config["Outputs"]["sylph_out"])
+filtered_euk = os.path.join(workingdir, config["Outputs"]["filtered_euk"])
+filtered_bact = os.path.join(workingdir, config["Outputs"]["filtered_bact"])
+merged_out = os.path.join(workingdir, config["Outputs"]["merged_out"])
+
+
 
 #Three optional arguments, that we are assessing here:
 reference_genome = config["Inputs"]["reference_genome"]
@@ -63,7 +69,14 @@ if not os.path.exists(ranalysis_out):
     os.makedirs(ranalysis_out)
 if not os.path.exists(metaphlan4_out):
     os.makedirs(metaphlan4_out)
-
+if not os.path.exists(sylph_out):
+    os.makedirs(sylph_out)
+if not os.path.exists(filtered_euk):
+    os.makedirs(filtered_euk)
+if not os.path.exists(filtered_bact):
+    os.makedirs(filtered_bact)
+if not os.path.exists(merged_out):
+    os.makedirs(merged_out)
 
 # file wildcard
 files = config["Wildcards"]["fastq_prefix"]
@@ -78,6 +91,8 @@ include: "lib/rules/host_depletion.smk"
 include: "lib/rules/kmer_taxonomy.smk"
 include: "lib/rules/RAnalysis.smk"
 include: "lib/rules/Biobakery.smk"
+include: "lib/rules/sylph.smk"
+include: "lib/rules/merge_taxonomy_outputs.smk"
 
 
 ##############
@@ -109,6 +124,14 @@ rule all:
         out_plot = os.path.join( ranalysis_out, f"{sample}_Barplot_phyla.jpeg"),
         out_profile = os.path.join(metaphlan4_out, f"{sample}_profiled.txt"),
         outdir_h = os.path.join(config["Outputs"]["metaphlan4_out"], sample),
+        out_tsv = os.path.join(sylph_out, f"{sample}.tsv"),
+        complete_taxonomy = os.path.join(config["Outputs"]["filtered_euk"], f"{sample}.unmapped.fastq.gz.sylphmpa"),
+        filtered_taxonomy_fungi = os.path.join(config["Outputs"]["filtered_euk"], f"{sample}.tsv"),
+        filtered_taxonomy_bact = os.path.join(config["Outputs"]["filtered_bact"], f"{sample}.tsv"),
+        biom_file = protected(os.path.join(merged_out, ".Kraken2.biom")),
+        metaphlan_merged = protected(os.path.join(merged_out, "_abundance_table.txt")),
+        out_fungi = protected(os.path.join(merged_out, ".tsv")) ,
+        bacteria_identified = protected(os.path.join(merged_out, "bacteria.tsv")),
         benchmark_plots = benchmark_plots_dir
 
 
@@ -149,6 +172,22 @@ rule BioBakery:
         out_profile = os.path.join(metaphlan4_out, f"{sample}_profiled.txt"),
         out_vsc = os.path.join(metaphlan4_out, f"{sample}.vsc.txt"),
         outdir_h = os.path.join(config["Outputs"]["metaphlan4_out"], sample)
+
+#Rule to run the sylph taxonomic assignment
+rule sylph:
+    input:
+        out_tsv = os.path.join(sylph_out, f"{sample}.tsv"),
+        complete_taxonomy = os.path.join(config["Outputs"]["filtered_euk"], f"{sample}.unmapped.fastq.gz.sylphmpa"),
+        filtered_taxonomy_fungi = os.path.join(config["Outputs"]["filtered_euk"], f"{sample}.tsv"),
+        filtered_taxonomy_bact = os.path.join(config["Outputs"]["filtered_bact"], f"{sample}.tsv")
+
+#Rule to merge the taxonomic assignments of different samples in a signular file
+rule merged_taxonomy_outputs:
+    input:
+        biom_file = protected(os.path.join(merged_out, ".Kraken2.biom")),
+        metaphlan_merged = protected(os.path.join(merged_out, "_abundance_table.txt")),
+        out_fungi = protected(os.path.join(merged_out, ".tsv")) ,
+        bacteria_identified = protected(os.path.join(merged_out, "bacteria.tsv"))
 
 # Private rule. It exists only to include the custom plots of the jobs in the html report.
 rule __benchmark_report:

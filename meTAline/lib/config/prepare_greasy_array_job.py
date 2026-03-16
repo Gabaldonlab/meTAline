@@ -50,6 +50,8 @@ class PrepareGreasyArrayJobArgs:
                 "kmer_taxonomy",
                 "RAnalysis",
                 "BioBakery",
+                "sylph"
+                "merge_taxonomy_outputs"
             ],
             default="all",
             help="The meTAline rule to use for the subcommands of the greasy array.",
@@ -182,6 +184,18 @@ class PrepareGreasyArrayJobArgs:
             default=5,
             help=("Total cores to assign for snakemake."),
         )
+          parser.add_argument(
+            "--sylph_db",
+            type=str,
+            required=True,
+            help="Sylph database",
+        )
+         parser.add_argument(
+            "--sylph_taxonomy",
+            type=str,
+            required=True,
+            help="Sylph taxonomy",
+         )
         return PrepareGreasyArrayJobArgs(**vars(parser.parse_args(args)))
 
 
@@ -258,6 +272,18 @@ def prepare_config_generation_commands(
         metaphlan4_out_abs_path = (
             intermediate_files_output_dir / "METAPHLAN4"
         ).absolute()
+        sylph_out_abs_path = (
+            intermediate_files_output_dir / "SYLPH"
+        ).absolute()
+        filtered_euk_abs_path = (
+            intermediate_files_output_dir / "FILTERED_EUK"
+        ).absolute()
+        filtered_bact_abs_path = (
+            intermediate_files_output_dir / "FILTERED_BACT"
+        ).absolute()
+         merged_out_abs_path = (
+            intermediate_files_output_dir / "MERGED"
+        ).absolute()
         fr_annotation_prefixes_formatted = " ".join([f'"{prefix}"' for prefix in args.prefix_fr])
 
         cmd: str = " ".join(
@@ -286,6 +312,13 @@ def prepare_config_generation_commands(
                 f"--trimmo-cores {args.trimmo_cores}",
                 f"--hisat2-cores {args.hisat2_cores}",
                 f"--kraken2-cores {args.kraken2_cores}",
+                f"--sylph-db {args.sylph_db}",
+                f"--sylph-db {args.sylph_taxonomy}",
+                f"--sylph-out {args.sylph_out}",
+                f"--filtered-euk {args.filtered_euk}",
+                f"--filtered-bact {args.filtered_bact}",
+                f"--merged-out {args.merged_out}",
+
             )
         )
         config_gen_cmds.append(
