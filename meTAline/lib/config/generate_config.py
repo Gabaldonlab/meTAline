@@ -287,24 +287,24 @@ class CreateConfigurationFile:
             default=self.sylph_out,
             help="Out directory of the Sylph results.",
         )
-         output_group.add_argument(
+        output_group.add_argument(
             "--filtered-euk",
             dest="filtered_euk",
             default=self.filtered_euk,
             help="Out directory of the Filtering of sylph - only Fungal hits.",
-         )
-          output_group.add_argument(
+        )
+        output_group.add_argument(
             "--filtered-bact",
             dest="filtered_bact",
             default=self.filtered_bact,
             help="Out directory of the Filtering of sylph - only Bacterial hits.",
-         )
-          output_group.add_argument(
+        )
+        output_group.add_argument(
             "--merged-out",
             dest="merged_out",
             default=self.merged_out,
             help="Out directory where to store the merged of different samples, for each taxonomy.",
-         )
+        )
 
     def register_wildcards(self, parser: argparse.ArgumentParser):
         """Register all wildcards parameters with the given
@@ -548,7 +548,7 @@ class CreateConfigurationFile:
         self.outputParameters["sylph_out"] = args.sylph_out
         self.outputParameters["filtered_euk"] = args.filtered_euk
         self.outputParameters["filtered_bact"] = args.filtered_bact
-        self.outputParameters["merged_out"]
+        self.outputParameters["merged_out"] = args.merged_out
         self.allParameters["Outputs"] = self.outputParameters
 
     def store_wildcard_parameters(self, args):

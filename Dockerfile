@@ -113,6 +113,16 @@ RUN mv -t /bin/ /bin/bin/*
 RUN rm -rf /bin/bin
 
 WORKDIR /bin
+chmod +x sylph
+
+WORKDIR /bin
+RUN git clone https://github.com/bluenote-1577/sylph-tax.git \
+    && cd sylph-tax \
+    && git checkout v1.8.0
+pip3 install .
+rm -rf sylph-tax
+
+WORKDIR /bin
 RUN unzip Trimmomatic-0.39.zip
 RUN rm -rf Trimmomatic-0.39.zip
 
@@ -201,3 +211,5 @@ RUN ktImportText
 RUN extract_kraken_output_reads -h
 RUN trimmomatic PE -version
 RUN fastqc --help
+RUN sylph --version
+RUN sylph-tax --version
