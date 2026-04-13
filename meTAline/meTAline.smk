@@ -8,6 +8,8 @@
 
 import os
 import sys
+import json
+import glob
 
 #First determine the config file, if changed by the user, need to either specified here or through snakemake commands (if using commands, comment the line below)
 #configfile: os.path.join(workflow.basedir, "config.json")
@@ -45,38 +47,25 @@ reference_genome = config["Inputs"]["reference_genome"]
 
 #Benchmark directory
 benchmark_dir = os.path.join(workingdir, "Benchmark")
-if not os.path.exists(benchmark_dir) :
-    os.makedirs(benchmark_dir)
+os.makedirs(benchmark_dir, exist_ok=True)
 
 benchmark_plots_dir = os.path.join(benchmark_dir, "plots")
-if not os.path.exists(benchmark_plots_dir) :
-    os.makedirs(benchmark_plots_dir)
+os.makedirs(benchmark_plots_dir, exist_ok=True)
 
 
 #Create the necessary dir. Do not create alignment_out directory if there is no reference in the config
 if reference_genome != None or reference_genome != "null":
-    if not os.path.exists(alignment_out):
-        os.makedirs(alignment_out)
-if not os.path.exists(trimmomatic_out):
-    os.makedirs(trimmomatic_out)
-if not os.path.exists(kraken_out):
-    os.makedirs(kraken_out)
-if not os.path.exists(krona_out):
-    os.makedirs(krona_out)
-if not os.path.exists(extracted_fa_out):
-    os.makedirs(extracted_fa_out)
-if not os.path.exists(ranalysis_out):
-    os.makedirs(ranalysis_out)
-if not os.path.exists(metaphlan4_out):
-    os.makedirs(metaphlan4_out)
-if not os.path.exists(sylph_out):
-    os.makedirs(sylph_out)
-if not os.path.exists(filtered_euk):
-    os.makedirs(filtered_euk)
-if not os.path.exists(filtered_bact):
-    os.makedirs(filtered_bact)
-if not os.path.exists(merged_out):
-    os.makedirs(merged_out)
+    os.makedirs(alignment_out, exist_ok=True)
+os.makedirs(trimmomatic_out, exist_ok=True)
+os.makedirs(kraken_out, exist_ok=True)
+os.makedirs(krona_out, exist_ok=True)
+os.makedirs(extracted_fa_out, exist_ok=True)
+os.makedirs(ranalysis_out, exist_ok=True)
+os.makedirs(metaphlan4_out, exist_ok=True)
+os.makedirs(sylph_out, exist_ok=True)
+os.makedirs(filtered_euk, exist_ok=True)
+os.makedirs(filtered_bact, exist_ok=True)
+os.makedirs(merged_out, exist_ok=True)
 
 # file wildcard
 files = config["Wildcards"]["fastq_prefix"]
@@ -109,7 +98,11 @@ else:
     read_processing.append(os.path.join(alignment_out, f"{sample}.hisat2.bam.bai"))
     read_processing.append(os.path.join(alignment_out, f"{sample}.unmapped.fastq.gz"))
 
+# need to include the outputs of all smaples in the rule all
+
 #Rule by default, runs the complete pipeline
+
+
 rule all:
     input:
         read_processing,
@@ -128,10 +121,10 @@ rule all:
         complete_taxonomy = os.path.join(config["Outputs"]["filtered_euk"], f"{sample}.unmapped.fastq.gz.sylphmpa"),
         filtered_taxonomy_fungi = os.path.join(config["Outputs"]["filtered_euk"], f"{sample}.tsv"),
         filtered_taxonomy_bact = os.path.join(config["Outputs"]["filtered_bact"], f"{sample}.tsv"),
-        biom_file = protected(os.path.join(merged_out, ".Kraken2.biom")),
-        metaphlan_merged = protected(os.path.join(merged_out, "_abundance_table.txt")),
-        out_fungi = protected(os.path.join(merged_out, ".tsv")) ,
-        bacteria_identified = protected(os.path.join(merged_out, "bacteria.tsv")),
+        kraken_merged=(os.path.join(merged_out, f"{sample}_kraken_merged_flag.txt")),
+        metaphlan_merged=os.path.join(merged_out, f"{sample}_metaphlan4_merged_flag.txt"),
+        sylph_fungi_merged=os.path.join(merged_out, f"{sample}_sylph_fungi_merged_flag.txt"),
+        sylph_bacteria_merged=os.path.join(merged_out, f"{sample}_sylph_bacteria_merged_flag.txt"),
         benchmark_plots = benchmark_plots_dir
 
 
@@ -181,13 +174,6 @@ rule sylph:
         filtered_taxonomy_fungi = os.path.join(config["Outputs"]["filtered_euk"], f"{sample}.tsv"),
         filtered_taxonomy_bact = os.path.join(config["Outputs"]["filtered_bact"], f"{sample}.tsv")
 
-#Rule to merge the taxonomic assignments of different samples in a signular file
-rule merged_taxonomy_outputs:
-    input:
-        biom_file = protected(os.path.join(merged_out, ".Kraken2.biom")),
-        metaphlan_merged = protected(os.path.join(merged_out, "_abundance_table.txt")),
-        out_fungi = protected(os.path.join(merged_out, ".tsv")) ,
-        bacteria_identified = protected(os.path.join(merged_out, "bacteria.tsv"))
 
 # Private rule. It exists only to include the custom plots of the jobs in the html report.
 rule __benchmark_report:

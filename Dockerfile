@@ -24,7 +24,7 @@ RUN apt-get update
 RUN DEBCONF_NOWARNINGS="yes" \
     TZ="Europe/Madrid" \
     DEBIAN_FRONTEND=noninteractive \
-    apt-fast install -y \
+    apt-get install -y \
         pigz \
         perl \
         git \
@@ -149,7 +149,8 @@ RUN pip3 install --upgrade \
         pybedtools \
         MetaPhlAn==4.1.1 \
         humann==3.9 \
-        pygments
+        pygments \
+        pathlib
 
 # Install the extract_kraken_output_reads tool derived from the "extract_reads_of_interest.py" script.
 RUN cd /bin/extract_kraken_output_reads && make install

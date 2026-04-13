@@ -284,7 +284,7 @@ def prepare_config_generation_commands(
             intermediate_files_output_dir / "FILTERED_BACT"
         ).absolute()
         merged_out_abs_path = (
-            intermediate_files_output_dir / "MERGED"
+            Path(args.basedir) / "MERGED"
         ).absolute()
         fr_annotation_prefixes_formatted = " ".join([f'"{prefix}"' for prefix in args.prefix_fr])
 
