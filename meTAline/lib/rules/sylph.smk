@@ -28,7 +28,7 @@ rule sylph_profiling:
         sylph_db = config["Inputs"]["sylph_db"],
         ani_score = config["Inputs"]["ani_score"]
     benchmark:
-        os.path.join(benchmark_dir, (sample + ".sylph.benchmark.txt"))
+        os.path.join(benchmark_dir, f"{sample}.sylph.benchmark.txt")
     run:
         if reference_genome == None or reference_genome == "null":
             shell("sylph profile {params.sylph_db} -1 {input.read1} -2 {input.read2} --estimate-read-counts -m {params.ani_score} -t 48 -o {output.out_tsv}")
@@ -61,7 +61,7 @@ rule filter_fungi:
     params:
         ani_score = config["Inputs"]["ani_score"]
     benchmark:
-        os.path.join(benchmark_dir, (sample + ".filter_fungi_sylph.benchmark.txt"))
+        os.path.join(benchmark_dir, f"{sample}.filter_fungi_sylph.benchmark.txt")
     run:
         #Filter the results, considering only Fungi hits, and with a coverage 1
         shell("awk -F'[[:space:]]+' 'NR==2 || ($0 ~ /k__Fungi/ && $(NF-1)+0 >= {params.ani_score} && $NF+0 >= 1)' \
@@ -73,7 +73,7 @@ rule filter_bacteria:
     output:
         filtered_taxonomy_bact = os.path.join(config["Outputs"]["filtered_bact"], f"{sample}.tsv")
     benchmark:
-        os.path.join(benchmark_dir, (sample + ".filter_bact_sylph.benchmark.txt"))
+        os.path.join(benchmark_dir,  f"{sample}.filter_bact_sylph.benchmark.txt")
     run:
         #Filter the results, considering only Fungi hits, and with a coverage 5
         shell("awk -F'[[:space:]]+' 'NR==2 || ($(NF-1)+0 >= 95 && $NF+0 >= 5)' \
