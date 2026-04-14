@@ -35,7 +35,8 @@ class PrepareGreasyArrayJobArgs:
     kraken2_cores: int
     snakemake_cores: int
     sylph_db: str
-    sylph_taxonomy:str
+    sylph_taxonomy: str
+    ani_score: int
 
     @classmethod
     def get_arguments(cls, args=sys.argv[1:]) -> PrepareGreasyArrayJobArgs:
@@ -190,13 +191,19 @@ class PrepareGreasyArrayJobArgs:
             "--sylph_db",
             type=str,
             required=True,
-            help="Sylph database",
+            help=("Sylph database"),
         )
         parser.add_argument(
             "--sylph_taxonomy",
             type=str,
             required=True,
-            help="Sylph taxonomy",
+            help=("Sylph taxonomy"),
+        )
+        parser.add_argument(
+            "--ani_score",
+            type=int,
+            default=80,
+            help=("ANI score"),
         )
         return PrepareGreasyArrayJobArgs(**vars(parser.parse_args(args)))
 
@@ -316,6 +323,7 @@ def prepare_config_generation_commands(
                 f"--kraken2-cores {args.kraken2_cores}",
                 f"--sylph-db {args.sylph_db}",
                 f"--sylph-taxonomy {args.sylph_taxonomy}",
+                f"--ani-score {args.ani_score}",
                 f"--sylph-out {sylph_out_abs_path}",
                 f"--filtered-euk {filtered_euk_abs_path}",
                 f"--filtered-bact {filtered_bact_abs_path}",

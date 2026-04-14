@@ -39,6 +39,7 @@ sylph_out = os.path.join(workingdir, config["Outputs"]["sylph_out"])
 filtered_euk = os.path.join(workingdir, config["Outputs"]["filtered_euk"])
 filtered_bact = os.path.join(workingdir, config["Outputs"]["filtered_bact"])
 merged_out = os.path.join(workingdir, config["Outputs"]["merged_out"])
+completed_samples_folder = os.path.join(merged_out, "completed_samples")
 
 
 
@@ -66,6 +67,7 @@ os.makedirs(sylph_out, exist_ok=True)
 os.makedirs(filtered_euk, exist_ok=True)
 os.makedirs(filtered_bact, exist_ok=True)
 os.makedirs(merged_out, exist_ok=True)
+os.makedirs(completed_samples_folder, exist_ok=True)
 
 # file wildcard
 files = config["Wildcards"]["fastq_prefix"]
@@ -121,10 +123,10 @@ rule all:
         complete_taxonomy = os.path.join(config["Outputs"]["filtered_euk"], f"{sample}.unmapped.fastq.gz.sylphmpa"),
         filtered_taxonomy_fungi = os.path.join(config["Outputs"]["filtered_euk"], f"{sample}.tsv"),
         filtered_taxonomy_bact = os.path.join(config["Outputs"]["filtered_bact"], f"{sample}.tsv"),
-        kraken_merged=(os.path.join(merged_out, f"{sample}_kraken_merged_flag.txt")),
-        metaphlan_merged=os.path.join(merged_out, f"{sample}_metaphlan4_merged_flag.txt"),
-        sylph_fungi_merged=os.path.join(merged_out, f"{sample}_sylph_fungi_merged_flag.txt"),
-        sylph_bacteria_merged=os.path.join(merged_out, f"{sample}_sylph_bacteria_merged_flag.txt"),
+        merged_kraken = os.path.join(completed_samples_folder, f"{sample}_kraken_merged_flag.txt"),
+        merged_metaphlan = os.path.join(completed_samples_folder, f"{sample}_metaphlan4_merged_flag.txt"),
+        merged_sylph_fungi = os.path.join(completed_samples_folder, f"{sample}_sylph_fungi_merged_flag.txt"),
+        merged_sylph_bacteria = os.path.join(completed_samples_folder, f"{sample}_sylph_bacteria_merged_flag.txt"),
         benchmark_plots = benchmark_plots_dir
 
 
@@ -134,7 +136,7 @@ rule Trimming:
     input:
         read_processing
 
-#Rule to deplete host reads, if a reference genome is provied
+#Rule to deplete host reads, if a reference genome is provided
 if reference_genome != None or reference_genome != "null":
     rule host_depletion:
         input:

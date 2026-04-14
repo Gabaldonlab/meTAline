@@ -40,6 +40,7 @@ class CreateConfigurationFile:
         self.protein_db = None  # Humann database for translation search
         self.sylph_db = None
         self.sylph_taxonomy = None
+        self.ani_score = 80 # Default ANI score
 
         # OUTPUT PARAMETERS
         self.alignment_out = "BAM"  # Out directory of the alignment step
@@ -228,6 +229,13 @@ class CreateConfigurationFile:
             metavar="sylph_taxonomy",
             default=self.sylph_taxonomy,
             help="Sylph taxonomy.",
+        )
+        input_group.add_argument(
+            "--ani-score",
+            dest="ani_score",
+            metavar="ani_score",
+            default=self.ani_score,
+            help="ANI score.",
         )
 
 
@@ -532,6 +540,7 @@ class CreateConfigurationFile:
         self.inputParameters["protein_db"] = args.protein_db
         self.inputParameters["sylph_db"] = args.sylph_db
         self.inputParameters["sylph_taxonomy"] = args.sylph_taxonomy
+        self.inputParameters["ani_score"] = args.ani_score
         self.allParameters["Inputs"] = self.inputParameters
 
     def store_output_parameters(self, args):
