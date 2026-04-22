@@ -24,7 +24,7 @@ class CreateConfigurationFile:
             "config.json"  # Name of the json configuration file to be created.
         )
         self.version = 1  # Pipeline version
-        self.extension = "fastq.gz"  # Extension of the raw read files
+        self.extension = ".fastq.gz"  # Extension of the raw read files
         self.sample_barcode = None  # Sample barcode
         self.basedir = self.sample_barcode  # Base directory for the pipeline run
         self.prefix_fr = "_"  # Prefix of the forward-reverse annotation in the filenames.

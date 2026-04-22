@@ -53,8 +53,10 @@ class PrepareGreasyArrayJobArgs:
                 "kmer_taxonomy",
                 "RAnalysis",
                 "BioBakery",
-                "sylph"
-                "merge_taxonomy_outputs"
+                "sylph",
+                "merge_kraken2",
+                "merge_metaphlan4",
+                "sylph_merge"
             ],
             default="all",
             help="The meTAline rule to use for the subcommands of the greasy array.",
@@ -114,7 +116,7 @@ class PrepareGreasyArrayJobArgs:
         parser.add_argument(
             "--fastq-extension",
             type=str,
-            default="fq.gz",
+            default=".fastq.gz",
             help="Extension of the fastq files.",
         )
         parser.add_argument(

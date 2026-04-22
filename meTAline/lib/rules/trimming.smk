@@ -14,8 +14,8 @@ reads_dir=config["Inputs"]["reads_directory"]
 # Trimming of raw data
 rule Trimmomatic:
     input:
-        read1 = lambda wc: os.path.join(reads_dir, f"{wc.file}{prefix_fr}1.{extension}"),
-        read2 = lambda wc: os.path.join(reads_dir, f"{wc.file}{prefix_fr}2.{extension}")
+        read1 = lambda wc: os.path.join(reads_dir, f"{wc.file}{prefix_fr}1{extension}"),
+        read2 = lambda wc: os.path.join(reads_dir, f"{wc.file}{prefix_fr}2{extension}")
     output:
         trim1 = protected(os.path.join(trimmomatic_out, "{file}_1_paired.fq.gz")),
         trim2 = protected(os.path.join(trimmomatic_out, "{file}_2_paired.fq.gz")),
