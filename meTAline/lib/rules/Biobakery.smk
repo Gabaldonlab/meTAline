@@ -38,11 +38,11 @@ rule metaphlan4:
     run:
         if reference_genome == None or reference_genome == "null":
             #Running kraken2 for paired data
-            shell("metaphlan --bowtie2db {params.metaphlan_db} --index {params.metaphlan_index} {input.read1},{input.read2} --input_type fastq --bowtie2out {output.out_bz2} -s {output.out_sam} --profile_vsc -o {output.out_profile} --nproc 4 --vsc_out {output.out_vsc}")
+            shell("metaphlan --bowtie2db {params.metaphlan_db} --index {params.metaphlan_index} {input.read1},{input.read2} --input_type fastq --bowtie2out {output.out_bz2} -s {output.out_sam} --profile_vsc -t rel_ab_w_read_stats -o {output.out_profile} --nproc 4 --vsc_out {output.out_vsc}")
 
         else:
             #Running metaphlan for reads extracted from BAM file
-            shell("metaphlan --bowtie2db {params.metaphlan_db} --index {params.metaphlan_index} {input.read1} --input_type fastq --bowtie2out {output.out_bz2} -s {output.out_sam} --profile_vsc -o {output.out_profile} --nproc 4 --vsc_out {output.out_vsc}")
+            shell("metaphlan --bowtie2db {params.metaphlan_db} --index {params.metaphlan_index} {input.read1} --input_type fastq --bowtie2out {output.out_bz2} -s {output.out_sam} --profile_vsc -t rel_ab_w_read_stats -o {output.out_profile} --nproc 4 --vsc_out {output.out_vsc}")
 
 
 
