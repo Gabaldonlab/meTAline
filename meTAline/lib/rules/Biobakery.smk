@@ -23,8 +23,8 @@ rule metaphlan4:
         read1 = read1_selected,
         read2 = read2_selected
     output:
-        out_bz2 = os.path.join(metaphlan4_out, f"{sample}.bz2"),
-        out_sam = os.path.join(metaphlan4_out, f"{sample}sam.bz2"),
+        out_bz2 = temp(os.path.join(metaphlan4_out, f"{sample}.bz2")),
+        out_sam = temp(os.path.join(metaphlan4_out, f"{sample}sam.bz2")),
         out_profile = os.path.join(metaphlan4_out, f"{sample}_profiled.txt"),
         out_vsc = os.path.join(metaphlan4_out, f"{sample}.vsc.txt")
     params:
@@ -60,8 +60,9 @@ rule humann:
         read2 = read2_selected,
         profiled_sample = rules.metaphlan4.output.out_profile
     output:
-        combined_reads = os.path.join(config["Outputs"]["metaphlan4_out"], f"{sample}.fastq"),
-        outdir_h = directory(os.path.join(config["Outputs"]["metaphlan4_out"], f"{sample}"))
+        combined_reads = temp(os.path.join(config["Outputs"]["metaphlan4_out"], f"{sample}.fastq")),
+        outdir_h = directory(os.path.join(config["Outputs"]["metaphlan4_out"], f"{sample}")),
+        intermediate=temp(directory(os.path.join(config["Outputs"]["metaphlan4_out"], f"{sample}/{sample} _humann_temp"))
     params:
         protein_db = config["Inputs"]["protein_db"],
         metaphlan_index = config["Inputs"]["metaphlan_Index"],

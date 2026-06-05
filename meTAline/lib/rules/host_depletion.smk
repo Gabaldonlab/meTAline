@@ -28,7 +28,7 @@ if reference_genome != None or reference_genome != "null":
         input:
             BAM = rules.hisat2.output.out
         output:
-            BAI = protected(os.path.join(alignment_out, f"{sample}.hisat2.bam.bai"))
+            BAI = temp(os.path.join(alignment_out, f"{sample}.hisat2.bam.bai"))
 
         threads:
             config["hisat2"]["hisat2_cores"]
@@ -42,7 +42,7 @@ if reference_genome != None or reference_genome != "null":
             BAI = rules.index_bam.output.BAI
         output:
             fastq = protected(os.path.join(alignment_out, f"{sample}.unmapped.fastq.gz")),
-            intermediate=os.path.join(alignment_out, "temp.bam")
+            intermediate=temp(os.path.join(alignment_out, "temp.bam"))
         benchmark:
             os.path.join(benchmark_dir, (sample +".extraction_unmapped_reads.benchmark.txt"))
         threads: config["hisat2"]["hisat2_cores"]
