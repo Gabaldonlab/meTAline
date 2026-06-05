@@ -52,24 +52,3 @@ rule Krona:
         os.path.join(benchmark_dir, (sample +".krona.benchmark.txt"))
     shell:
         "kreport2krona.py -r  {input.report} -o {output.krona_file}; ktImportText {output.krona_file} -o {output.krona_html}"
-
-#Extraction of reads classified to a particular taxa id, by default the unclassified reads
-rule extract_reads:
-    input:
-        read1 = read1_selected,
-        read2 = read2_selected,
-        report = rules.Kraken2.output.report,
-        kraken = rules.Kraken2.output.out
-    output:
-        ext1 = protected(os.path.join(extracted_fa_out, f"{sample}.1.fastq.gz")),
-        ext2 = protected(os.path.join(extracted_fa_out, f"{sample}.2.fastq.gz"))
-    params:
-        intermediate1 = os.path.join(extracted_fa_out, f"{sample}1.fastq"),
-        intermediate2 = os.path.join(extracted_fa_out, f"{sample}2.fastq"),
-        taxid = config["Inputs"]["taxid"]
-    benchmark:
-        os.path.join(benchmark_dir, (sample +".extract_reads.benchmark.txt"))
-    threads: 4
-    shell:
-        "extract_kraken_output_reads -k {input.kraken} -r {input.report} -s1 {input.read1} -s2 {input.read2} -t {params.taxid} --include-children -o {params.intermediate1} -o2 {params.intermediate2};"
-        "cat {params.intermediate1} | pigz -p {threads} -c > {output.ext1}; cat {params.intermediate2} | pigz -p {threads} -c  > {output.ext2};"

@@ -26,15 +26,15 @@ rule sylph_profiling:
         out_tsv = os.path.join(config["Outputs"]["sylph_out"], f"{sample}.tsv")
     params:
         sylph_db = config["Inputs"]["sylph_db"],
-        ani_score = config["Inputs"]["ani_score"]
+        ani_score_sylph = config["Inputs"]["ani_score_sylph"]
     benchmark:
         os.path.join(benchmark_dir, f"{sample}.sylph.benchmark.txt")
     run:
         if reference_genome == None or reference_genome == "null":
-            shell("sylph profile {params.sylph_db} -1 {input.read1} -2 {input.read2} --estimate-read-counts -m {params.ani_score} -t 48 -o {output.out_tsv}")
+            shell("sylph profile {params.sylph_db} -1 {input.read1} -2 {input.read2} --estimate-read-counts -m {params.ani_score_sylph} -t 48 -o {output.out_tsv}")
 
         else:
-            shell("sylph profile {params.sylph_db} {input.read1} --estimate-read-counts -m {params.ani_score} -t 48 -o {output.out_tsv}")
+            shell("sylph profile {params.sylph_db} {input.read1} --estimate-read-counts -m {params.ani_score_sylph} -t 48 -o {output.out_tsv}")
 
 
 #This will take the sylph output and filter only Fungi that are greater than or equal to the ANI score given
@@ -59,12 +59,12 @@ rule filter_fungi:
     output:
         filtered_taxonomy_fungi = os.path.join(config["Outputs"]["filtered_euk"], f"{sample}.tsv")
     params:
-        ani_score = config["Inputs"]["ani_score"]
+        ani_score_fungi_filtering = config["Inputs"]["ani_score_fungi_filtering"]
     benchmark:
         os.path.join(benchmark_dir, f"{sample}.filter_fungi_sylph.benchmark.txt")
     run:
-        #Filter the results, considering only Fungi hits, and with a coverage 1
-        shell("awk -F'[[:space:]]+' 'NR==2 || ($0 ~ /k__Fungi/ && $(NF-1)+0 >= {params.ani_score} && $NF+0 >= 1)' \
+        #Filter the results, considering only Fungi hits
+        shell("awk -F'[[:space:]]+' 'NR==2 || ($0 ~ /k__Fungi/ && $(NF-1)+0 >= {params.ani_score_fungi_filtering})' \
         \"{input.profile_taxo_sylph}\" > \"{output.filtered_taxonomy_fungi}\"")
         
 rule filter_bacteria:
@@ -72,9 +72,11 @@ rule filter_bacteria:
         profile_taxo_sylph = rules.add_taxonomy_to_sylph.output.complete_taxonomy
     output:
         filtered_taxonomy_bact = os.path.join(config["Outputs"]["filtered_bact"], f"{sample}.tsv")
+    params:
+        ani_score_bacteria_filtering = config["Inputs"]["ani_score_bacteria_filtering"]
     benchmark:
         os.path.join(benchmark_dir,  f"{sample}.filter_bact_sylph.benchmark.txt")
     run:
-        #Filter the results, considering only Fungi hits, and with a coverage 5
-        shell("awk -F'[[:space:]]+' 'NR==2 || ($(NF-1)+0 >= 95 && $NF+0 >= 5)' \
+        #Filter the results, considering only bacteria hits, and with a coverage 5
+        shell("awk -F'[[:space:]]+' 'NR==2 || ($(NF-1)+0 >= {params.ani_score_bacteria_filtering} && $NF+0 >= 5)' \
         \"{input.profile_taxo_sylph}\" > \"{output.filtered_taxonomy_bact}\"")

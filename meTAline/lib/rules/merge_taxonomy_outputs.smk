@@ -212,8 +212,8 @@ rule merge_metaphlan4:
 rule sylph_merge:
     input:
         merge = maybe_merge_sylph,
-        sylph_output_bacteria = get_sylph_output_fungi,
-        sylph_output_fungi = get_sylph_output_bacteria
+        sylph_output_bacteria = get_sylph_output_bacteria,
+        sylph_output_fungi = get_sylph_output_fungi
         
     output:
         os.path.join(completed_samples_folder, f"{sample}_sylph_merged_flag.txt")

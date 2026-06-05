@@ -28,6 +28,7 @@ sample = config["Parameters"]["sample_barcode"]
 pipeline_version = "v" + str(config["Parameters"]["version"])
 
 workingdir = config["Parameters"]["basedir"]
+
 alignment_out = os.path.join(workingdir, config["Outputs"]["alignment_out"])
 trimmomatic_out = os.path.join(workingdir, config["Outputs"]["trimmomatic_out"])
 kraken_out = os.path.join(workingdir, config["Outputs"]["kraken_out"])
@@ -43,23 +44,14 @@ completed_samples_folder = os.path.join(merged_out, "completed_samples")
 kraken_completed_samples_folder = os.path.join(completed_samples_folder, "Kraken2")
 metaphlan_completed_samples_folder = os.path.join(completed_samples_folder, "Metaphlan4")
 sylph_completed_samples_folder = os.path.join(completed_samples_folder, "Sylph")
-
-
-
-#Three optional arguments, that we are assessing here:
-reference_genome = config["Inputs"]["reference_genome"]
+sample_dir=os.path.join(workingdir, sample)
 
 #Benchmark directory
 benchmark_dir = os.path.join(workingdir, "Benchmark")
-os.makedirs(benchmark_dir, exist_ok=True)
-
 benchmark_plots_dir = os.path.join(benchmark_dir, "plots")
-os.makedirs(benchmark_plots_dir, exist_ok=True)
 
 
-#Create the necessary dir. Do not create alignment_out directory if there is no reference in the config
-if reference_genome != None or reference_genome != "null":
-    os.makedirs(alignment_out, exist_ok=True)
+os.makedirs(sample_dir, exist_ok=True)
 os.makedirs(trimmomatic_out, exist_ok=True)
 os.makedirs(kraken_out, exist_ok=True)
 os.makedirs(krona_out, exist_ok=True)
@@ -69,12 +61,13 @@ os.makedirs(metaphlan4_out, exist_ok=True)
 os.makedirs(sylph_out, exist_ok=True)
 os.makedirs(filtered_euk, exist_ok=True)
 os.makedirs(filtered_bact, exist_ok=True)
-os.makedirs(merged_out, exist_ok=True)
-os.makedirs(completed_samples_folder, exist_ok=True)
 
-os.makedirs(kraken_completed_samples_folder, exist_ok=True)
-os.makedirs(metaphlan_completed_samples_folder, exist_ok=True)
-os.makedirs(sylph_completed_samples_folder, exist_ok=True)
+
+#Create the necessary dir. Do not create alignment_out directory if there is no reference in the config
+reference_genome = config["Inputs"]["reference_genome"]
+if reference_genome != None or reference_genome != "null":
+    os.makedirs(alignment_out, exist_ok=True)
+
 
 # file wildcard
 files = config["Wildcards"]["fastq_prefix"]
@@ -107,11 +100,8 @@ else:
     read_processing.append(os.path.join(alignment_out, f"{sample}.hisat2.bam.bai"))
     read_processing.append(os.path.join(alignment_out, f"{sample}.unmapped.fastq.gz"))
 
-# need to include the outputs of all smaples in the rule all
 
 #Rule by default, runs the complete pipeline
-
-
 rule all:
     input:
         read_processing,
@@ -119,8 +109,6 @@ rule all:
         kraken_report= os.path.join(kraken_out, f"{sample}.kraken2.report"),
         krona_file= os.path.join(krona_out, f"{sample}.krona"),
         krona_html= os.path.join(krona_out, f"{sample}.html"),
-        ext1= os.path.join(extracted_fa_out, f"{sample}.1.fastq.gz"),
-        ext2= os.path.join(extracted_fa_out, f"{sample}.2.fastq.gz"),
         phyloseq_object = os.path.join( ranalysis_out, f"{sample}.rds"),
         rich_object = os.path.join( ranalysis_out, f"{sample}_alpha_div.csv"),
         out_plot = os.path.join( ranalysis_out, f"{sample}_Barplot_phyla.jpeg"),
@@ -136,11 +124,11 @@ rule all:
         benchmark_plots = benchmark_plots_dir
 
 
-
 #Rule in case you want to only perform trimming and qualiy assessment of the data
 rule Trimming:
     input:
         read_processing
+
 
 #Rule to deplete host reads, if a reference genome is provided
 if reference_genome != None or reference_genome != "null":
@@ -156,6 +144,7 @@ rule kmer_taxonomy:
         kraken_report = os.path.join(kraken_out, f"{sample}.kraken2.report"),
         krona_file = os.path.join(krona_out, f"{sample}.krona"),
         krona_html = os.path.join(krona_out, f"{sample}.html")
+
 
 #This rule is used to make a basic R analysis
 rule R_Analysis:
@@ -173,6 +162,7 @@ rule BioBakery:
         out_profile = os.path.join(metaphlan4_out, f"{sample}_profiled.txt"),
         out_vsc = os.path.join(metaphlan4_out, f"{sample}.vsc.txt"),
         outdir_h = os.path.join(config["Outputs"]["metaphlan4_out"], sample)
+
 
 #Rule to run the sylph taxonomic assignment
 rule sylph:

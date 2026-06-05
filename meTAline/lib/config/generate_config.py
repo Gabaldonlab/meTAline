@@ -40,7 +40,9 @@ class CreateConfigurationFile:
         self.protein_db = None  # Humann database for translation search
         self.sylph_db = None
         self.sylph_taxonomy = None
-        self.ani_score = 80 # Default ANI score
+        self.ani_score_sylph = 70 # Default ANI score sylph
+        self.ani_score_fungi_filtering = 80 # Default ANI score fungi filtering
+        self.ani_score_bacteria_filtering = 95 # Default ANI score bacteria filtering
 
         # OUTPUT PARAMETERS
         self.alignment_out = "BAM"  # Out directory of the alignment step
@@ -231,11 +233,25 @@ class CreateConfigurationFile:
             help="Sylph taxonomy.",
         )
         input_group.add_argument(
-            "--ani-score",
-            dest="ani_score",
-            metavar="ani_score",
-            default=self.ani_score,
-            help="ANI score.",
+            "--ani-score-sylph",
+            dest="ani_score_sylph",
+            metavar="ani_score_sylph",
+            default=self.ani_score_sylph,
+            help="ANI score Sylph.",
+        )
+        input_group.add_argument(
+            "--ani-score-bacteria-filtering",
+            dest="ani_score_bacteria_filtering",
+            metavar="ani_score_bacteria_filtering",
+            default=self.ani_score_bacteria_filtering,
+            help="ANI score bacteria filtering.",
+        )
+        input_group.add_argument(
+            "--ani-score-fungi-filtering",
+            dest="ani_score_fungi_filtering",
+            metavar="ani_score_fungi_filtering",
+            default=self.ani_score_fungi_filtering,
+            help="ANI score fungi filtering.",
         )
 
 
@@ -540,7 +556,9 @@ class CreateConfigurationFile:
         self.inputParameters["protein_db"] = args.protein_db
         self.inputParameters["sylph_db"] = args.sylph_db
         self.inputParameters["sylph_taxonomy"] = args.sylph_taxonomy
-        self.inputParameters["ani_score"] = args.ani_score
+        self.inputParameters["ani_score_sylph"] = args.ani_score_sylph
+        self.inputParameters["ani_score_bacteria_filtering"] = args.ani_score_bacteria_filtering
+        self.inputParameters["ani_score_fungi_filtering"] = args.ani_score_fungi_filtering
         self.allParameters["Inputs"] = self.inputParameters
 
     def store_output_parameters(self, args):

@@ -36,7 +36,9 @@ class PrepareGreasyArrayJobArgs:
     snakemake_cores: int
     sylph_db: str
     sylph_taxonomy: str
-    ani_score: int
+    ani_score_sylph: int
+    ani_score_bacteria_filtering: int
+    ani_score_fungi_filtering: int
 
     @classmethod
     def get_arguments(cls, args=sys.argv[1:]) -> PrepareGreasyArrayJobArgs:
@@ -202,10 +204,22 @@ class PrepareGreasyArrayJobArgs:
             help=("Sylph taxonomy"),
         )
         parser.add_argument(
-            "--ani_score",
+            "--ani_score_sylph",
+            type=int,
+            default=70,
+            help=("ANI score sylph"),
+        )
+        parser.add_argument(
+            "--ani_score_bacteria_filtering",
+            type=int,
+            default=95,
+            help=("ANI score bacteria filtering"),
+        )
+        parser.add_argument(
+            "--ani_score_fungi_filtering",
             type=int,
             default=80,
-            help=("ANI score"),
+            help=("ANI score fungi filtering"),
         )
         return PrepareGreasyArrayJobArgs(**vars(parser.parse_args(args)))
 
@@ -325,7 +339,9 @@ def prepare_config_generation_commands(
                 f"--kraken2-cores {args.kraken2_cores}",
                 f"--sylph-db {args.sylph_db}",
                 f"--sylph-taxonomy {args.sylph_taxonomy}",
-                f"--ani-score {args.ani_score}",
+                f"--ani-score-sylph {args.ani_score_sylph}",
+                f"--ani-score-bacteria-filtering {args.ani_score_bacteria_filtering}",
+                f"--ani-score-fungi-filtering {args.ani_score_fungi_filtering}",
                 f"--sylph-out {sylph_out_abs_path}",
                 f"--filtered-euk {filtered_euk_abs_path}",
                 f"--filtered-bact {filtered_bact_abs_path}",
@@ -415,6 +431,14 @@ def write_slurm_job_file_template(
 #SBATCH --time=24:00:00  # 1 day.
 
 module load greasy
+mkdir -p {basedir}/MERGED/
+mkdir -p {basedir}/MERGED/completed_samples
+mkdir -p {basedir}/MERGED/completed_samples/Kraken2
+mkdir -p {basedir}/MERGED/completed_samples/Metaphlan4
+mkdir -p {basedir}/MERGED/completed_samples/Sylph
+mkdir -p {basedir}/Benchmark
+mkdir -p {basedir}/Benchmark/plots
+
 # Print the task id
 $(sed -n "${{SLURM_ARRAY_TASK_ID}}p" {greasy_list_path})
 """
