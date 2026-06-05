@@ -77,6 +77,6 @@ rule filter_bacteria:
     benchmark:
         os.path.join(benchmark_dir,  f"{sample}.filter_bact_sylph.benchmark.txt")
     run:
-        #Filter the results, considering only bacteria hits, and with a coverage 5
-        shell("awk -F'[[:space:]]+' 'NR==2 || ($(NF-1)+0 >= {params.ani_score_bacteria_filtering} && $NF+0 >= 5)' \
+        #Filter the results, considering only bacteria hits
+        shell("awk -F'[[:space:]]+' 'NR==2 || ($(NF-1)+0 >= {params.ani_score_bacteria_filtering})' \
         \"{input.profile_taxo_sylph}\" > \"{output.filtered_taxonomy_bact}\"")
