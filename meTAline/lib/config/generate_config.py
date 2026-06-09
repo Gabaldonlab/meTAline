@@ -49,9 +49,6 @@ class CreateConfigurationFile:
         self.trimmomatic_out = "TRIMMOMATIC"  # Out directory of the sv calls
         self.kraken_out = "KRAKEN_ASSIGN"  # Out directory of the Kraken2 reports
         self.krona_out = "KRONA_HTML"  # Out directory of the Krona visualization tool
-        self.extracted_fa_out = (
-            "EXTRACTED_FASTA"  # Out directory of the extracted fasta
-        )
         self.ranalysis_out = "R_ANALYSIS"  # Out directory of R analysis
         self.metaphlan4_out = "METAPHLAN4"  # Metaphlan4 and Humann directory
         self.sylph_out = "SYLPH"
@@ -288,12 +285,6 @@ class CreateConfigurationFile:
             help="Out directory of the Krona visualization tool.",
         )
         output_group.add_argument(
-            "--extracted-fa-out",
-            dest="extracted_fa_out",
-            default=self.extracted_fa_out,
-            help="Out directory of the extracted fasta reads.",
-        )
-        output_group.add_argument(
             "--ranalysis-out",
             dest="ranalysis_out",
             default=self.ranalysis_out,
@@ -514,8 +505,6 @@ class CreateConfigurationFile:
             args.kraken_out = f"{os.path.join(args.basedir, self.kraken_out)}/"
         if args.krona_out == self.krona_out:
             args.krona_out = f"{os.path.join(args.basedir, self.krona_out)}/"
-        if args.extracted_fa_out == self.extracted_fa_out:
-            args.extracted_fa_out = f"{os.path.join(args.basedir, self.extracted_fa_out)}/"
         if args.ranalysis_out == self.ranalysis_out:
             args.ranalysis_out = f"{os.path.join(args.basedir, self.ranalysis_out)}/"
         if args.metaphlan4_out == self.metaphlan4_out:
@@ -569,7 +558,6 @@ class CreateConfigurationFile:
         self.outputParameters["trimmomatic_out"] = args.trimmomatic_out
         self.outputParameters["kraken_out"] = args.kraken_out
         self.outputParameters["krona_out"] = args.krona_out
-        self.outputParameters["extracted_fa_out"] = args.extracted_fa_out
         self.outputParameters["ranalysis_out"] = args.ranalysis_out
         self.outputParameters["metaphlan4_out"] = args.metaphlan4_out
         self.outputParameters["sylph_out"] = args.sylph_out

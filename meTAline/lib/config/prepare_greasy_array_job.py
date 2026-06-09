@@ -288,9 +288,6 @@ def prepare_config_generation_commands(
             intermediate_files_output_dir / "KRAKEN_ASSIGN"
         ).absolute()
         krona_out_abs_path = (intermediate_files_output_dir / "KRONA_HTML").absolute()
-        extracted_fa_out_abs_path = (
-            intermediate_files_output_dir / "EXTRACTED_FASTA"
-        ).absolute()
         ranalysis_out_abs_path = (
             intermediate_files_output_dir / "R_ANALYSIS"
         ).absolute()
@@ -331,7 +328,6 @@ def prepare_config_generation_commands(
                 f"--trimmomatic-out {trimmomatic_out_abs_path}",
                 f"--kraken-out {kraken_out_abs_path}",
                 f"--krona-out {krona_out_abs_path}",
-                f"--extracted-fa-out {extracted_fa_out_abs_path}",
                 f"--ranalysis-out {ranalysis_out_abs_path}",
                 f"--metaphlan4-out {metaphlan4_out_abs_path}",
                 f"--trimmo-cores {args.trimmo_cores}",
@@ -401,7 +397,6 @@ def write_greasy_list(
         file.writelines(tuple(map(lambda line: f"{line}\n", greasy_list_lines)))
     return output_greasy_list_file
 
-
 def write_slurm_job_file_template(
     basedir: Path,
     greasy_list_path,
@@ -431,6 +426,8 @@ def write_slurm_job_file_template(
 #SBATCH --time=24:00:00  # 1 day.
 
 module load greasy
+module load singularity
+
 mkdir -p {basedir}/MERGED/
 mkdir -p {basedir}/MERGED/completed_samples
 mkdir -p {basedir}/MERGED/completed_samples/Kraken2
@@ -441,7 +438,15 @@ mkdir -p {basedir}/Benchmark/plots
 
 # Print the task id
 $(sed -n "${{SLURM_ARRAY_TASK_ID}}p" {greasy_list_path})
+
+
+for config in ./configs/*.json; do
+
+    singularity exec /gpfs/projects/bsc40/current/lmccluskey/projects/update_metaline2-addmerge/meTAline-testing-private/metaline.sif snakemake -s /gpfs/projects/bsc40/current/lmccluskey/projects/update_metaline2-addmerge/meTAline-testing-private/meTAline/meTAline.smk --delete-temp-output --configfile "$config"
+
+done
 """
+
     output_job_file.write_text(template)
     return output_job_file
 

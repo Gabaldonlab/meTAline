@@ -33,7 +33,6 @@ alignment_out = os.path.join(workingdir, config["Outputs"]["alignment_out"])
 trimmomatic_out = os.path.join(workingdir, config["Outputs"]["trimmomatic_out"])
 kraken_out = os.path.join(workingdir, config["Outputs"]["kraken_out"])
 krona_out = os.path.join(workingdir, config["Outputs"]["krona_out"])
-extracted_fa_out = os.path.join(workingdir, config["Outputs"]["extracted_fa_out"])
 ranalysis_out = os.path.join(workingdir, config["Outputs"]["ranalysis_out"])
 metaphlan4_out = os.path.join(workingdir, config["Outputs"]["metaphlan4_out"])
 sylph_out = os.path.join(workingdir, config["Outputs"]["sylph_out"])
@@ -55,7 +54,6 @@ os.makedirs(sample_dir, exist_ok=True)
 os.makedirs(trimmomatic_out, exist_ok=True)
 os.makedirs(kraken_out, exist_ok=True)
 os.makedirs(krona_out, exist_ok=True)
-os.makedirs(extracted_fa_out, exist_ok=True)
 os.makedirs(ranalysis_out, exist_ok=True)
 os.makedirs(metaphlan4_out, exist_ok=True)
 os.makedirs(sylph_out, exist_ok=True)
@@ -121,7 +119,6 @@ rule all:
         merged_kraken = os.path.join(completed_samples_folder, f"{sample}_kraken_merged_flag.txt"),
         merged_metaphlan = os.path.join(completed_samples_folder, f"{sample}_metaphlan4_merged_flag.txt"),
         merged_sylph = os.path.join(completed_samples_folder, f"{sample}_sylph_merged_flag.txt"),
-        benchmark_plots = benchmark_plots_dir
 
 
 #Rule in case you want to only perform trimming and qualiy assessment of the data
@@ -176,12 +173,12 @@ rule sylph:
 # Private rule. It exists only to include the custom plots of the jobs in the html report.
 rule __benchmark_report:
     input:
-        benchmark_dir
+        benchmark_plots_dir
     output:
        report(
             directory(benchmark_plots_dir),
             patterns=["{name}.svg"],
             category="Resource benchmark"
        )
-    shell:
-       "sleep 0.1"
+    run:
+       pass

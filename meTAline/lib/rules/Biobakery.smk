@@ -62,7 +62,7 @@ rule humann:
     output:
         combined_reads = temp(os.path.join(config["Outputs"]["metaphlan4_out"], f"{sample}.fastq")),
         outdir_h = directory(os.path.join(config["Outputs"]["metaphlan4_out"], f"{sample}")),
-        intermediate=temp(directory(os.path.join(config["Outputs"]["metaphlan4_out"], f"{sample}/{sample} _humann_temp"))
+        intermediate=temp(directory(os.path.join(config["Outputs"]["metaphlan4_out"], f"{sample}/{sample}_humann_temp")))
     params:
         protein_db = config["Inputs"]["protein_db"],
         metaphlan_index = config["Inputs"]["metaphlan_Index"],
