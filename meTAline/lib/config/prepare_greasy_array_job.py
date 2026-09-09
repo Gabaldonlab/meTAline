@@ -20,6 +20,7 @@ class PrepareGreasyArrayJobArgs:
     metaline_cmd: str
     greasy_cmd: str
     reference_genome: str
+    reference_phix: str
     krakendb: str
     reads_directory: str
     fastq_extension: str
@@ -55,10 +56,7 @@ class PrepareGreasyArrayJobArgs:
                 "kmer_taxonomy",
                 "RAnalysis",
                 "BioBakery",
-                "sylph",
-                "merge_kraken2",
-                "merge_metaphlan4",
-                "sylph_merge"
+                "sylph"
             ],
             default="all",
             help="The meTAline rule to use for the subcommands of the greasy array.",
@@ -102,6 +100,12 @@ class PrepareGreasyArrayJobArgs:
             type=str,
             required=True,
             help="Path to the indexed reference genome.",
+        )
+        parser.add_argument(
+            "--reference-phix",
+            type=str,
+            required=False,
+            help="Path to the indexed PhiX reference genome.",
         )
         parser.add_argument(
             "--krakendb",
@@ -303,20 +307,18 @@ def prepare_config_generation_commands(
         filtered_bact_abs_path = (
             intermediate_files_output_dir / "FILTERED_BACT"
         ).absolute()
-        merged_out_abs_path = (
-            Path(args.basedir) / "MERGED"
-        ).absolute()
         fr_annotation_prefixes_formatted = " ".join([f'"{prefix}"' for prefix in args.prefix_fr])
 
         cmd: str = " ".join(
             (
                 f"{args.generate_config_cmd}",
                 f"--config-file {config_output_file}",
-                f"--extension {args.fastq_extension}",
+                f"--fastq-extension {args.fastq_extension}",
                 f"--basedir {args.basedir}",
                 f"--prefix-fr {fr_annotation_prefixes_formatted}",
                 f"--reads-directory {args.reads_directory}",
                 f"--reference-genome {args.reference_genome}",
+                f"--reference-phix {args.reference_phix}",
                 f"--krakendb {args.krakendb}",
                 f"--sample-barcode {prefix}",
                 f"--fastq-prefix {prefix}",
@@ -333,15 +335,14 @@ def prepare_config_generation_commands(
                 f"--trimmo-cores {args.trimmo_cores}",
                 f"--hisat2-cores {args.hisat2_cores}",
                 f"--kraken2-cores {args.kraken2_cores}",
-                f"--sylph-db {args.sylph_db}",
-                f"--sylph-taxonomy {args.sylph_taxonomy}",
+                f"--sylph_db {args.sylph_db}",
+                f"--sylph_taxonomy {args.sylph_taxonomy}",
                 f"--ani-score-sylph {args.ani_score_sylph}",
                 f"--ani-score-bacteria-filtering {args.ani_score_bacteria_filtering}",
                 f"--ani-score-fungi-filtering {args.ani_score_fungi_filtering}",
                 f"--sylph-out {sylph_out_abs_path}",
                 f"--filtered-euk {filtered_euk_abs_path}",
                 f"--filtered-bact {filtered_bact_abs_path}",
-                f"--merged-out {merged_out_abs_path}",
 
             )
         )
@@ -403,6 +404,7 @@ def write_slurm_job_file_template(
     joblist_num: int,
     jobslist_max_size: int,
     cpus_per_task: int,
+    metaline_cmd
 ) -> Path:
     output_job_file = basedir / "launch_metaline.job"
     log_output_directory = str(basedir).rstrip("/")
@@ -428,23 +430,12 @@ def write_slurm_job_file_template(
 module load greasy
 module load singularity
 
-mkdir -p {basedir}/MERGED/
-mkdir -p {basedir}/MERGED/completed_samples
-mkdir -p {basedir}/MERGED/completed_samples/Kraken2
-mkdir -p {basedir}/MERGED/completed_samples/Metaphlan4
-mkdir -p {basedir}/MERGED/completed_samples/Sylph
 mkdir -p {basedir}/Benchmark
 mkdir -p {basedir}/Benchmark/plots
 
 # Print the task id
 $(sed -n "${{SLURM_ARRAY_TASK_ID}}p" {greasy_list_path})
 
-
-for config in ./configs/*.json; do
-
-    singularity exec /gpfs/projects/bsc40/current/lmccluskey/projects/update_metaline2-addmerge/meTAline-testing-private/metaline.sif snakemake -s /gpfs/projects/bsc40/current/lmccluskey/projects/update_metaline2-addmerge/meTAline-testing-private/meTAline/meTAline.smk --delete-temp-output --configfile "$config"
-
-done
 """
 
     output_job_file.write_text(template)
@@ -467,7 +458,7 @@ def main() -> int:
     _ = _run_shell_cmds_parallel(cmd_entries, args.max_workers)
     generated_config_files = [entry["config_output_file"] for entry in gen_config_cmds]
     metaline_cmds = [
-        f"{args.metaline_cmd} {args.metaline_rule} -j {args.snakemake_cores} --configfile {file}"
+        f"{args.metaline_cmd} {args.metaline_rule} -j {args.snakemake_cores} --configfile {file} && {args.metaline_cmd} {args.metaline_rule} -j {args.snakemake_cores} --configfile {file} --delete-temp-output "
         for file in generated_config_files
     ]
     metaline_cmds_splits = [
@@ -490,6 +481,7 @@ def main() -> int:
         joblist_num=len(joblist_output_files),
         jobslist_max_size=args.joblist_size,
         cpus_per_task=args.cluster_node_cores,
+        metaline_cmd=args.metaline_cmd
     )
     return 0
 

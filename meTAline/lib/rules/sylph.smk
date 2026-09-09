@@ -1,7 +1,7 @@
-#Author: Diego Fuentes, Dániel Majer and Olfat Khannous Lleiffe
+#Author: Laura McCluskey, Diego Fuentes, Dániel Majer and Olfat Khannous Lleiffe
 #Contact email: olfat.khannous@bsc.es
 #Barcelona
-#Date:2026-02-03
+#Date:2026-05-12
 
 ###################
 # SYLPH  #Metagenomic profiling with ANIs
@@ -11,12 +11,25 @@
 
 
 #Check whether we use the filtered reads or the unmapped reads, which happens when the host genome is provided. In case for instance of an environmental sample the trimmed reads are the ones that will be used.
-if reference_genome == None or reference_genome == "null":
+if reference_genome in [None, "null"] and reference_phix in [None, "null"]:
     read1_selected = rules.Concat_reads.output.concat1,
-    read2_selected = rules.Concat_reads.output.concat2
-else:
+    read2_selected = rules.Concat_reads.output.concat2,
+    sylph_taxonomy_suffix="1.fastq.gz.sylphmpa"
+
+elif reference_genome not in [None, "null"] and reference_phix in [None, "null"]:
     read1_selected = rules.extracted_unmapped_reads.output.fastq,
-    read2_selected = rules.extracted_unmapped_reads.output.fastq
+    read2_selected = rules.extracted_unmapped_reads.output.fastq,
+    sylph_taxonomy_suffix="unmapped.fastq.gz.sylphmpa"
+
+elif reference_genome not in [None, "null"] and reference_phix not in [None, "null"]:
+    read1_selected = rules.extract_phix_unmapped_reads.output.fastq_phix,
+    read2_selected = rules.extract_phix_unmapped_reads.output.fastq_phix,
+    sylph_taxonomy_suffix="clean.fastq.gz.sylphmpa"
+
+elif reference_genome in [None, "null"] and reference_phix not in [None, "null"]:
+    read1_selected = rules.remove_phix_reads.output.fastq_phix,
+    read2_selected = rules.remove_phix_reads.output.fastq_phix,
+    sylph_taxonomy_suffix="unmapped.fastq.gz.sylphmpa"
 
 rule sylph_profiling:
     input:
@@ -30,7 +43,7 @@ rule sylph_profiling:
     benchmark:
         os.path.join(benchmark_dir, f"{sample}.sylph.benchmark.txt")
     run:
-        if reference_genome == None or reference_genome == "null":
+        if reference_genome in [None, "null"] and reference_phix in [None, "null"]:
             shell("sylph profile {params.sylph_db} -1 {input.read1} -2 {input.read2} --estimate-read-counts -m {params.ani_score_sylph} -t 48 -o {output.out_tsv}")
 
         else:
@@ -42,7 +55,7 @@ rule add_taxonomy_to_sylph:
     input:
         profiled_sample = rules.sylph_profiling.output.out_tsv
     output:
-        complete_taxonomy = os.path.join(config["Outputs"]["filtered_euk"], f"{sample}.unmapped.fastq.gz.sylphmpa")
+        complete_taxonomy = os.path.join(config["Outputs"]["filtered_euk"], f"{sample}.{sylph_taxonomy_suffix}")
     params:
         sylph_taxonomy = config["Inputs"]["sylph_taxonomy"],
         out_prefix = os.path.join(config["Outputs"]["filtered_euk"], "")

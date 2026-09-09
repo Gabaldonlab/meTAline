@@ -11,7 +11,6 @@ from itertools import takewhile
 def merge(aaastrIn, ostm, gtdb):
     """
     Outputs the table join of the given pre-split string collection.
-
     :param  aaastrIn:   One or more split lines from which data are read.
     :type   aaastrIn:   collection of collections of string collections
     :param  ostm:       Output stream to which matched rows are written.
@@ -32,8 +31,8 @@ def merge(aaastrIn, ostm, gtdb):
                   'samples using the same MetaPhlAn version.\n')
             return
             
-        iIn = pd.read_csv(f, sep='\t', skiprows=len(headers), names=names, usecols=[0,2] if not gtdb else range(2), index_col=0)
-        profiles_list.append(pd.Series(data=iIn['relative_abundance'], index=iIn.index,
+        iIn = pd.read_csv(f, sep='\t', skiprows=len(headers), names=names, usecols=[0,4] if not gtdb else range(4), index_col=0)
+        profiles_list.append(pd.Series(data=iIn[names[-1]], index=iIn.index,
                                        name=os.path.splitext(os.path.basename(f))[0].replace('_profile', '')))
 
     merged_tables = pd.concat([merged_tables, pd.concat(profiles_list, axis=1).fillna(0)], axis=1).fillna(0)

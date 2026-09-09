@@ -1,10 +1,10 @@
 #If you want to set up your environment PATH in the bashrc you can use the line below to source it
 #shell.prefix("source ~/.bashrc; ")
 
-#Author: Diego Fuentes, Dániel Majer and Olfat Khannous Lleiffe
+#Author: Laura McCluskey, Diego Fuentes, Dániel Majer and Olfat Khannous Lleiffe
 #Contact email: olfat.khannous@bsc.es
 #Barcelona
-#Date:2026-03-04
+#Date:2026-05-12
 
 import os
 import sys
@@ -13,6 +13,7 @@ import glob
 
 #First determine the config file, if changed by the user, need to either specified here or through snakemake commands (if using commands, comment the line below)
 #configfile: os.path.join(workflow.basedir, "config.json")
+
 
 ##############
 # PARAMETERS #
@@ -38,12 +39,8 @@ metaphlan4_out = os.path.join(workingdir, config["Outputs"]["metaphlan4_out"])
 sylph_out = os.path.join(workingdir, config["Outputs"]["sylph_out"])
 filtered_euk = os.path.join(workingdir, config["Outputs"]["filtered_euk"])
 filtered_bact = os.path.join(workingdir, config["Outputs"]["filtered_bact"])
-merged_out = os.path.join(workingdir, config["Outputs"]["merged_out"])
-completed_samples_folder = os.path.join(merged_out, "completed_samples")
-kraken_completed_samples_folder = os.path.join(completed_samples_folder, "Kraken2")
-metaphlan_completed_samples_folder = os.path.join(completed_samples_folder, "Metaphlan4")
-sylph_completed_samples_folder = os.path.join(completed_samples_folder, "Sylph")
 sample_dir=os.path.join(workingdir, sample)
+reference_phix = config["Inputs"]["reference_phix"]
 
 #Benchmark directory
 benchmark_dir = os.path.join(workingdir, "Benchmark")
@@ -77,11 +74,11 @@ files = config["Wildcards"]["fastq_prefix"]
 
 include: "lib/rules/trimming.smk"
 include: "lib/rules/host_depletion.smk"
+include: "lib/rules/PhiX_removal.smk"
 include: "lib/rules/kmer_taxonomy.smk"
 include: "lib/rules/RAnalysis.smk"
 include: "lib/rules/Biobakery.smk"
 include: "lib/rules/sylph.smk"
-include: "lib/rules/merge_taxonomy_outputs.smk"
 
 
 ##############
@@ -98,12 +95,18 @@ else:
     read_processing.append(os.path.join(alignment_out, f"{sample}.hisat2.bam.bai"))
     read_processing.append(os.path.join(alignment_out, f"{sample}.unmapped.fastq.gz"))
 
+if reference_genome not in [None, "null"] and reference_phix in [None, "null"]:
+    sylph_taxonomy_suffix="unmapped.fastq.gz.sylphmpa"
+if reference_genome not in [None, "null"] and reference_phix not in [None, "null"]:
+    sylph_taxonomy_suffix="clean.fastq.gz.sylphmpa"
+if reference_genome in [None, "null"] and reference_phix in [None, "null"]:
+    sylph_taxonomy_suffix="1.fastq.gz.sylphmpa"
 
 #Rule by default, runs the complete pipeline
 rule all:
     input:
         read_processing,
-        kraken_out = os.path.join(kraken_out, f"{sample}.kraken2.txt"),
+        kraken_output = os.path.join(kraken_out, f"{sample}.kraken2.txt.gz"),
         kraken_report= os.path.join(kraken_out, f"{sample}.kraken2.report"),
         krona_file= os.path.join(krona_out, f"{sample}.krona"),
         krona_html= os.path.join(krona_out, f"{sample}.html"),
@@ -113,31 +116,38 @@ rule all:
         out_profile = os.path.join(metaphlan4_out, f"{sample}_profiled.txt"),
         outdir_h = os.path.join(config["Outputs"]["metaphlan4_out"], sample),
         out_tsv = os.path.join(sylph_out, f"{sample}.tsv"),
-        complete_taxonomy = os.path.join(config["Outputs"]["filtered_euk"], f"{sample}.unmapped.fastq.gz.sylphmpa"),
+        complete_taxonomy = os.path.join(config["Outputs"]["filtered_euk"], f"{sample}.{sylph_taxonomy_suffix}"),
         filtered_taxonomy_fungi = os.path.join(config["Outputs"]["filtered_euk"], f"{sample}.tsv"),
-        filtered_taxonomy_bact = os.path.join(config["Outputs"]["filtered_bact"], f"{sample}.tsv"),
-        merged_kraken = os.path.join(completed_samples_folder, f"{sample}_kraken_merged_flag.txt"),
-        merged_metaphlan = os.path.join(completed_samples_folder, f"{sample}_metaphlan4_merged_flag.txt"),
-        merged_sylph = os.path.join(completed_samples_folder, f"{sample}_sylph_merged_flag.txt"),
+        filtered_taxonomy_bact = os.path.join(config["Outputs"]["filtered_bact"], f"{sample}.tsv")
 
 
 #Rule in case you want to only perform trimming and qualiy assessment of the data
-rule Trimming:
+rule trimming:
     input:
         read_processing
 
 
 #Rule to deplete host reads, if a reference genome is provided
-if reference_genome != None or reference_genome != "null":
+if reference_genome not in [None, "null"] and reference_phix in [None, "null"]:
     rule host_depletion:
         input:
             fastq = os.path.join(alignment_out, f"{sample}.unmapped.fastq.gz")
+
+elif reference_genome not in [None, "null"] and reference_phix not in [None, "null"]:
+    rule host_depletion:
+        input:
+            fastq_phix = os.path.join(alignment_out, f"{sample}.clean.fastq.gz")
+
+elif reference_genome in [None, "null"] and reference_phix not in [None, "null"]:
+    rule PhiX_removal:
+        input:
+            fastq_phix= os.path.join(alignment_out, f"{sample}.unmapped.fastq.gz")
 
 
 #This rule is used to perform the taxonomy assignment based on the k-mer based approach
 rule kmer_taxonomy:
     input:
-        kraken_out = os.path.join(kraken_out, f"{sample}.kraken2.txt"),
+        kraken_output = os.path.join(kraken_out, f"{sample}.kraken2.txt.gz"),
         kraken_report = os.path.join(kraken_out, f"{sample}.kraken2.report"),
         krona_file = os.path.join(krona_out, f"{sample}.krona"),
         krona_html = os.path.join(krona_out, f"{sample}.html")
@@ -165,11 +175,11 @@ rule BioBakery:
 rule sylph:
     input:
         out_tsv = os.path.join(sylph_out, f"{sample}.tsv"),
-        complete_taxonomy = os.path.join(config["Outputs"]["filtered_euk"], f"{sample}.unmapped.fastq.gz.sylphmpa"),
+        complete_taxonomy = os.path.join(config["Outputs"]["filtered_euk"], f"{sample}.{sylph_taxonomy_suffix}"),
         filtered_taxonomy_fungi = os.path.join(config["Outputs"]["filtered_euk"], f"{sample}.tsv"),
         filtered_taxonomy_bact = os.path.join(config["Outputs"]["filtered_bact"], f"{sample}.tsv")
 
-
+        
 # Private rule. It exists only to include the custom plots of the jobs in the html report.
 rule __benchmark_report:
     input:
@@ -182,3 +192,4 @@ rule __benchmark_report:
        )
     run:
        pass
+       

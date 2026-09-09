@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 
-#Author: Diego Fuentes, Dániel Majer and Olfat Khannous Lleiffe
+#Author: Laura McCluskey, Diego Fuentes, Dániel Majer and Olfat Khannous Lleiffe
 #Contact email: olfat.khannous@bsc.es
 #Barcelona
-#Date:2025-03-27
+#Date:2026-05-12
 
 import os
 import json
@@ -24,7 +24,7 @@ class CreateConfigurationFile:
             "config.json"  # Name of the json configuration file to be created.
         )
         self.version = 1  # Pipeline version
-        self.extension = ".fastq.gz"  # Extension of the raw read files
+        self.fastq_extension = ".fastq.gz"  # Extension of the raw read files
         self.sample_barcode = None  # Sample barcode
         self.basedir = self.sample_barcode  # Base directory for the pipeline run
         self.prefix_fr = "_"  # Prefix of the forward-reverse annotation in the filenames.
@@ -32,6 +32,7 @@ class CreateConfigurationFile:
         # INPUT PARAMETERS
         self.reads_directory = None  # Directory where the illumina fastqs are stored
         self.reference_genome = None  # Indexed reference genome (Hisat2 index) path
+        self.reference_phix = None
         self.krakendb = None  # Kraken2 DB path that is going to be used
         self.taxid = 0  # Default taxid used to extract reads, based on the kraken report. By default 0 -> unclassified
         self.metaphlan_db = None  # Metaphlan4 database path
@@ -54,7 +55,6 @@ class CreateConfigurationFile:
         self.sylph_out = "SYLPH"
         self.filtered_euk = "FILTERED_EUK"
         self.filtered_bact = "FILTERED_BACT"
-        self.merged_out = "MERGED"
 
         # WILDCARD PARAMETER
         self.fastq_prefix = None  # List with basename of the fastq-prefix if any
@@ -121,10 +121,10 @@ class CreateConfigurationFile:
             help="Pipeline run version.",
         )
         general_group.add_argument(
-            "--extension",
-            dest="extension",
-            metavar="extension",
-            default=self.extension,
+            "--fastq-extension",
+            dest="fastq_extension",
+            metavar="fastq_extension",
+            default=self.fastq_extension,
             help="Extension of the illumina raw read files.",
         )
         general_group.add_argument(
@@ -173,6 +173,13 @@ class CreateConfigurationFile:
             help="Indexed reference genome path (ie: reference/Human_index).",
         )
         input_group.add_argument(
+            "--reference-phix",
+            dest="reference_phix",
+            metavar="reference_phix",
+            default=self.reference_phix,
+            help="Indexed reference genome for PhiX removal (ie: reference/phix_index).",
+        )
+        input_group.add_argument(
             "--krakendb",
             dest="krakendb",
             required=True,
@@ -216,14 +223,14 @@ class CreateConfigurationFile:
             help="Humann database to do the nucleotide search (based on already built annotations).",
         )
         input_group.add_argument(
-            "--sylph-db",
+            "--sylph_db",
             dest="sylph_db",
             metavar="sylph_db",
             default=self.sylph_db,
             help="Sylph db.",
         )
         input_group.add_argument(
-            "--sylph-taxonomy",
+            "--sylph_taxonomy",
             dest="sylph_taxonomy",
             metavar="sylph_taxonomy",
             default=self.sylph_taxonomy,
@@ -313,12 +320,6 @@ class CreateConfigurationFile:
             dest="filtered_bact",
             default=self.filtered_bact,
             help="Out directory of the Filtering of sylph - only Bacterial hits.",
-        )
-        output_group.add_argument(
-            "--merged-out",
-            dest="merged_out",
-            default=self.merged_out,
-            help="Out directory where to store the merged of different samples, for each taxonomy.",
         )
 
     def register_wildcards(self, parser: argparse.ArgumentParser):
@@ -486,6 +487,17 @@ class CreateConfigurationFile:
                         file=sys.stderr,
                     )
                     args.reference_genome = None
+        if args.reference_phix != None:
+            args.reference_phix = os.path.abspath(args.reference_phix)
+
+            if not os.path.exists(args.reference_phix):
+                if not re.search("index", args.reference_phix):
+                    print(
+                        f"A reference genome index (including index as suffix, ie:'phix_index') has been not provided or it has not been found in "
+                        f"{args.reference_phix}. Enabling the taxonomic assignment of a environmental sample.",
+                        file=sys.stderr,
+                    )
+                    args.reference_phix = None
 
         if args.krakendb:
             args.krakendb = os.path.abspath(args.krakendb)
@@ -515,8 +527,6 @@ class CreateConfigurationFile:
             args.filtered_euk = f"{os.path.join(args.basedir, self.filtered_euk)}/"
         if args.filtered_bact == self.filtered_bact:
             args.filtered_bact = f"{os.path.join(args.basedir, self.filtered_bact)}/"
-        if args.merged_out == self.merged_out:
-            args.merged_out = f"{os.path.join(args.basedir, self.merged_out)}/"
 
     def store_general_parameters(self, args):
         """Updates general parameters to the map of parameters to be store in a JSON file
@@ -525,7 +535,7 @@ class CreateConfigurationFile:
         self.generalParameters["configFile"] = args.configFile
         self.generalParameters["version"] = args.version
         self.generalParameters["basedir"] = args.basedir
-        self.generalParameters["extension"] = args.extension
+        self.generalParameters["extension"] = args.fastq_extension
         self.generalParameters["sample_barcode"] = args.sample_barcode
         self.generalParameters["prefix_fr"] = args.prefix_fr
         self.allParameters["Parameters"] = self.generalParameters
@@ -534,9 +544,9 @@ class CreateConfigurationFile:
         """Updates input parameters to the map of parameters to be store in a JSON file
         args -- set of parsed arguments
         """
-
         self.inputParameters["reads_directory"] = args.reads_directory
         self.inputParameters["reference_genome"] = args.reference_genome
+        self.inputParameters["reference_phix"] = args.reference_phix
         self.inputParameters["krakendb"] = args.krakendb
         self.inputParameters["taxid"] = args.taxid
         self.inputParameters["metaphlan_db"] = args.metaphlan_db
@@ -563,7 +573,6 @@ class CreateConfigurationFile:
         self.outputParameters["sylph_out"] = args.sylph_out
         self.outputParameters["filtered_euk"] = args.filtered_euk
         self.outputParameters["filtered_bact"] = args.filtered_bact
-        self.outputParameters["merged_out"] = args.merged_out
         self.allParameters["Outputs"] = self.outputParameters
 
     def store_wildcard_parameters(self, args):
