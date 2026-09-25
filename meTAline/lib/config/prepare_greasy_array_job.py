@@ -421,14 +421,13 @@ def write_slurm_job_file_template(
 #SBATCH --error={log_output_directory}/jobnm_%j.err # File where the error is written
 
 #SBATCH --array={array_range} # The number of jobs in the array
-#SBATCH --ntasks={joblist_num} # The number of parallel tasks
+#SBATCH --ntasks={jobslist_max_size} # The number of parallel tasks
 #SBATCH --tasks-per-node={jobslist_max_size}
 #SBATCH --cpus-per-task={cpus_per_task} # Number of CPUs per run task
 #SBATCH --constraint=highmem  # Use this only if your the database is too big and this constrainst is available in your cluster.
 #SBATCH --time=24:00:00  # 1 day.
 
 module load greasy
-module load singularity
 
 mkdir -p {basedir}/Benchmark
 mkdir -p {basedir}/Benchmark/plots
@@ -458,7 +457,7 @@ def main() -> int:
     _ = _run_shell_cmds_parallel(cmd_entries, args.max_workers)
     generated_config_files = [entry["config_output_file"] for entry in gen_config_cmds]
     metaline_cmds = [
-        f"{args.metaline_cmd} {args.metaline_rule} -j {args.snakemake_cores} --configfile {file} && {args.metaline_cmd} {args.metaline_rule} -j {args.snakemake_cores} --configfile {file} --delete-temp-output "
+        f"{args.metaline_cmd} {args.metaline_rule} -j {args.snakemake_cores} --configfile {file} && {args.metaline_cmd} {args.metaline_rule} -j {args.snakemake_cores} --configfile {file} --delete-temp-output"
         for file in generated_config_files
     ]
     metaline_cmds_splits = [

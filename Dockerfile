@@ -1,13 +1,13 @@
-FROM python:3.11.13-slim-bullseye
+FROM python:3.11.13-slim-bookworm
 
-LABEL base.image="python:3.11.13-slim-bullseye"
-LABEL version="1.2.0"
+LABEL base.image="FROM python:3.11-slim-bookworm"
+LABEL version="2.0.0"
 LABEL software="meTAline"
-LABEL software.version="1.2.0"
+LABEL software.version="2.0.0"
 LABEL description="Taxonomic assignation pipeline implementation in Snakemake for shotgun genome sequencing."
 LABEL website="https://github.com/gabaldonlab/meTAline"
 LABEL license="GNU General Public License 3.0"
-LABEL maintainer="Daniel Majer (BSC), Olfat Khannous (BSC), Diego Fuentes (BSC)"
+LABEL maintainer="Daniel Majer (BSC), Olfat Khannous (BSC), Diego Fuentes (BSC), Laura McCluskey(BSC)"
 
 RUN apt-get update
 RUN apt-get install -y \
@@ -38,11 +38,11 @@ RUN DEBCONF_NOWARNINGS="yes" \
         libncurses5-dev \
         libncursesw5-dev \
         default-jre \
-        r-base=4.0.4-1 \
-        r-base-dev=4.0.4-1 \
-        r-cran-ggplot2=3.3.3+dfsg-1 \
-        r-bioc-phyloseq=1.34.0+dfsg-1 \
-        r-bioc-biobase=2.50.0-1
+        r-base=4.2.2.20221110-2 \
+        r-base-dev=4.2.2.20221110-2 \
+        r-cran-ggplot2=3.4.1+dfsg-1 \
+        r-bioc-phyloseq=1.42.0+dfsg-1 \
+        r-bioc-biobase=2.58.0-2
 
 # - htslib
 # - samtools
