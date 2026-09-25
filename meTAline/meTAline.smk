@@ -114,7 +114,7 @@ rule all:
         out_tsv = os.path.join(sylph_out, f"{sample}.tsv"),
         complete_taxonomy = os.path.join(config["Outputs"]["filtered_euk"], f"{sample}.{sylph_taxonomy_suffix}"),
         filtered_taxonomy_fungi = os.path.join(config["Outputs"]["filtered_euk"], f"{sample}.tsv"),
-        filtered_taxonomy_bact = os.path.join(config["Outputs"]["filtered_bact"], f"{sample}.tsv"),
+        filtered_taxonomy_bact = os.path.join(config["Outputs"]["filtered_bact"], f"{sample}.tsv")
 
 #Rule in case you want to only perform trimming and qualiy assessment of the data
 rule trimming:
