@@ -98,7 +98,7 @@ class PrepareGreasyArrayJobArgs:
         parser.add_argument(
             "--reference-genome",
             type=str,
-            required=True,
+            required=False,
             help="Path to the indexed reference genome.",
         )
         parser.add_argument(
