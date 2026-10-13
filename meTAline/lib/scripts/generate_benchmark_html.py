@@ -127,8 +127,7 @@ def main(argv: list[str] = sys.argv[1:]) -> int:
         plt.savefig(plot_output_path, format="svg")
         plt.close()
         print(f"-> Created '{column}' plot on path {plot_output_path}")
-
-    _exec_shell_cmd(f"metaline --configfile {args.config_file} --report {args.output_html_path}")
+    _exec_shell_cmd(f"metaline __benchmark_report --configfile {args.config_file} --report {args.output_html_path}")
     return 0
 
 

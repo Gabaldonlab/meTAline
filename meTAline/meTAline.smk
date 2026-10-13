@@ -42,6 +42,7 @@ reference_phix = config["Inputs"]["reference_phix"]
 
 #Benchmark directory
 benchmark_dir = os.path.join(workingdir, "Benchmark")
+benchmark_plots_dir = os.path.join(benchmark_dir, "plots")
 
 os.makedirs(sample_dir, exist_ok=True)
 os.makedirs(trimmomatic_out, exist_ok=True)
@@ -173,4 +174,18 @@ rule sylph:
         complete_taxonomy = os.path.join(config["Outputs"]["filtered_euk"], f"{sample}.{sylph_taxonomy_suffix}"),
         filtered_taxonomy_fungi = os.path.join(config["Outputs"]["filtered_euk"], f"{sample}.tsv"),
         filtered_taxonomy_bact = os.path.join(config["Outputs"]["filtered_bact"], f"{sample}.tsv")
+        
+         
+# Private rule. It exists only to include the custom plots of the jobs in the html report.
+rule __benchmark_report:
+    input:
+        benchmark_dir
+    output:
+       report(
+            directory(benchmark_plots_dir),
+            patterns=["{name}.svg"],
+            category="Resource benchmark"
+       )
+    run:
+      "sleep 0.1"
 
