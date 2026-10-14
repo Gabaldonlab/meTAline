@@ -115,7 +115,8 @@ rule all:
         out_tsv = os.path.join(sylph_out, f"{sample}.tsv"),
         complete_taxonomy = os.path.join(config["Outputs"]["filtered_euk"], f"{sample}.{sylph_taxonomy_suffix}"),
         filtered_taxonomy_fungi = os.path.join(config["Outputs"]["filtered_euk"], f"{sample}.tsv"),
-        filtered_taxonomy_bact = os.path.join(config["Outputs"]["filtered_bact"], f"{sample}.tsv")
+        filtered_taxonomy_bact = os.path.join(config["Outputs"]["filtered_bact"], f"{sample}.tsv"),
+        benchmark_plots = benchmark_plots_dir
 
 #Rule in case you want to only perform trimming and qualiy assessment of the data
 rule trimming:
@@ -179,13 +180,14 @@ rule sylph:
 # Private rule. It exists only to include the custom plots of the jobs in the html report.
 rule __benchmark_report:
     input:
-        benchmark_dir
+        #This rule needs input where the timestamp is before the output so it is not in the DAG (so this file was created to satisfy this requirement)
+        os.path.join(benchmark_dir, "required.txt")
     output:
        report(
             directory(benchmark_plots_dir),
             patterns=["{name}.svg"],
             category="Resource benchmark"
        )
-    run:
+    shell:
       "sleep 0.1"
 

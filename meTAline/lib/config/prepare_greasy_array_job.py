@@ -99,12 +99,14 @@ class PrepareGreasyArrayJobArgs:
             "--reference-genome",
             type=str,
             required=False,
+            default= None,
             help="Path to the indexed reference genome.",
         )
         parser.add_argument(
             "--reference-phix",
             type=str,
             required=False,
+            default= None,
             help="Path to the indexed PhiX reference genome.",
         )
         parser.add_argument(
@@ -430,6 +432,8 @@ def write_slurm_job_file_template(
 module load greasy
 
 mkdir -p {basedir}/Benchmark
+# This file is required for __Benchmark_report rule
+[ -f {basedir}/Benchmark/required.txt ] || touch {basedir}/Benchmark/required.txt
 mkdir -p {basedir}/Benchmark/plots
 
 # Print the task id
