@@ -99,14 +99,14 @@ class PrepareGreasyArrayJobArgs:
             "--reference-genome",
             type=str,
             required=False,
-            default= None,
+            default=None,
             help="Path to the indexed reference genome.",
         )
         parser.add_argument(
             "--reference-phix",
             type=str,
             required=False,
-            default= None,
+            default=None,
             help="Path to the indexed PhiX reference genome.",
         )
         parser.add_argument(
