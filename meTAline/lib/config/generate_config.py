@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 
-#Author: Diego Fuentes, Dániel Majer and Olfat Khannous Lleiffe
+#Author: Laura McCluskey, Diego Fuentes, Dániel Majer and Olfat Khannous Lleiffe
 #Contact email: olfat.khannous@bsc.es
 #Barcelona
-#Date:2025-03-27
+#Date:2026-05-12
 
 import os
 import json
@@ -24,7 +24,7 @@ class CreateConfigurationFile:
             "config.json"  # Name of the json configuration file to be created.
         )
         self.version = 1  # Pipeline version
-        self.extension = "fastq.gz"  # Extension of the raw read files
+        self.fastq_extension = ".fastq.gz"  # Extension of the raw read files
         self.sample_barcode = None  # Sample barcode
         self.basedir = self.sample_barcode  # Base directory for the pipeline run
         self.prefix_fr = "_"  # Prefix of the forward-reverse annotation in the filenames.
@@ -32,23 +32,29 @@ class CreateConfigurationFile:
         # INPUT PARAMETERS
         self.reads_directory = None  # Directory where the illumina fastqs are stored
         self.reference_genome = None  # Indexed reference genome (Hisat2 index) path
+        self.reference_phix = None
         self.krakendb = None  # Kraken2 DB path that is going to be used
         self.taxid = 0  # Default taxid used to extract reads, based on the kraken report. By default 0 -> unclassified
         self.metaphlan_db = None  # Metaphlan4 database path
         self.metaphlan_Index = None  # Metaphlan4 index (last release of the database)
         self.n_db = None  # Humann database for nucleotide search
         self.protein_db = None  # Humann database for translation search
+        self.sylph_db = None
+        self.sylph_taxonomy = None
+        self.ani_score_sylph = 70 # Default ANI score sylph
+        self.ani_score_fungi_filtering = 80 # Default ANI score fungi filtering
+        self.ani_score_bacteria_filtering = 95 # Default ANI score bacteria filtering
 
         # OUTPUT PARAMETERS
         self.alignment_out = "BAM"  # Out directory of the alignment step
         self.trimmomatic_out = "TRIMMOMATIC"  # Out directory of the sv calls
         self.kraken_out = "KRAKEN_ASSIGN"  # Out directory of the Kraken2 reports
         self.krona_out = "KRONA_HTML"  # Out directory of the Krona visualization tool
-        self.extracted_fa_out = (
-            "EXTRACTED_FASTA"  # Out directory of the extracted fasta
-        )
         self.ranalysis_out = "R_ANALYSIS"  # Out directory of R analysis
         self.metaphlan4_out = "METAPHLAN4"  # Metaphlan4 and Humann directory
+        self.sylph_out = "SYLPH"
+        self.filtered_euk = "FILTERED_EUK"
+        self.filtered_bact = "FILTERED_BACT"
 
         # WILDCARD PARAMETER
         self.fastq_prefix = None  # List with basename of the fastq-prefix if any
@@ -115,10 +121,10 @@ class CreateConfigurationFile:
             help="Pipeline run version.",
         )
         general_group.add_argument(
-            "--extension",
-            dest="extension",
-            metavar="extension",
-            default=self.extension,
+            "--fastq-extension",
+            dest="fastq_extension",
+            metavar="fastq_extension",
+            default=self.fastq_extension,
             help="Extension of the illumina raw read files.",
         )
         general_group.add_argument(
@@ -167,6 +173,13 @@ class CreateConfigurationFile:
             help="Indexed reference genome path (ie: reference/Human_index).",
         )
         input_group.add_argument(
+            "--reference-phix",
+            dest="reference_phix",
+            metavar="reference_phix",
+            default=self.reference_phix,
+            help="Indexed reference genome for PhiX removal (ie: reference/phix_index).",
+        )
+        input_group.add_argument(
             "--krakendb",
             dest="krakendb",
             required=True,
@@ -209,6 +222,43 @@ class CreateConfigurationFile:
             default=self.n_db,
             help="Humann database to do the nucleotide search (based on already built annotations).",
         )
+        input_group.add_argument(
+            "--sylph_db",
+            dest="sylph_db",
+            metavar="sylph_db",
+            default=self.sylph_db,
+            help="Sylph db.",
+        )
+        input_group.add_argument(
+            "--sylph_taxonomy",
+            dest="sylph_taxonomy",
+            metavar="sylph_taxonomy",
+            default=self.sylph_taxonomy,
+            help="Sylph taxonomy.",
+        )
+        input_group.add_argument(
+            "--ani-score-sylph",
+            dest="ani_score_sylph",
+            metavar="ani_score_sylph",
+            default=self.ani_score_sylph,
+            help="ANI score Sylph.",
+        )
+        input_group.add_argument(
+            "--ani-score-bacteria-filtering",
+            dest="ani_score_bacteria_filtering",
+            metavar="ani_score_bacteria_filtering",
+            default=self.ani_score_bacteria_filtering,
+            help="ANI score bacteria filtering.",
+        )
+        input_group.add_argument(
+            "--ani-score-fungi-filtering",
+            dest="ani_score_fungi_filtering",
+            metavar="ani_score_fungi_filtering",
+            default=self.ani_score_fungi_filtering,
+            help="ANI score fungi filtering.",
+        )
+
+
 
     def register_output(self, parser: argparse.ArgumentParser):
         """Register all output parameters with the given
@@ -242,12 +292,6 @@ class CreateConfigurationFile:
             help="Out directory of the Krona visualization tool.",
         )
         output_group.add_argument(
-            "--extracted-fa-out",
-            dest="extracted_fa_out",
-            default=self.extracted_fa_out,
-            help="Out directory of the extracted fasta reads.",
-        )
-        output_group.add_argument(
             "--ranalysis-out",
             dest="ranalysis_out",
             default=self.ranalysis_out,
@@ -258,6 +302,24 @@ class CreateConfigurationFile:
             dest="metaphlan4_out",
             default=self.metaphlan4_out,
             help="Out directory of the Metaphlan4 and Humann analysis.",
+        )
+        output_group.add_argument(
+            "--sylph-out",
+            dest="sylph_out",
+            default=self.sylph_out,
+            help="Out directory of the Sylph results.",
+        )
+        output_group.add_argument(
+            "--filtered-euk",
+            dest="filtered_euk",
+            default=self.filtered_euk,
+            help="Out directory of the Filtering of sylph - only Fungal hits.",
+        )
+        output_group.add_argument(
+            "--filtered-bact",
+            dest="filtered_bact",
+            default=self.filtered_bact,
+            help="Out directory of the Filtering of sylph - only Bacterial hits.",
         )
 
     def register_wildcards(self, parser: argparse.ArgumentParser):
@@ -425,6 +487,17 @@ class CreateConfigurationFile:
                         file=sys.stderr,
                     )
                     args.reference_genome = None
+        if args.reference_phix != None:
+            args.reference_phix = os.path.abspath(args.reference_phix)
+
+            if not os.path.exists(args.reference_phix):
+                if not re.search("index", args.reference_phix):
+                    print(
+                        f"A reference genome index (including index as suffix, ie:'phix_index') has been not provided or it has not been found in "
+                        f"{args.reference_phix}. Enabling the taxonomic assignment of a environmental sample.",
+                        file=sys.stderr,
+                    )
+                    args.reference_phix = None
 
         if args.krakendb:
             args.krakendb = os.path.abspath(args.krakendb)
@@ -444,12 +517,16 @@ class CreateConfigurationFile:
             args.kraken_out = f"{os.path.join(args.basedir, self.kraken_out)}/"
         if args.krona_out == self.krona_out:
             args.krona_out = f"{os.path.join(args.basedir, self.krona_out)}/"
-        if args.extracted_fa_out == self.extracted_fa_out:
-            args.extracted_fa_out = f"{os.path.join(args.basedir, self.extracted_fa_out)}/"
         if args.ranalysis_out == self.ranalysis_out:
             args.ranalysis_out = f"{os.path.join(args.basedir, self.ranalysis_out)}/"
         if args.metaphlan4_out == self.metaphlan4_out:
             args.metaphlan4_out = f"{os.path.join(args.basedir, self.metaphlan4_out)}/"
+        if args.sylph_out == self.sylph_out:
+            args.sylph_out = f"{os.path.join(args.basedir, self.sylph_out)}/"
+        if args.filtered_euk == self.filtered_euk:
+            args.filtered_euk = f"{os.path.join(args.basedir, self.filtered_euk)}/"
+        if args.filtered_bact == self.filtered_bact:
+            args.filtered_bact = f"{os.path.join(args.basedir, self.filtered_bact)}/"
 
     def store_general_parameters(self, args):
         """Updates general parameters to the map of parameters to be store in a JSON file
@@ -458,7 +535,7 @@ class CreateConfigurationFile:
         self.generalParameters["configFile"] = args.configFile
         self.generalParameters["version"] = args.version
         self.generalParameters["basedir"] = args.basedir
-        self.generalParameters["extension"] = args.extension
+        self.generalParameters["extension"] = args.fastq_extension
         self.generalParameters["sample_barcode"] = args.sample_barcode
         self.generalParameters["prefix_fr"] = args.prefix_fr
         self.allParameters["Parameters"] = self.generalParameters
@@ -467,15 +544,20 @@ class CreateConfigurationFile:
         """Updates input parameters to the map of parameters to be store in a JSON file
         args -- set of parsed arguments
         """
-
         self.inputParameters["reads_directory"] = args.reads_directory
         self.inputParameters["reference_genome"] = args.reference_genome
+        self.inputParameters["reference_phix"] = args.reference_phix
         self.inputParameters["krakendb"] = args.krakendb
         self.inputParameters["taxid"] = args.taxid
         self.inputParameters["metaphlan_db"] = args.metaphlan_db
         self.inputParameters["metaphlan_Index"] = args.metaphlan_Index
         self.inputParameters["n_db"] = args.n_db
         self.inputParameters["protein_db"] = args.protein_db
+        self.inputParameters["sylph_db"] = args.sylph_db
+        self.inputParameters["sylph_taxonomy"] = args.sylph_taxonomy
+        self.inputParameters["ani_score_sylph"] = args.ani_score_sylph
+        self.inputParameters["ani_score_bacteria_filtering"] = args.ani_score_bacteria_filtering
+        self.inputParameters["ani_score_fungi_filtering"] = args.ani_score_fungi_filtering
         self.allParameters["Inputs"] = self.inputParameters
 
     def store_output_parameters(self, args):
@@ -486,9 +568,11 @@ class CreateConfigurationFile:
         self.outputParameters["trimmomatic_out"] = args.trimmomatic_out
         self.outputParameters["kraken_out"] = args.kraken_out
         self.outputParameters["krona_out"] = args.krona_out
-        self.outputParameters["extracted_fa_out"] = args.extracted_fa_out
         self.outputParameters["ranalysis_out"] = args.ranalysis_out
         self.outputParameters["metaphlan4_out"] = args.metaphlan4_out
+        self.outputParameters["sylph_out"] = args.sylph_out
+        self.outputParameters["filtered_euk"] = args.filtered_euk
+        self.outputParameters["filtered_bact"] = args.filtered_bact
         self.allParameters["Outputs"] = self.outputParameters
 
     def store_wildcard_parameters(self, args):

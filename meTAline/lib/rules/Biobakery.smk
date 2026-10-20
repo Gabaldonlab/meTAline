@@ -1,7 +1,7 @@
-#Author: Diego Fuentes, Dániel Majer and Olfat Khannous Lleiffe
+#Author: Laura McCluskey, Diego Fuentes, Dániel Majer and Olfat Khannous Lleiffe
 #Contact email: olfat.khannous@bsc.es
 #Barcelona
-#Date:2025-03-27
+#Date:2026-05-12
 
 ###################
 # BIOBAKERY_TOOLS (Metaphlan4 and Humann) #Taxonomy and functional profiling based on marker genes.
@@ -11,20 +11,29 @@
 
 
 #Check whether we use the filtered reads or the unmapped reads, which happens when the host genome is provided. In case for instance of an environmental sample the trimmed reads are the ones that will be used. s
-if reference_genome == None or reference_genome == "null":
+if reference_genome in [None, "null"] and reference_phix in [None, "null"]:
     read1_selected = rules.Concat_reads.output.concat1,
     read2_selected = rules.Concat_reads.output.concat2
-else:
+
+elif reference_genome not in [None, "null"] and reference_phix in [None, "null"]:
     read1_selected = rules.extracted_unmapped_reads.output.fastq,
     read2_selected = rules.extracted_unmapped_reads.output.fastq
+
+elif reference_genome not in [None, "null"] and reference_phix not in [None, "null"]:
+    read1_selected = rules.extract_phix_unmapped_reads.output.fastq_phix,
+    read2_selected = rules.extract_phix_unmapped_reads.output.fastq_phix
+
+elif reference_genome in [None, "null"] and reference_phix not in [None, "null"]:
+    read1_selected = rules.remove_phix_reads.output.fastq_phix,
+    read2_selected = rules.remove_phix_reads.output.fastq_phix
 
 rule metaphlan4:
     input:
         read1 = read1_selected,
         read2 = read2_selected
     output:
-        out_bz2 = os.path.join(metaphlan4_out, f"{sample}.bz2"),
-        out_sam = os.path.join(metaphlan4_out, f"{sample}sam.bz2"),
+        out_bz2 = temp(os.path.join(metaphlan4_out, f"{sample}.bz2")),
+        out_sam = temp(os.path.join(metaphlan4_out, f"{sample}sam.bz2")),
         out_profile = os.path.join(metaphlan4_out, f"{sample}_profiled.txt"),
         out_vsc = os.path.join(metaphlan4_out, f"{sample}.vsc.txt")
     params:
@@ -36,23 +45,13 @@ rule metaphlan4:
     benchmark:
         os.path.join(benchmark_dir, (sample + ".metaphlan4.benchmark.txt"))
     run:
-        if reference_genome == None or reference_genome == "null":
+        if reference_genome in [None, "null"] and reference_phix in [None, "null"]:
             #Running kraken2 for paired data
-            shell("metaphlan --bowtie2db {params.metaphlan_db} --index {params.metaphlan_index} {input.read1},{input.read2} --input_type fastq --bowtie2out {output.out_bz2} -s {output.out_sam} --profile_vsc -o {output.out_profile} --nproc 4 --vsc_out {output.out_vsc}")
+            shell("metaphlan --bowtie2db {params.metaphlan_db} --index {params.metaphlan_index} {input.read1},{input.read2} --input_type fastq --bowtie2out {output.out_bz2} -s {output.out_sam} --profile_vsc -t rel_ab_w_read_stats -o {output.out_profile} --nproc 4 --vsc_out {output.out_vsc}")
 
         else:
             #Running metaphlan for reads extracted from BAM file
-            shell("metaphlan --bowtie2db {params.metaphlan_db} --index {params.metaphlan_index} {input.read1} --input_type fastq --bowtie2out {output.out_bz2} -s {output.out_sam} --profile_vsc -o {output.out_profile} --nproc 4 --vsc_out {output.out_vsc}")
-
-
-
-# Check again if reference genome is provided
-if reference_genome == None or reference_genome == "null":
-    read1_selected = rules.Concat_reads.output.concat1,
-    read2_selected = rules.Concat_reads.output.concat2
-else:
-    read1_selected = rules.extracted_unmapped_reads.output.fastq,
-    read2_selected = rules.extracted_unmapped_reads.output.fastq
+            shell("metaphlan --bowtie2db {params.metaphlan_db} --index {params.metaphlan_index} {input.read1} --input_type fastq --bowtie2out {output.out_bz2} -s {output.out_sam} --profile_vsc -t rel_ab_w_read_stats -o {output.out_profile} --nproc 4 --vsc_out {output.out_vsc}")
 
 rule humann:
     input:
@@ -60,8 +59,9 @@ rule humann:
         read2 = read2_selected,
         profiled_sample = rules.metaphlan4.output.out_profile
     output:
-        combined_reads = os.path.join(config["Outputs"]["metaphlan4_out"], f"{sample}.fastq"),
-        outdir_h = directory(os.path.join(config["Outputs"]["metaphlan4_out"], f"{sample}"))
+        combined_reads = temp(os.path.join(config["Outputs"]["metaphlan4_out"], f"{sample}.fastq")),
+        outdir_h = directory(os.path.join(config["Outputs"]["metaphlan4_out"], f"{sample}")),
+        intermediate=temp(directory(os.path.join(config["Outputs"]["metaphlan4_out"], f"{sample}/{sample}_humann_temp")))
     params:
         protein_db = config["Inputs"]["protein_db"],
         metaphlan_index = config["Inputs"]["metaphlan_Index"],
@@ -70,7 +70,8 @@ rule humann:
     benchmark:
         os.path.join(benchmark_dir, (sample + ".humann.benchmark.txt"))
     run:
-        if reference_genome == None or reference_genome == "null":
+        if reference_genome in [None, "null"] and reference_phix in [None, "null"]:
+
             # Concatenate paired-end reads using zcat if gzipped
             shell("zcat {input.read1} {input.read2} > {output.combined_reads}")
             # Run humann on the concatenated reads

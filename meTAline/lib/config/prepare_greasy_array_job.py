@@ -20,6 +20,7 @@ class PrepareGreasyArrayJobArgs:
     metaline_cmd: str
     greasy_cmd: str
     reference_genome: str
+    reference_phix: str
     krakendb: str
     reads_directory: str
     fastq_extension: str
@@ -34,6 +35,11 @@ class PrepareGreasyArrayJobArgs:
     hisat2_cores: int
     kraken2_cores: int
     snakemake_cores: int
+    sylph_db: str
+    sylph_taxonomy: str
+    ani_score_sylph: int
+    ani_score_bacteria_filtering: int
+    ani_score_fungi_filtering: int
 
     @classmethod
     def get_arguments(cls, args=sys.argv[1:]) -> PrepareGreasyArrayJobArgs:
@@ -50,6 +56,7 @@ class PrepareGreasyArrayJobArgs:
                 "kmer_taxonomy",
                 "RAnalysis",
                 "BioBakery",
+                "sylph"
             ],
             default="all",
             help="The meTAline rule to use for the subcommands of the greasy array.",
@@ -91,8 +98,16 @@ class PrepareGreasyArrayJobArgs:
         parser.add_argument(
             "--reference-genome",
             type=str,
-            required=True,
+            required=False,
+            default=None,
             help="Path to the indexed reference genome.",
+        )
+        parser.add_argument(
+            "--reference-phix",
+            type=str,
+            required=False,
+            default=None,
+            help="Path to the indexed PhiX reference genome.",
         )
         parser.add_argument(
             "--krakendb",
@@ -109,7 +124,7 @@ class PrepareGreasyArrayJobArgs:
         parser.add_argument(
             "--fastq-extension",
             type=str,
-            default="fq.gz",
+            default=".fastq.gz",
             help="Extension of the fastq files.",
         )
         parser.add_argument(
@@ -182,6 +197,36 @@ class PrepareGreasyArrayJobArgs:
             default=5,
             help=("Total cores to assign for snakemake."),
         )
+        parser.add_argument(
+            "--sylph_db",
+            type=str,
+            required=True,
+            help=("Sylph database"),
+        )
+        parser.add_argument(
+            "--sylph_taxonomy",
+            type=str,
+            required=True,
+            help=("Sylph taxonomy"),
+        )
+        parser.add_argument(
+            "--ani_score_sylph",
+            type=int,
+            default=70,
+            help=("ANI score sylph"),
+        )
+        parser.add_argument(
+            "--ani_score_bacteria_filtering",
+            type=int,
+            default=95,
+            help=("ANI score bacteria filtering"),
+        )
+        parser.add_argument(
+            "--ani_score_fungi_filtering",
+            type=int,
+            default=80,
+            help=("ANI score fungi filtering"),
+        )
         return PrepareGreasyArrayJobArgs(**vars(parser.parse_args(args)))
 
 
@@ -249,14 +294,20 @@ def prepare_config_generation_commands(
             intermediate_files_output_dir / "KRAKEN_ASSIGN"
         ).absolute()
         krona_out_abs_path = (intermediate_files_output_dir / "KRONA_HTML").absolute()
-        extracted_fa_out_abs_path = (
-            intermediate_files_output_dir / "EXTRACTED_FASTA"
-        ).absolute()
         ranalysis_out_abs_path = (
             intermediate_files_output_dir / "R_ANALYSIS"
         ).absolute()
         metaphlan4_out_abs_path = (
             intermediate_files_output_dir / "METAPHLAN4"
+        ).absolute()
+        sylph_out_abs_path = (
+            intermediate_files_output_dir / "SYLPH"
+        ).absolute()
+        filtered_euk_abs_path = (
+            intermediate_files_output_dir / "FILTERED_EUK"
+        ).absolute()
+        filtered_bact_abs_path = (
+            intermediate_files_output_dir / "FILTERED_BACT"
         ).absolute()
         fr_annotation_prefixes_formatted = " ".join([f'"{prefix}"' for prefix in args.prefix_fr])
 
@@ -264,11 +315,12 @@ def prepare_config_generation_commands(
             (
                 f"{args.generate_config_cmd}",
                 f"--config-file {config_output_file}",
-                f"--extension {args.fastq_extension}",
+                f"--fastq-extension {args.fastq_extension}",
                 f"--basedir {args.basedir}",
                 f"--prefix-fr {fr_annotation_prefixes_formatted}",
                 f"--reads-directory {args.reads_directory}",
                 f"--reference-genome {args.reference_genome}",
+                f"--reference-phix {args.reference_phix}",
                 f"--krakendb {args.krakendb}",
                 f"--sample-barcode {prefix}",
                 f"--fastq-prefix {prefix}",
@@ -280,12 +332,20 @@ def prepare_config_generation_commands(
                 f"--trimmomatic-out {trimmomatic_out_abs_path}",
                 f"--kraken-out {kraken_out_abs_path}",
                 f"--krona-out {krona_out_abs_path}",
-                f"--extracted-fa-out {extracted_fa_out_abs_path}",
                 f"--ranalysis-out {ranalysis_out_abs_path}",
                 f"--metaphlan4-out {metaphlan4_out_abs_path}",
                 f"--trimmo-cores {args.trimmo_cores}",
                 f"--hisat2-cores {args.hisat2_cores}",
                 f"--kraken2-cores {args.kraken2_cores}",
+                f"--sylph_db {args.sylph_db}",
+                f"--sylph_taxonomy {args.sylph_taxonomy}",
+                f"--ani-score-sylph {args.ani_score_sylph}",
+                f"--ani-score-bacteria-filtering {args.ani_score_bacteria_filtering}",
+                f"--ani-score-fungi-filtering {args.ani_score_fungi_filtering}",
+                f"--sylph-out {sylph_out_abs_path}",
+                f"--filtered-euk {filtered_euk_abs_path}",
+                f"--filtered-bact {filtered_bact_abs_path}",
+
             )
         )
         config_gen_cmds.append(
@@ -340,13 +400,13 @@ def write_greasy_list(
         file.writelines(tuple(map(lambda line: f"{line}\n", greasy_list_lines)))
     return output_greasy_list_file
 
-
 def write_slurm_job_file_template(
     basedir: Path,
     greasy_list_path,
     joblist_num: int,
     jobslist_max_size: int,
     cpus_per_task: int,
+    metaline_cmd
 ) -> Path:
     output_job_file = basedir / "launch_metaline.job"
     log_output_directory = str(basedir).rstrip("/")
@@ -363,16 +423,24 @@ def write_slurm_job_file_template(
 #SBATCH --error={log_output_directory}/jobnm_%j.err # File where the error is written
 
 #SBATCH --array={array_range} # The number of jobs in the array
-#SBATCH --ntasks={joblist_num} # The number of parallel tasks
+#SBATCH --ntasks={jobslist_max_size} # The number of parallel tasks
 #SBATCH --tasks-per-node={jobslist_max_size}
 #SBATCH --cpus-per-task={cpus_per_task} # Number of CPUs per run task
 #SBATCH --constraint=highmem  # Use this only if your the database is too big and this constrainst is available in your cluster.
 #SBATCH --time=24:00:00  # 1 day.
 
 module load greasy
+
+mkdir -p {basedir}/Benchmark
+# This file is required for __Benchmark_report rule
+[ -f {basedir}/Benchmark/required.txt ] || touch {basedir}/Benchmark/required.txt
+mkdir -p {basedir}/Benchmark/plots
+
 # Print the task id
 $(sed -n "${{SLURM_ARRAY_TASK_ID}}p" {greasy_list_path})
+
 """
+
     output_job_file.write_text(template)
     return output_job_file
 
@@ -393,7 +461,7 @@ def main() -> int:
     _ = _run_shell_cmds_parallel(cmd_entries, args.max_workers)
     generated_config_files = [entry["config_output_file"] for entry in gen_config_cmds]
     metaline_cmds = [
-        f"{args.metaline_cmd} {args.metaline_rule} -j {args.snakemake_cores} --configfile {file}"
+        f"{args.metaline_cmd} {args.metaline_rule} -j {args.snakemake_cores} --configfile {file} && {args.metaline_cmd} {args.metaline_rule} -j {args.snakemake_cores} --configfile {file} --delete-temp-output"
         for file in generated_config_files
     ]
     metaline_cmds_splits = [
@@ -416,6 +484,7 @@ def main() -> int:
         joblist_num=len(joblist_output_files),
         jobslist_max_size=args.joblist_size,
         cpus_per_task=args.cluster_node_cores,
+        metaline_cmd=args.metaline_cmd
     )
     return 0
 

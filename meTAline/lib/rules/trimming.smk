@@ -14,13 +14,13 @@ reads_dir=config["Inputs"]["reads_directory"]
 # Trimming of raw data
 rule Trimmomatic:
     input:
-        read1 = lambda wc: os.path.join(reads_dir, f"{wc.file}{prefix_fr}1.{extension}"),
-        read2 = lambda wc: os.path.join(reads_dir, f"{wc.file}{prefix_fr}2.{extension}")
+        read1 = lambda wc: os.path.join(reads_dir, f"{wc.file}{prefix_fr}1{extension}"),
+        read2 = lambda wc: os.path.join(reads_dir, f"{wc.file}{prefix_fr}2{extension}")
     output:
         trim1 = protected(os.path.join(trimmomatic_out, "{file}_1_paired.fq.gz")),
         trim2 = protected(os.path.join(trimmomatic_out, "{file}_2_paired.fq.gz")),
-        unpaired1 = protected(os.path.join(trimmomatic_out, "{file}_1_unpaired.fq.gz")),
-        unpaired2 = protected(os.path.join(trimmomatic_out, "{file}_2_unpaired.fq.gz"))
+        unpaired1 = temp(os.path.join(trimmomatic_out, "{file}_1_unpaired.fq.gz")),
+        unpaired2 = temp(os.path.join(trimmomatic_out, "{file}_2_unpaired.fq.gz"))
     params:
         illuminaclip = os.path.join(workflow.basedir, config["Trimmomatic"]["illuminaclip"]),
         leading = config["Trimmomatic"]["leading"],
