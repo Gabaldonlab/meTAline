@@ -10,9 +10,9 @@ MeTAline, is a snakemake pipeline for metagenomics analysis. MeTAline, facilitat
 
 ---
 
-# Table of [Wiki](https://github.com/Gabaldonlab/meTAline/wiki/) content
-### [About](https://github.com/Gabaldonlab/meTAline/wiki/MeTAline)
-### [Quick Start & Try Out](https://github.com/Gabaldonlab/meTAline/wiki/Quick-Start-&-Try‐Out) 
+# Table of [Wiki](docs/) content
+### [About](docs/MeTAline)
+### [Quick Start & Try Out](docs/Quick-Start-&-Try‐Out) 
 
 You can watch a small tutorial here: 
 
@@ -24,26 +24,26 @@ You can watch a small tutorial here:
 ---
 
 ### meTAline with Singularity
-#### [Build Singularity image](https://github.com/Gabaldonlab/meTAline/wiki/Build-meTAline-singularity-image)
-#### [Run with Singularity](https://github.com/Gabaldonlab/meTAline/wiki/Run-meTAline-with-singularity)
+#### [Build Singularity image](docs/Build-meTAline-singularity-image)
+#### [Run with Singularity](docs/Run-meTAline-with-singularity)
 
 ## meTAline with Docker
-#### [Build Docker image](https://github.com/Gabaldonlab/meTAline/wiki/Build-meTAline-docker-image)
-#### [Run with Docker](https://github.com/Gabaldonlab/meTAline/wiki/Run-meTAline-with-docker)
+#### [Build Docker image](docs/Build-meTAline-docker-image)
+#### [Run with Docker](docs/Run-meTAline-with-docker)
 
 ## meTAline with HPC
-#### [Running in HPC environment ](https://github.com/Gabaldonlab/meTAline/wiki/Run-meTAline-in-HPC-environment)
+#### [Running in HPC environment ](docs/Run-meTAline-in-HPC-environment)
 
 ## parallelize meTAline
-#### [In HPC cluster](https://github.com/Gabaldonlab/meTAline/wiki/Parallelize-meTAline-in-HPC-environment)
-#### [On local machine](https://github.com/Gabaldonlab/meTAline/wiki/Parallelize-meTAline-on-local-machine)
+#### [In HPC cluster](docs/Parallelize-meTAline-in-HPC-environment)
+#### [On local machine](docs/Parallelize-meTAline-on-local-machine)
 
 ---
 
-### [Available target rules](https://github.com/Gabaldonlab/meTAline/wiki/Available-target-rules)
-### [Benchmark outputs](https://github.com/Gabaldonlab/meTAline/wiki/Benchmark-outputs)
-### [Reporting meTAline](https://github.com/Gabaldonlab/meTAline/wiki/Reporting-meTAline)
-### [Debugging meTAline](https://github.com/Gabaldonlab/meTAline/wiki/Debugging-meTAline)
-### [Citations / Acknowledgments](https://github.com/Gabaldonlab/meTAline/wiki/Citations---Acknowledgments)
+### [Available target rules](docs/Available-target-rules)
+### [Benchmark outputs](docs/Benchmark-outputs)
+### [Reporting meTAline](docs/Reporting-meTAline)
+### [Debugging meTAline](docs/Debugging-meTAline)
+### [Citations / Acknowledgments](docs/Citations---Acknowledgments)
 
 ---
