@@ -22,11 +22,11 @@
 **Outputs and target rules**
 * [Available target rules](docs/Available-target-rules.md)
 
-**Benchmark**
-* [Benchmark output](docs/Benchmark-outputs.md)
+**Benchmark and report**
+* [Benchmark output and reporting](docs/Benchmark-outputs-and-reporting-meTAline.md)
 
-**Reporting**
-* [Report meTAline](docs/Reporting-meTAline.md)
+**Merge outputs**
+* [Merge outputs](docs/Merge-outputs.md)
 
 **Debugging**
 * [Debugging meTAline](docs/Debugging-meTAline.md)

@@ -48,3 +48,6 @@ Relevant paper for usage of KrakenTools:
 
 ### FastQC <a id="fastqc" />
 [FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
+
+### Sylph <a id="sylph" />
+[Jim Shaw and Yun William Yu. Rapid species-level metagenome profiling and containment estimation with sylph (2024). Nature Biotechnology] (https://www.nature.com/articles/s41587-024-02412-y)
