@@ -11,8 +11,8 @@ MeTAline, is a snakemake pipeline for metagenomics analysis. MeTAline, facilitat
 ---
 
 # Table of [Wiki](docs/) content
-### [About](docs/MeTAline)
-### [Quick Start & Try Out](docs/Quick-Start-&-Try‐Out) 
+### [About](docs/MeTAline.md)
+### [Quick Start & Try Out](docs/Quick-Start-&-Try‐Out.md) 
 
 You can watch a small tutorial here: 
 
@@ -24,26 +24,26 @@ You can watch a small tutorial here:
 ---
 
 ### meTAline with Singularity
-#### [Build Singularity image](docs/Build-meTAline-singularity-image)
-#### [Run with Singularity](docs/Run-meTAline-with-singularity)
+#### [Build Singularity image](docs/Build-meTAline-singularity-image.md)
+#### [Run with Singularity](docs/Run-meTAline-with-singularity.md)
 
 ## meTAline with Docker
-#### [Build Docker image](docs/Build-meTAline-docker-image)
-#### [Run with Docker](docs/Run-meTAline-with-docker)
+#### [Build Docker image](docs/Build-meTAline-docker-image.md)
+#### [Run with Docker](docs/Run-meTAline-with-docker.md)
 
 ## meTAline with HPC
-#### [Running in HPC environment ](docs/Run-meTAline-in-HPC-environment)
+#### [Running in HPC environment ](docs/Run-meTAline-in-HPC-environment.md)
 
 ## parallelize meTAline
-#### [In HPC cluster](docs/Parallelize-meTAline-in-HPC-environment)
-#### [On local machine](docs/Parallelize-meTAline-on-local-machine)
+#### [In HPC cluster](docs/Parallelize-meTAline-in-HPC-environment.md)
+#### [On local machine](docs/Parallelize-meTAline-on-local-machine.md)
 
 ---
 
-### [Available target rules](docs/Available-target-rules)
-### [Benchmark outputs](docs/Benchmark-outputs)
-### [Reporting meTAline](docs/Reporting-meTAline)
-### [Debugging meTAline](docs/Debugging-meTAline)
-### [Citations / Acknowledgments](docs/Citations---Acknowledgments)
+### [Available target rules](docs/Available-target-rules.md)
+### [Benchmark outputs](docs/Benchmark-outputs.md)
+### [Reporting meTAline](docs/Reporting-meTAline.md)
+### [Debugging meTAline](docs/Debugging-meTAline.md)
+### [Citations / Acknowledgments](docs/Citations---Acknowledgments.md)
 
 ---
