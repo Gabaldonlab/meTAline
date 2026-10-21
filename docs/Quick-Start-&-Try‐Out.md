@@ -54,7 +54,7 @@ make download-test-datasets
 ```sh
 singularity run --cleanenv ./metaline.sif metaline-generate-config \
     --config-file test_run.json \
-    --extension fq.gz \
+    --fastq-extension .fq.gz \
     --basedir ./test_output \
     --reads-directory  ./test_input \
     --reference-genome ./test_input/test_datasets/grch38_index/genome \
@@ -122,7 +122,7 @@ docker run --rm \
     cgenomics/metaline:latest \
     metaline-generate-config \
     --config-file /output-directory/test_run.json \
-    --extension fq.gz \
+    --fastq-extension .fq.gz \
     --basedir /output-directory/ \
     --reads-directory  /input-directory/ \
     --reference-genome /input-directory/test_datasets/grch38_index/genome \
