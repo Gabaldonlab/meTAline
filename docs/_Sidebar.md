@@ -1,35 +1,35 @@
 **ABOUT**
-* [About](https://github.com/Gabaldonlab/meTAline/wiki/MeTAline)
+* [About](docs/MeTAline)
 
 **Quick Start**
-* [Quick Start & Try Out](https://github.com/Gabaldonlab/meTAline/wiki/Quick-Start-&-Try‐Out)
+* [Quick Start & Try Out](docs/Quick-Start-&-Try‐Out.md)
 
 **meTAline with Singularity**
-* [Build Singularity image](https://github.com/Gabaldonlab/meTAline/wiki/Build-meTAline-singularity-image)
-* [Run with Singularity](https://github.com/Gabaldonlab/meTAline/wiki/Run-meTAline-with-singularity)
+* [Build Singularity image](docs/Build-meTAline-singularity-image.md)
+* [Run with Singularity](docs/Run-meTAline-with-singularity.md)
 
 **meTAline with Docker**
-* [Build Docker image](https://github.com/Gabaldonlab/meTAline/wiki/Build-meTAline-docker-image)
-* [Run with Docker](https://github.com/Gabaldonlab/meTAline/wiki/Run-meTAline-with-docker)
+* [Build Docker image](docs/Build-meTAline-docker-image.md)
+* [Run with Docker](docs/Run-meTAline-with-docker.md)
 
 **meTAline with HPC**
-* [Running in HPC environment ](https://github.com/Gabaldonlab/meTAline/wiki/Run-meTAline-in-HPC-environment)
+* [Running in HPC environment ](docs/Run-meTAline-in-HPC-environment.md)
 
 **parallelize meTAline**
-* [In HPC cluster](https://github.com/Gabaldonlab/meTAline/wiki/Parallelize-meTAline-in-HPC-environment)
-* [On local machine](https://github.com/Gabaldonlab/meTAline/wiki/Parallelize-meTAline-on-local-machine)
+* [In HPC cluster](docs/Parallelize-meTAline-in-HPC-environment.md)
+* [On local machine](docs/Parallelize-meTAline-on-local-machine.md)
 
 **Outputs and target rules**
-* [Available target rules](https://github.com/Gabaldonlab/meTAline/wiki/Available-target-rules)
+* [Available target rules](docs/Available-target-rules.md)
 
 **Benchmark**
-* [Benchmark output](https://github.com/Gabaldonlab/meTAline/wiki/Benchmark-outputs)
+* [Benchmark output](docs/Benchmark-outputs.md)
 
 **Reporting**
-* [Report meTAline](https://github.com/Gabaldonlab/meTAline/wiki/Reporting-meTAline)
+* [Report meTAline](docs/Reporting-meTAline.md)
 
 **Debugging**
-* [Debugging meTAline](https://github.com/Gabaldonlab/meTAline/wiki/Debugging-meTAline)
+* [Debugging meTAline](docs/Debugging-meTAline.md)
 
 **Citations / Acknowledgments**
-* [Citations / Acknowledgments](https://github.com/Gabaldonlab/meTAline/wiki/Citations---Acknowledgments)
+* [Citations / Acknowledgments](docs/Citations---Acknowledgments.md)

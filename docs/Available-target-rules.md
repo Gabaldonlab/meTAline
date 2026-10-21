@@ -9,5 +9,6 @@ The target rules currently available to use are:
 - rule **kmer_taxonomy**: This rule is used if you already have the concatenated/unmapped reads and you want to perform the taxonomic assignment based on k-mers, without running the initial steps of the pipeline.
 - rule **RAnalysis**: This rule is used to make a basic R analysis and plotting alpha diversity.
 - rule **BioBakery**: This rule is to perform the taxonomy and functional profiling using Biobakery tools based on gene markers: Metaphlan4 and Humann.
+- rule **sylph**: This rule is to perform the taxonomy and functional profiling using Biobakery tools based on gene markers: Metaphlan4 and Humann.
 
 ---

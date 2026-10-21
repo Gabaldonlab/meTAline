@@ -41,16 +41,30 @@ metaline-prepare-greasy-array-job \
 - `--basedir` → Base directory for output files.
 - `--metaline-cmd` → Command to execute MeTAline.
 - `--greasy-cmd` → Command to execute Greasy.
-- `--reference-genome` → Path to the indexed reference genome.
 - `--krakendb` → Path to the Kraken database.
 - `--reads-directory` → Directory containing FASTQ read files.
-- `--fastq-extension` → Extension of FASTQ files (default: `fq.gz`).
+- `--fastq-extension` → Extension of FASTQ files (default: `.fastq.gz`).
 - `--metaphlan-db` → Path to the Metaphlan database.
 - `--metaphlan-index` → Name of the Metaphlan database index.
 - `--n-db` → Path to the nucleotide search database.
 - `--protein-db` → Path to the protein search database.
 - `--max_workers` → Number of parallel workers (default: 4).
 - `--joblist-size` → Number of commands per job list file (default: 2).
+- `--sylph_db` → Sylph database.
+- `--sylph_taxonomy` → Sylph taxonomy database.
+- `--prefix-fr` → Values between the sample barcode and 1,2 for paired end reads (default: `_`).
+
+
+### Optional Arguments
+- `--reference-genome` → Path to the indexed reference genome.
+- `--reference-phix` → Path to the indexed phix genome.
+- `--ani_score_sylph` → ani score for Sylph (default: 70).
+- `--ani_score_bacteria_filtering` → filter sylph output by this ani score- bacteria only (default: 95).
+- `--ani_score_fungi_filtering` → filter sylph output by this ani score- fungi (default: 80).
+- `--cluster-node-cores` → (default: 40).
+- `--kraken2-cores` → cores available for kraken2 (default: 10).
+- `--snakemake-cores` → cores available for snakemake (default: 5).
+
 
 ## Workflow
 1. Extracts common prefixes from FASTQ files in the reads directory.
