@@ -48,8 +48,12 @@ make download-test-datasets
 ```sh
 ./_scripts/download_test_datasets
 ```
+6. Generate the required files and folders
+mkdir -p ./Benchmark
+mkdir -p ./Benchmark/plots
+[ -f ./Benchmark/required.txt ] || touch ./Benchmark/required.txt
 
-6. Execute meTAline with the following commands:
+7. Execute meTAline with the following commands:
 - Generate the configuration file to run the job:
 ```sh
 singularity run --cleanenv ./metaline.sif metaline-generate-config \

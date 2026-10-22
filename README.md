@@ -10,7 +10,7 @@ MeTAline, is a snakemake pipeline for metagenomics analysis. MeTAline, facilitat
 
 ---
 
-# Table of [Wiki](docs/) content
+# Table of [Wiki](docs/Home.md) content
 ### [About](docs/MeTAline.md)
 ### [Quick Start & Try Out](docs/Quick-Start-&-Try‐Out.md) 
 
@@ -41,9 +41,9 @@ You can watch a small tutorial here:
 ---
 
 ### [Available target rules](docs/Available-target-rules.md)
-### [Benchmark outputs](docs/Benchmark-outputs.md)
-### [Reporting meTAline](docs/Reporting-meTAline.md)
+### [Benchmark outputs and reporting](docs/Benchmark-outputs-and-reporting-meTAline.md)
 ### [Debugging meTAline](docs/Debugging-meTAline.md)
+### [Merging meTAline outputs](docs/Merge-outputs.md)
 ### [Citations / Acknowledgments](docs/Citations---Acknowledgments.md)
 
 ---

@@ -31,15 +31,15 @@ This section provides step-by-step instructions to help you set up and execute t
 meTAline offers flexibility in deployment to suit various computational environments:
 
 **Docker**: *For containerized execution, learn how to Build and Run meTAline using Docker.*
-  - [Build Docker image](docs/Build-meTAline-docker-image.md)
-  - [Run with Docker](docs/Run-meTAline-with-docker.md)
+  - [Build Docker image](docs/Building_images/Build-meTAline-docker-image.md)
+  - [Run with Docker](docs/Running_meTAline/Run-meTAline-with-docker.md)
 
 **Singularity**: *Ideal for HPC clusters, follow the guides to Build and Run meTAline with Singularity.*
-  - [Build Singularity image](docs/Build-meTAline-singularity-image.md)
-  - [Run with Singularity](docs/Run-meTAline-with-singularity.md)
+  - [Build Singularity image](docs/Building_images/Build-meTAline-singularity-image.md)
+  - [Run with Singularity](docs/Running_meTAline/Run-meTAline-with-singularity.md)
 
 **High-Performance Computing (HPC)**: *For large-scale analyses, see our instructions on Running in HPC environments.*
-  - [Running in HPC environment ](docs/Run-meTAline-in-HPC-environment.md)
+  - [Running in HPC environment ](docs/Running_meTAline/Run-meTAline-in-HPC-environment.md)
 
 ---
 
@@ -48,10 +48,10 @@ meTAline offers flexibility in deployment to suit various computational environm
 To expedite processing, meTAline supports parallel execution:
 
 **HPC Cluster**: *Discover strategies for Parallelizing in HPC clusters.*
-- [In HPC cluster](docs/Parallelize-meTAline-in-HPC-environment.md)
+- [In HPC cluster](docs/Running_meTAline/Run-meTAline-in-HPC-environment.md)
 
 **Local Machine**: *Learn how to Parallelize on a local machine to leverage multi-core processors.*
-- [On local machine](docs/Parallelize-meTAline-on-local-machine.md)
+- [On local machine](docs/Running_meTAline/Parallelize-meTAline-on-local-machine.md)
 
 ---
 
@@ -60,24 +60,24 @@ To expedite processing, meTAline supports parallel execution:
 Understand the expected results and how to customize them:
 
 **Available Target Rules**: *Explore the Available target rules to tailor the pipeline to your specific needs.*
-- [Available target rules](docs/Available-target-rules.md)
+- [Available target rules](docs/Running_meTAline/Available-target-rules.md)
 
 ---
 
 **Benchmark and reporting**
 
 After the completion of each meTAline run you will obtain a set of metrics per rule that you can include in an html report
-- [Benchmark output and reporting](docs/Benchmark-outputs-and-reporting-meTAline.md)
+- [Benchmark output and reporting](docs/Running_meTAline/Benchmark-outputs-and-reporting-meTAline.md)
 ---
 
 **Merging outputs from the same tool**
 
 After the completion of each meTAline run, you can merge the outputs of each of the tools (Sylph, Metaphlan and Kraken2)
-- [Merge outputs](docs/Merge-outputs.md)
+- [Merge outputs](docs/Running_meTAline/Merge-outputs.md)
 
 ---
 
-[**Debugging**](docs/Debugging-meTAline.md)
+[**Debugging**](docs/Developing_meTAline/Debugging-meTAline.md)
 
 Want to contribute or encountered an issue? Our Debugging meTAline section offers solutions to common problems and tips for troubleshooting.
 

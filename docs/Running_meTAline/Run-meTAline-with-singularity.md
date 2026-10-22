@@ -16,20 +16,7 @@ singularity run --cleanenv ./metaline.sif metaline-generate-config `# Path where
     --n-db ./test_input/test_datasets/chocophlan_EC_FILTERED.v4_alpha.tar.gz `# Humann database to do the nucleotide search (based on already built annotations)` \
     --protein-db ./test_input/test_datasets/uniref90_annotated_v4_alpha_ec_filtered.tar.gz  `# Humann database to do the translation search (by default this is by-passed)`
 ```
-
->[!IMPORTANT]
->Please note that while we designed the pipeline to be as generalizable as possible, we identified sample naming as a potential source of issues. To address this, we introduced the `--fastq-extension` parameter.We recommend setting the fastq-extension to either "fastq.gz" or "fq.gz". By default, meTAline uses ".fastq.gz".Additionally, we added the `--prefix-fr` parameter, which allows you to specify the naming convention used to distinguish forward and reverse reads. By default the value will be "_" .
->
->**For example:**
->If _ is used before indicating 1 (for forward) and 2 (for reverse): {file}_1{fastq-extension}
->
->If .R is used as the prefix: {file}.R1{fastq-extension}
->
->**Examples:**
->For sample G12, you have these two files as raw data: **sample_G12_1.fastq.gz** and **sample_G12_2.fastq.gz**
->
->In this case you will indicate `--fastq-extension` .fastq.gz and `--prefix-fr` "_", but in case the raw files are: "sample_G12.R1.fq.gz" and "sample_G12.R1.fq.gz", then:
->`--fastq-extension` .fq.gz and `--prefix-fr ".R"`
+Required and default parameters for this job can be found at (docs/Available-target-rules.md).
 
 ## Run of the pipeline, indicating the config file with all the details
 ```sh

@@ -3,8 +3,8 @@
 ### Merge Sylph outputs
 
 ```sh
-python3 lib/scripts/merge_sylph_taxprof.py "./sample/FILTERED_EUK/{sample}.tsv" --column sequence_abundance -o sylph_fungi_merged.tsv
-python3 lib/scripts/merge_sylph_taxprof.py "./sample/FILTERED_BACT/{sample}.tsv" --column sequence_abundance -o sylph_bacteria_merged.tsv
+python3 lib/scripts/merge_sylph_taxprof.py {list of sylph output fungi tsv files} --column sequence_abundance -o sylph_fungi_merged.tsv
+python3 lib/scripts/merge_sylph_taxprof.py {list of sylph output bacteria tsv files} --column sequence_abundance -o sylph_bacteria_merged.tsv
 ```
 ---
 

@@ -78,6 +78,10 @@ Verify Installation
 ```sh
 singularity run --cleanenv ./metaline.sif metaline-generate-config --config-file test_run.json --fastq-extension .fq.gz --basedir ./test_output --reads-directory  ./test_input --reference-genome ./test_input/test_datasets/grch38_index/genome --krakendb ./test_input/test_datasets/minikraken2_v2_8GB_201904_UPDATE --sample-barcode test_run --fastq-prefix V300091236_L01_100 --metaphlan-db ./test_input/test_datasets/metaphlan_dbs --metaphlan-index mpa_vJun23_CHOCOPhlAnSGB_202307 --n-db ./test_input/test_datasets/chocophlan_EC_FILTERED.v4_alpha.tar.gz --protein-db ./test_input/test_datasets/uniref90_annotated_v4_alpha_ec_filtered.tar.gz && singularity run --cleanenv ./metaline.sif metaline kmer_taxonomy -j 16 --configfile ./test_run.json
 
+mkdir -p ./Benchmark
+mkdir -p ./Benchmark/plots
+[ -f ./Benchmark/required.txt ] || touch ./Benchmark/required.txt
+
 singularity run --cleanenv ./metaline.sif metaline-generate-config --config-file test_run.json --fastq-extension .fq.gz --basedir ./test_output --reads-directory  ./test_input --reference-genome ./test_input/test_datasets/grch38_index/genome --krakendb ./test_input/test_datasets/minikraken2_v2_8GB_201904_UPDATE --sample-barcode test_run --fastq-prefix V300091236_L01_100 --metaphlan-db ./test_input/test_datasets/metaphlan_dbs --metaphlan-index mpa_vJun23_CHOCOPhlAnSGB_202307 --n-db ./test_input/test_datasets/chocophlan_EC_FILTERED.v4_alpha.tar.gz --protein-db ./test_input/test_datasets/uniref90_annotated_v4_alpha_ec_filtered.tar.gz && singularity run --cleanenv ./metaline.sif metaline kmer_taxonomy -j 16 --configfile ./test_run.json
 ```
 
