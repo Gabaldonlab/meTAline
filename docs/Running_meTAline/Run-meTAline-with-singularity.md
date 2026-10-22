@@ -1,6 +1,80 @@
-You can download an already built singularity image [metaline.sif](https://github.com/Gabaldonlab/meTAline/releases/download/v1.0.0/metaline.sif)
 
-## Creation of the config file
+
+Before starting this step by step process you should have completed the build and setup process. Further information can be found at [Build meTAline singularity image](../Building_images/Build-meTAline-singularity-image.md). Alternatively You can download an already built singularity image [metaline.sif](https://github.com/Gabaldonlab/meTAline/releases/download/v1.0.0/metaline.sif)
+
+
+
+> [!IMPORTANT]
+> To avoid any unexpected results when finding the sample code prefixes from the fastq.gz files make sure that the `--reads-directory` argument's directory path and its content conforms the following critarias
+> - 1. Use ONLY gzipped (with .gz extension) files. Do not `gunzip` them before use!
+>
+> - 2. FORWARD and REVERSE files of a sample must be in pairs
+> ```sh
+> # E.G.:
+> E100043441_L01_1_1.1.fq.gz
+> E100043441_L01_1_1.2.fq.gz
+>
+> E100043441_L01_1_2.1.fq.gz
+> E100043441_L01_1_2.2.fq.gz
+>
+> # See: The FORWARD is split into 2 files, and the REVERSE also. (N of FORWARD files == N of REVERSE files)
+> ```
+>
+> - 3. Nested directories are allowed, but the FORWARD and REVERSE sequences of a sample must be in the same subdirectory:
+> ```sh
+> ── TG0002
+>    ├── E100043441_L01_1_1.fq.gz
+>    └── E100043441_L01_1_2.fq.gz
+> ── TG0003
+>    ├── E100043441_L01_2_1.fq.gz
+>    └── E100043441_L01_2_2.fq.gz
+> ── TG0004
+>    ├── E100043441_L01_3_1.fq.gz
+>    └── E100043441_L01_3_2.fq.gz
+> ```
+> **OR in case of flat directory**
+> ```sh                                                                                                                  │~
+> ├── V300091236_L01_100_1.fq.gz
+> ├── V300091236_L01_100_2.fq.gz
+> ```
+
+**Step by step:**
+
+## 1. Download samples (or use yours):
+```sh
+cd ./test_input
+
+wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR101/003/ERR1018263/ERR1018263_2.fastq.gz  # ERR1018263 read 1
+wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR101/003/ERR1018263/ERR1018263_1.fastq.gz  # ERR1018263 read 2
+
+wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR101/004/ERR1018234/ERR1018234_2.fastq.gz  # ERR1018234 read 1
+wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR101/004/ERR1018234/ERR1018234_1.fastq.gz  # ERR1018234 read 2
+
+wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR101/002/ERR1018192/ERR1018192_1.fastq.gz  # ERR1018192 read 1
+wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR101/002/ERR1018192/ERR1018192_2.fastq.gz  # ERR1018192 read 2
+
+wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR101/008/ERR1018218/ERR1018218_1.fastq.gz  # ERR1018218 read 1
+wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR101/008/ERR1018218/ERR1018218_2.fastq.gz  # ERR1018218 read 2
+```
+
+## 2. Download test datasets (or use yours):
+```sh
+make download-test-datasets
+```
+
+
+##  3. Creation of the config file and running of the pipeline
+ There are options at this point. 
+
+## If using a hpc cluster 
+ Continue using [Parallelize metaline on a local machine](Parallelize-meTAline-on-local-machine.md) instructions
+
+## If running locally with parallelisation
+   Continue using [Run with Singularity](Run-metaline-in-HPC-environment.md) instructions
+
+## If running locally without parallelisation: 
+### Create the config
+
 ```sh
 singularity run --cleanenv ./metaline.sif metaline-generate-config `# Path where the downloaded .sif image is.` \
     --config-file ./test_output/test_run.json `# Name you want to give to the output configuration file.` \
@@ -16,9 +90,10 @@ singularity run --cleanenv ./metaline.sif metaline-generate-config `# Path where
     --n-db ./test_input/test_datasets/chocophlan_EC_FILTERED.v4_alpha.tar.gz `# Humann database to do the nucleotide search (based on already built annotations)` \
     --protein-db ./test_input/test_datasets/uniref90_annotated_v4_alpha_ec_filtered.tar.gz  `# Humann database to do the translation search (by default this is by-passed)`
 ```
-Required and default parameters for this job can be found at (docs/Available-target-rules.md).
+Required and default parameters for this job can be found at (../Available-target-rules.md).
 
-## Run of the pipeline, indicating the config file with all the details
+
+### Run of the pipeline, indicating the config file with all the details
 ```sh
 singularity run --cleanenv ./metaline.sif metaline \
     kmer_taxonomy \

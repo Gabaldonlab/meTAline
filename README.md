@@ -10,7 +10,7 @@ MeTAline, is a snakemake pipeline for metagenomics analysis. MeTAline, facilitat
 
 ---
 
-# Table of [Wiki](docs/Home.md) content
+# Table of [docs](docs/Home.md) content
 ### [About](docs/MeTAline.md)
 ### [Quick Start & Try Out](docs/Quick-Start-&-Try‐Out.md) 
 
@@ -30,13 +30,6 @@ You can watch a small tutorial here:
 ## meTAline with Docker
 #### [Build Docker image](docs/Build-meTAline-docker-image.md)
 #### [Run with Docker](docs/Run-meTAline-with-docker.md)
-
-## meTAline with HPC
-#### [Running in HPC environment ](docs/Run-meTAline-in-HPC-environment.md)
-
-## parallelize meTAline
-#### [In HPC cluster](docs/Parallelize-meTAline-in-HPC-environment.md)
-#### [On local machine](docs/Parallelize-meTAline-on-local-machine.md)
 
 ---
 

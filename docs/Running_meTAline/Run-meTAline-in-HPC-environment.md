@@ -1,66 +1,10 @@
 ## Running in HPC environment <a id="running-in-hpc" />
 
 The MeTAline pipeline is intended to be used in HPC environment, because of its high RAM runtime requirement.
-Before starting this step by step process you should have completed the build and setup process. Further information can be found at [Build meTAline singularity image](../Building_images/Build-meTAline-singularity-image.md)
 
 
-> [!IMPORTANT]
-> To avoid any unexpected results when finding the sample code prefixes from the fastq.gz files make sure that the `--reads-directory` argument's directory path and its content conforms the following critarias
-> - 1. Use ONLY gzipped (with .gz extension) files. Do not `gunzip` them before use!
->
-> - 2. FORWARD and REVERSE files of a sample must be in pairs
-> ```sh
-> # E.G.:
-> E100043441_L01_1_1.1.fq.gz
-> E100043441_L01_1_1.2.fq.gz
->
-> E100043441_L01_1_2.1.fq.gz
-> E100043441_L01_1_2.2.fq.gz
->
-> # See: The FORWARD is split into 2 files, and the REVERSE also. (N of FORWARD files == N of REVERSE files)
-> ```
->
-> - 3. Nested directories are allowed, but the FORWARD and REVERSE sequences of a sample must be in the same subdirectory:
-> ```sh
-> ── TG0002
->    ├── E100043441_L01_1_1.fq.gz
->    └── E100043441_L01_1_2.fq.gz
-> ── TG0003
->    ├── E100043441_L01_2_1.fq.gz
->    └── E100043441_L01_2_2.fq.gz
-> ── TG0004
->    ├── E100043441_L01_3_1.fq.gz
->    └── E100043441_L01_3_2.fq.gz
-> ```
-> **OR in case of flat directory**
-> ```sh                                                                                                                  │~
-> ├── V300091236_L01_100_1.fq.gz
-> ├── V300091236_L01_100_2.fq.gz
-> ```
+This is a continuation of the step by step instruction in docs/Run-meTAline-with-singularity.md. 
 
-**Step by step:**
-
-1. Download samples (or use yours):
-```sh
-cd ./test_input
-
-wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR101/003/ERR1018263/ERR1018263_2.fastq.gz  # ERR1018263 read 1
-wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR101/003/ERR1018263/ERR1018263_1.fastq.gz  # ERR1018263 read 2
-
-wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR101/004/ERR1018234/ERR1018234_2.fastq.gz  # ERR1018234 read 1
-wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR101/004/ERR1018234/ERR1018234_1.fastq.gz  # ERR1018234 read 2
-
-wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR101/002/ERR1018192/ERR1018192_1.fastq.gz  # ERR1018192 read 1
-wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR101/002/ERR1018192/ERR1018192_2.fastq.gz  # ERR1018192 read 2
-
-wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR101/008/ERR1018218/ERR1018218_1.fastq.gz  # ERR1018218 read 1
-wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR101/008/ERR1018218/ERR1018218_2.fastq.gz  # ERR1018218 read 2
-```
-
-2. Download test datasets (or use yours):
-```sh
-make download-test-datasets
-```
 
 3. There are two options at this point. 
 

@@ -38,21 +38,6 @@ meTAline offers flexibility in deployment to suit various computational environm
   - [Build Singularity image](Building_images/Build-meTAline-singularity-image.md)
   - [Run with Singularity](Running_meTAline/Run-meTAline-with-singularity.md)
 
-**High-Performance Computing (HPC)**: *For large-scale analyses, see our instructions on Running in HPC environments.*
-  - [Running in HPC environment ](Running_meTAline/Run-meTAline-in-HPC-environment.md)
-
----
-
-**Parallelization**
-
-To expedite processing, meTAline supports parallel execution:
-
-**HPC Cluster**: *Discover strategies for Parallelizing in HPC clusters.*
-- [In HPC cluster](Running_meTAline/Run-meTAline-in-HPC-environment.md)
-
-**Local Machine**: *Learn how to Parallelize on a local machine to leverage multi-core processors.*
-- [On local machine](Running_meTAline/Parallelize-meTAline-on-local-machine.md)
-
 ---
 
 **Outputs and Target Rules**
