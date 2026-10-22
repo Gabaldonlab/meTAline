@@ -1,7 +1,7 @@
 ## Running in HPC environment <a id="running-in-hpc" />
 
 The MeTAline pipeline is intended to be used in HPC environment, because of its high RAM runtime requirement.
-Before starting this step by step process you should have completed the build and setup process. Further information can be found at [Build meTAline singularity image](docs/Building_images/Build-meTAline-singularity-image.md)
+Before starting this step by step process you should have completed the build and setup process. Further information can be found at [Build meTAline singularity image](../Building_images/Build-meTAline-singularity-image.md)
 
 
 > [!IMPORTANT]
@@ -68,7 +68,7 @@ make download-test-datasets
 meTAline is written for single input execution, without managing it's own parallelization, which simplifies development, debugging, and maintenance while avoiding parallelization issues.
 If you want to parallelize multiple meTAline executions, you can make use of native features of snakemake or external tools like `GREASY arrays with SLURM` provide flexible parallelization, allowing users to control resource allocation dynamically. This approach enhances scalability, enabling execution across multiple computational nodes or even machines without modifying the tool itself. It also improves fault isolation, robustness, and composability within Unix pipelines and automation scripts. By keeping the tool "single-input", you maximize portability and efficiency while leaving parallel execution to specialized tools.
 
-With meTAline we provide the [metaline-prepare-greasy-array-job](docs/Running_meTAline/Metaline-prepare-greasy-array-job.md) CLI tool to pre-generate the config files and metaline commands for a greasy array job launch on SLURM based compute nodes.
+With meTAline we provide the [metaline-prepare-greasy-array-job](Metaline-prepare-greasy-array-job.md) CLI tool to pre-generate the config files and metaline commands for a greasy array job launch on SLURM based compute nodes.
 
 **Run jobs individually**
 Generate a hpc_sbatch.job file. An example can be found at [example_hpc_sbatch.job](examples/example_hpc_sbatch.job)
