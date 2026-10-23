@@ -64,16 +64,16 @@ make download-test-datasets
 
 
 ##  3. Creation of the config file and running of the pipeline
- There are options at this point. 
+ There are several options at this point:
 
-## If using a hpc cluster 
- Continue using [Parallelize metaline on a local machine](Parallelize-meTAline-on-local-machine.md) instructions
+### If using a hpc cluster:
+ Continue using [Run in a HPC environment](Run-meTAline-in-HPC-environment.md) instructions
 
-## If running locally with parallelisation
-   Continue using [Run with Singularity](Run-metaline-in-HPC-environment.md) instructions
+### If running locally with parallelisation:
+ Continue using [Parallelize on local machine](Parallelize-meTAline-on-local-machine.md) instructions
 
-## If running locally without parallelisation: 
-### Create the config
+### If running locally without parallelisation:
+#### Create the config
 
 ```sh
 singularity run --cleanenv ./metaline.sif metaline-generate-config `# Path where the downloaded .sif image is.` \
@@ -92,8 +92,14 @@ singularity run --cleanenv ./metaline.sif metaline-generate-config `# Path where
 ```
 Required and default parameters for this job can be found at (../Available-target-rules.md).
 
+#### Create the required folders and file
+```sh
+mkdir -p ./Benchmark
+mkdir -p ./Benchmark/plots
+[ -f ./Benchmark/required.txt ] || touch ./Benchmark/required.txt
+```
 
-### Run of the pipeline, indicating the config file with all the details
+#### Run the pipeline, indicating the config file with all the details
 ```sh
 singularity run --cleanenv ./metaline.sif metaline \
     kmer_taxonomy \

@@ -19,7 +19,7 @@ By automating these steps, meTAline ensures a consistent and reproducible analys
 
 ---
 
-[**Quick Start**](Quick-Start-&-Try%E2%80%90Out.md)
+[**Quick Start**](Running_meTAline/Quick-Start-&-Try%E2%80%90Out.md)
 
 To get started with meTAline, refer to our Quick Start & Try-Out guide.
 This section provides step-by-step instructions to help you set up and execute the pipeline efficiently for a quick trial.
@@ -40,7 +40,7 @@ meTAline offers flexibility in deployment to suit various computational environm
 
 ---
 
-**Outputs and Target Rules**
+**Target Rules**
 
 Understand the expected results and how to customize them:
 
