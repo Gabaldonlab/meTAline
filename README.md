@@ -10,7 +10,7 @@ MeTAline, is a snakemake pipeline for metagenomics analysis. MeTAline, facilitat
 
 ---
 
-# Got to the documetation [here](docs/Home.md) 
+# Go to the documentation homepage [here](docs/Home.md) 
 ### [Quick Start & Try Out](docs/Running_meTAline/Quick-Start-&-Try‐Out.md) 
 
 You can watch a small tutorial here: 
