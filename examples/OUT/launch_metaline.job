@@ -1,0 +1,25 @@
+#!/bin/bash
+
+#SBATCH --job-name=metaline
+#SBATCH --qos=gp_bscls
+#SBATCH --account=bsc40
+#SBATCH --output=test_output/jobnm_%j.out # Output file, where
+#SBATCH --error=test_output/jobnm_%j.err # File where the error is written
+
+#SBATCH --array=1-2 # The number of jobs in the array
+#SBATCH --ntasks=2 # The number of parallel tasks
+#SBATCH --tasks-per-node=2
+#SBATCH --cpus-per-task=24 # Number of CPUs per run task
+#SBATCH --constraint=highmem  # Use this only if your the database is too big and this constrainst is available in your cluster.
+#SBATCH --time=24:00:00  # 1 day.
+
+module load greasy
+
+mkdir -p test_output/Benchmark
+# This file is required for __Benchmark_report rule
+[ -f test_output/Benchmark/required.txt ] || touch test_output/Benchmark/required.txt
+mkdir -p test_output/Benchmark/plots
+
+# Print the task id
+$(sed -n "${SLURM_ARRAY_TASK_ID}p" test_output/list_greasy.txt)
+
