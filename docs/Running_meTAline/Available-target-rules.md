@@ -31,7 +31,7 @@ The target rules currently available to use are:
 - `--sylph_db` → Sylph database.
 - `--sylph_taxonomy` → Sylph taxonomy database.
 - `--prefix-fr` → Values between the sample barcode and 1,2 for paired end reads (default: `_`).
-
+- `--fastq_prefix` → This is not required when running as a greasy array
 
 ### Optional Arguments
 - `--reference-genome` → Path to the indexed reference genome.

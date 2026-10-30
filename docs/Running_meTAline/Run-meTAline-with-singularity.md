@@ -88,9 +88,11 @@ singularity run --cleanenv ./metaline.sif metaline-generate-config `# Path where
     --metaphlan-db ./test_input/test_datasets/metaphlan_dbs `# Path where the metaphlan4 database is located` \
     --metaphlan-index mpa_vJun23_CHOCOPhlAnSGB_202307 `# Index of the metaphlan4 database` \
     --n-db ./test_input/test_datasets/chocophlan_EC_FILTERED.v4_alpha.tar.gz `# Humann database to do the nucleotide search (based on already built annotations)` \
-    --protein-db ./test_input/test_datasets/uniref90_annotated_v4_alpha_ec_filtered.tar.gz  `# Humann database to do the translation search (by default this is by-passed)`
+    --protein-db ./test_input/test_datasets/uniref90_annotated_v4_alpha_ec_filtered.tar.gz  `# Humann database to do the translation search (by default this is by-passed)` \
+    --sylph_db None  \
+    --sylph_taxonomy None\
 ```
-You can change the required and default parameters your job using the [Parameters documentation](../Available-target-rules.md).
+You can change the required and default parameters your job using the [Parameters documentation](Available-target-rules.md).
 
 #### Create the required folders and file
 ```sh

@@ -12,7 +12,7 @@ This script automates the preparation of a greasy array job for submitting multi
 Run the script with the required arguments as follows:
 
 > [!IMPORTANT]
-> The arguments for `--metaline-cmd` and `--greasy-cmd` must be quoted (E.G.: `--generate_config_cmd "singularity run --cleanenv /gpfs/projects/bsc40/project/pipelines/meTAline/meTAline-1.1.0/metaline.sif metaline-generate-config"`)
+> The arguments for `--metaline-cmd` and `--greasy-cmd` must be quoted (E.G.: `--generate_config_cmd "singularity run --cleanenv /path_to_metaline_directory/metaline.sif metaline-generate-config"`)
 
 > [!NOTE]
 > It is advised to keep some of the "--cluster-node-cores" free for greasy and slurm to manage the executions.
@@ -21,8 +21,8 @@ Run the script with the required arguments as follows:
 singularity run --cleanenv ./metaline.sif metaline-prepare-greasy-array-job \
     --metaline-rule "all" \
     --basedir ~/metaline-prepare-greasy-array-job/test_output \
-    --metaline-cmd "module load singularity && singularity run --cleanenv ~/project/pipelines/meTAline/meTAline-1.1.0/metaline.sif metaline" \
-    --greasy-cmd "/apps/GPP/GREASY/2.2.4.1/INTEL/IMPI/bin/greasy" \
+    --metaline-cmd "module load singularity && singularity run --cleanenv /path_to_metaline_directory/metaline.sif metaline" \
+    --greasy-cmd "/path_to_greasy_directory/greasy" \
     --reference-genome ./test_input/test_datasets/grch38_index/genome \
     --krakendb ./test_input/test_datasets/minikraken2_v2_8GB_201904_UPDATE \
     --reads-directory  ./test_input \
@@ -31,6 +31,8 @@ singularity run --cleanenv ./metaline.sif metaline-prepare-greasy-array-job \
     --metaphlan-index  mpa_vJun23_CHOCOPhlAnSGB_202307 \
     --n-db ./test_input/test_datasets/chocophlan_EC_FILTERED.v4_alpha.tar.gz \
     --protein-db ./test_input/test_datasets/uniref90_annotated_v4_alpha_ec_filtered.tar.gz \
+    --sylph_db ./test_input/test_datasets/sylph_db.syldb \
+    --sylph_taxonomy ./test_input/test_datasets/taxonomy_sylph.tsv \
     --joblist-size 2 `# Max. number of jobs per each node in the Greasy array.` \
     --cluster-node-cores 24 `# Adjust these cores according to your cluster node's resouces.` \
     --trimmo-cores 16 `# Adjust these cores according to the --cluster-node-cores.` \
@@ -39,11 +41,11 @@ singularity run --cleanenv ./metaline.sif metaline-prepare-greasy-array-job \
     --snakemake-cores 16 `# Adjust these cores according to the --cluster-node-cores.`
 ```
 
+
+
+Required and default arguments can be found in the [Parameters documentation](Available-target-rules.md).
+
 ```
-
-Required and default arguments can be found at...
-
-
 ## Output Files
 - **Configs Directory**: Stores generated MeTAline config files.
 - **Job List Files**: Stores job batch files for `greasy`.
