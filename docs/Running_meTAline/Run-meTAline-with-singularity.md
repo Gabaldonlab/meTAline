@@ -1,4 +1,4 @@
-
+## Running meTAline with singularity <a id="running-in-hpc" />
 
 Before starting this step by step process you should have completed the build and setup process. Further information can be found at [Build meTAline singularity image](../Building_images/Build-meTAline-singularity-image.md). Alternatively You can download an already built singularity image [metaline.sif](https://github.com/Gabaldonlab/meTAline/releases/download/v1.0.0/metaline.sif)
 
@@ -90,7 +90,7 @@ singularity run --cleanenv ./metaline.sif metaline-generate-config `# Path where
     --n-db ./test_input/test_datasets/chocophlan_EC_FILTERED.v4_alpha.tar.gz `# Humann database to do the nucleotide search (based on already built annotations)` \
     --protein-db ./test_input/test_datasets/uniref90_annotated_v4_alpha_ec_filtered.tar.gz  `# Humann database to do the translation search (by default this is by-passed)`
 ```
-Required and default parameters for this job can be found at (../Available-target-rules.md).
+You can change the required and default parameters your job using the [Parameters documentation](../Available-target-rules.md).
 
 #### Create the required folders and file
 ```sh
