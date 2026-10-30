@@ -49,9 +49,11 @@ make download-test-datasets
 ./_scripts/download_test_datasets
 ```
 6. Generate the required files and folders
+```sh
 mkdir -p ./Benchmark
 mkdir -p ./Benchmark/plots
 [ -f ./Benchmark/required.txt ] || touch ./Benchmark/required.txt
+```
 
 7. Execute meTAline with the following commands:
 - Generate the configuration file to run the job:
