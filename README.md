@@ -10,7 +10,7 @@ MeTAline, is a snakemake pipeline for metagenomics analysis. MeTAline, facilitat
 
 ---
 
-# Table of [docs](docs/Home.md) content
+# Got to the documetation [here](docs/Home.md) 
 ### [Quick Start & Try Out](docs/Running_meTAline/Quick-Start-&-Try‐Out.md) 
 
 You can watch a small tutorial here: 
@@ -23,19 +23,19 @@ You can watch a small tutorial here:
 ---
 
 ### meTAline with Singularity
-#### [Build Singularity image](docs/Build-meTAline-singularity-image.md)
-#### [Run with Singularity](docs/Run-meTAline-with-singularity.md)
+#### [Build Singularity image](docs/Building_images/Build-meTAline-singularity-image.md)
+#### [Run with Singularity](docs/Running_meTAline/Run-meTAline-with-singularity.md)
 
 ## meTAline with Docker
-#### [Build Docker image](docs/Build-meTAline-docker-image.md)
-#### [Run with Docker](docs/Run-meTAline-with-docker.md)
+#### [Build Docker image](docs/Building_images/Build-meTAline-docker-image.md)
+#### [Run with Docker](docs/Running_meTAline/Run-meTAline-with-docker.md)
 
 ---
 
-### [Available target rules](docs/Available-target-rules.md)
-### [Benchmark outputs and reporting](docs/Benchmark-outputs-and-reporting-meTAline.md)
-### [Debugging meTAline](docs/Debugging-meTAline.md)
-### [Merging meTAline outputs](docs/Merge-outputs.md)
+### [Available target rules](docs/Running_meTAline/Available-target-rules.md)
+### [Benchmark outputs and reporting](docs/Running_meTAline/Benchmark-outputs-and-reporting-meTAline.md)
+### [Debugging meTAline](docs/Developing_meTAline/Debugging-meTAline.md)
+### [Merging meTAline outputs](docs/Running_meTAline/Merge-outputs.md)
 ### [Citations / Acknowledgments](docs/Citations---Acknowledgments.md)
 
 ---
