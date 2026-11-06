@@ -70,7 +70,10 @@ singularity run --cleanenv ./metaline.sif metaline-generate-config \
     --metaphlan-db ./test_input/test_datasets/metaphlan_dbs \
     --metaphlan-index mpa_vJun23_CHOCOPhlAnSGB_202307 \
     --n-db ./test_input/test_datasets/chocophlan_EC_FILTERED.v4_alpha.tar.gz \
-    --protein-db ./test_input/test_datasets/uniref90_annotated_v4_alpha_ec_filtered.tar.gz
+    --protein-db ./test_input/test_datasets/uniref90_annotated_v4_alpha_ec_filtered.tar.gz \
+    --sylph_db ./test_input/test_datasets/fungi-refseq-2025-10-11-c200-dbv1.syldb \
+    --sylph_taxonomy ./test_input/test_datasets/fungi_refseq_2025-10-11_metadata.tsv 
+
 ```
 
 - Run the job with the previously generated configuration file:
@@ -138,7 +141,10 @@ docker run --rm \
     --metaphlan-db /input-directory/test_datasets/metaphlan_dbs \
     --metaphlan-index mpa_vJun23_CHOCOPhlAnSGB_202307 \
     --n-db /input-directory/test_datasets/chocophlan_EC_FILTERED.v4_alpha.tar.gz \
-    --protein-db /input-directory/test_datasets/uniref90_annotated_v4_alpha_ec_filtered.tar.gz
+    --protein-db /input-directory/test_datasets/uniref90_annotated_v4_alpha_ec_filtered.tar.gz  \
+    --sylph_db ./test_input/test_datasets/fungi-refseq-2025-10-11-c200-dbv1.syldb \
+    --sylph_taxonomy ./test_input/test_datasets/fungi_refseq_2025-10-11_metadata.tsv 
+    
 ```
 
 - Run the job with the previously generated configuration file:

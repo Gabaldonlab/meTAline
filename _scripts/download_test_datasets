@@ -44,6 +44,15 @@ http://huttenhower.sph.harvard.edu/humann_data/uniprot/uniref_ec_filtered/uniref
 # [Humann chocoplan](https://github.com/biobakery/humann?tab=readme-ov-file#download-the-chocophlan-database)
 # [EC_FILTERED]
 http://huttenhower.sph.harvard.edu/humann_data/chocophlan/chocophlan_EC_FILTERED.v4_alpha.tar.gz
+
+# [--sylph_db]
+# [Sylph fungi RefSeq database]
+http://faust.compbio.cs.cmu.edu/sylph-stuff/fungi-refseq-2025-10-11-c200-dbv1.syldb
+# ================
+
+# [--sylph_taxonomy]
+# [Fungi RefSeq metadata from Zenodo]
+https://zenodo.org/records/17330476/files/fungi_refseq_2025-10-11_metadata.tsv?download=1
 EOF
 
 echo "==> Extracting $OTHER_DATASETS_DIR/grch38_genome.tar.gz into $OTHER_DATASETS_DIR"

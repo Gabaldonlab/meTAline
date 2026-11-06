@@ -31,8 +31,8 @@ singularity run --cleanenv ./metaline.sif metaline-prepare-greasy-array-job \
     --metaphlan-index  mpa_vJun23_CHOCOPhlAnSGB_202307 \
     --n-db ./test_input/test_datasets/chocophlan_EC_FILTERED.v4_alpha.tar.gz \
     --protein-db ./test_input/test_datasets/uniref90_annotated_v4_alpha_ec_filtered.tar.gz \
-    --sylph_db ./test_input/test_datasets/sylph_db.syldb \
-    --sylph_taxonomy ./test_input/test_datasets/taxonomy_sylph.tsv \
+    --sylph_db ./test_input/test_datasets/fungi-refseq-2025-10-11-c200-dbv1.syldb \
+    --sylph_taxonomy ./test_input/test_datasets/fungi_refseq_2025-10-11_metadata.tsv \
     --joblist-size 2 `# Max. number of jobs per each node in the Greasy array.` \
     --cluster-node-cores 24 `# Adjust these cores according to your cluster node's resouces.` \
     --trimmo-cores 16 `# Adjust these cores according to the --cluster-node-cores.` \
