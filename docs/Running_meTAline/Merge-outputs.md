@@ -29,7 +29,7 @@ kraken-biom {list_of_kraken_reports} -o Kraken2_merged.biom --fmt json
 
 ### Merge Metaphlan outputs
 ```sh
-python3 lib/scripts/merge_sylph_taxprof.py {list of metaphalan output profiled.txt files} > metaphlan_merged_abundance_table.txt
+python3 merge_metaphlan_tables.py {list of metaphalan output profiled.txt files} > metaphlan_merged_abundance_table.txt
 ```
 ---
 
